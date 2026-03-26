@@ -115,6 +115,7 @@
             vertical-align: middle; margin-right: 10px;
             flex-shrink: 0;
         }
+        .item-img[src=""], .item-img:not([src]) { display: none; }
         .item-name { font-weight: 500; display: flex; align-items: center; }
         .item-qty { text-align: center; color: var(--dim); white-space: nowrap; font-size: 0.85em; }
         .item-price { text-align: right; white-space: nowrap; }
@@ -228,7 +229,7 @@
                 {% if item.qty > 0 %}
                 <div class="item">
                     <div class="item-name">
-                        {% if item.image_url is defined and item.image_url %}<img src="{{ item.image_url }}" alt="" class="item-img" loading="lazy">{% endif %}
+                        {% if item.get('image_url') %}<img src="{{ item.image_url }}" alt="" class="item-img" loading="lazy" onerror="this.style.display='none'">{% endif %}
                         <span>{% if item.url %}<a href="{{ item.url }}" target="_blank" rel="noopener">{{ item.name }}</a>{% else %}{{ item.name }}{% endif %}{% if item.sku is defined and item.sku %}<span style="color:var(--dim);font-size:0.8em"> #{{ item.sku }}</span>{% endif %}</span>
                     </div>
                     <div class="item-qty">{{ item.qty }}&nbsp;{{ item.unit }}</div>

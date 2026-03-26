@@ -30,35 +30,30 @@ DIVISION_1 = {
             "qty": 1, "unit": "EA", "unit_price": 1500.00,
             "url": "https://www.stjohns.ca/en/building-development/building-renovation-and-repair.aspx",
             "notes": "Backyard suite permit, contact City of St. John's Development Dept.",
-            "image_url": "/static/images/service-permit.svg",
         },
         {
             "name": "Engineered Drawings & Stamps",
             "qty": 1, "unit": "EA", "unit_price": 2500.00,
             "url": "https://pegnl.ca/",
             "notes": "Structural engineer + architectural drawings for permit submission",
-            "image_url": "/static/images/service-engineering.svg",
         },
         {
             "name": "Site Survey",
             "qty": 1, "unit": "EA", "unit_price": 500.00,
             "url": "https://www.anls.ca/",
             "notes": "Licensed NL land surveyor — confirm lot lines and setbacks",
-            "image_url": "/static/images/service-survey.svg",
         },
         {
             "name": "Portable Toilet Rental (3 months)",
             "qty": 1, "unit": "EA", "unit_price": 600.00,
             "url": "https://www.yellowpages.ca/search/si/1/Portable+Toilet+Rental/St+John%27s+NL",
             "notes": "Construction-duration rental from local provider",
-            "image_url": "/static/images/service-toilet.svg",
         },
         {
             "name": "Dumpster Rental (2 hauls)",
             "qty": 2, "unit": "EA", "unit_price": 500.00,
             "url": "https://www.yellowpages.ca/search/si/1/Waste+Bins+%26+Containers/St+John%27s+NL",
             "notes": "20-yard bin, construction debris disposal",
-            "image_url": "/static/images/service-dumpster.svg",
         },
     ],
 }
@@ -74,7 +69,6 @@ DIVISION_2 = {
             "qty": 430, "unit": "sqft", "unit_price": 8.00,
             "url": "https://www.yellowpages.ca/search/si/1/Excavation+Contractors/St+John%27s+NL",
             "notes": "Strip topsoil, excavate to 18\" depth for FPSF, grade for drainage",
-            "image_url": "/static/images/service-excavation.svg",
         },
         {
             "name": "4\" Gravel Base (3/4\" clear crush)",
@@ -130,7 +124,6 @@ DIVISION_2 = {
             "qty": 1, "unit": "EA", "unit_price": 500.00,
             "url": "https://www.yellowpages.ca/search/si/1/Excavation+Contractors/St+John%27s+NL",
             "notes": "Machine backfill and grade for drainage away from building",
-            "image_url": "/static/images/service-grading.svg",
         },
     ],
 }
@@ -186,14 +179,12 @@ DIVISION_3 = {
             "qty": 24, "unit": "EA", "unit_price": 25.00,
             "url": "https://www.weyerhaeuser.com/woodproducts/engineered-lumber/tji-joists/",
             "notes": "Special order — 9.5\" or 11-7/8\" TJI joists for mono-slope roof, 16\" OC over 21.5' span",
-            "image_url": "/static/images/service-lumber.svg",
         },
         {
             "name": "LVL Beam (3.5×9.5\" for headers/ridge)",
             "qty": 2, "unit": "EA", "unit_price": 150.00,
             "url": "https://www.weyerhaeuser.com/woodproducts/engineered-lumber/microllam-lvl/",
             "notes": "Laminated veneer lumber for window/door headers and any concentrated loads",
-            "image_url": "/static/images/service-lumber.svg",
         },
         {
             "name": "1/2\" × 4' × 8' Spruce Plywood (wall sheathing)",
@@ -695,7 +686,6 @@ DIVISION_8 = {
             "qty": 1, "unit": "EA", "unit_price": 4000.00,
             "url": "https://www.yellowpages.ca/search/si/1/Plumbers/St+John%27s+NL",
             "notes": "Licensed NL plumber. Rough-in: supply, DWV, venting. Finish: set fixtures. ~2 visits.",
-            "image_url": "/static/images/service-plumber.svg",
         },
     ],
 }
@@ -795,7 +785,6 @@ DIVISION_9 = {
             "qty": 1, "unit": "EA", "unit_price": 3500.00,
             "url": "https://www.yellowpages.ca/search/si/1/Electricians/St+John%27s+NL",
             "notes": "Licensed NL electrician. Rough-in wiring, panel hookup, inspection. Finish: devices + fixtures.",
-            "image_url": "/static/images/service-electrician.svg",
         },
     ],
 }
@@ -839,7 +828,6 @@ DIVISION_10 = {
             "qty": 1, "unit": "EA", "unit_price": 2000.00,
             "url": "https://www.yellowpages.ca/search/si/1/Heating+Contractors/St+John%27s+NL",
             "notes": "Licensed HVAC tech for mini-split line set, refrigerant charge, HRV ducting, baseboard wiring.",
-            "image_url": "/static/images/service-hvac.svg",
         },
     ],
 }
