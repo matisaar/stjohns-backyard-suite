@@ -454,10 +454,9 @@ DIVISION_6 = {
         },
         {
             "name": "Great Stuff Spray Foam (gaps & rim joist)",
-            "qty": 6, "unit": "EA", "unit_price": 12.00,
-            "url": f"{KENT_BASE}/handi-foam-ii-605-insulating-spray-foam-sealant-1121865",
+            "qty": 6, "unit": "EA", "unit_price": 12.00, "estimate": True,
+            "url": "https://www.greatstuff.dupont.com/products/greatstuff-gaps-cracks.html",
             "notes": "Expanding spray foam for sealing around pipes, wires, rim joists, sill plate to slab",
-            "image_url": "/static/images/1121865.jpg",
         },
         {
             "name": "Tuck Tape (Red Sheathing Tape)",
@@ -554,10 +553,9 @@ DIVISION_7 = {
         },
         {
             "name": "Thin-Set Mortar, Grout, Tile Trim",
-            "qty": 1, "unit": "LOT", "unit_price": 120.00,
-            "url": f"{KENT_BASE}/12-x24-artiquity-ceramic-tile-17-49-sf-bx-1397727",
+            "qty": 1, "unit": "LOT", "unit_price": 120.00, "estimate": True,
+            "url": "https://www.homedepot.ca/product/mapei-keracolor-u-unsanded-grout-25-lb/1000672694",
             "notes": "Modified thin-set (50 lb bag × 2), sanded grout, Schluter trim edges, spacers.",
-            "image_url": "/static/images/1397727.jpg",
         },
         {
             "name": "Alexandria 1/2\"×3-1/2\"×96\" Modern MDF Baseboard Valupak (10-pack)",
@@ -884,10 +882,9 @@ DIVISION_12 = {
     "items": [
         {
             "name": "Stackable Washer/Dryer — 24\" Compact Set",
-            "qty": 1, "unit": "SET", "unit_price": 1800.00,
-            "url": f"{KENT_BASE}/stacked-washer-dryer-electric-laundry-center-1461896",
+            "qty": 1, "unit": "SET", "unit_price": 1800.00, "estimate": True,
+            "url": "https://www.homedepot.ca/en/home/categories/appliances/washers-and-dryers.html",
             "notes": "24\" compact stackable — fits in hallway closet. Electric dryer (no gas in NL). GE, LG, or Bosch.",
-            "image_url": "/static/images/1461896.jpg",
         },
         {
             "name": "Dryer Vent Kit (4\" rigid + wall cap)",

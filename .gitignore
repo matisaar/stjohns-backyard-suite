@@ -29,3 +29,11 @@ Thumbs.db
 # Scrapy
 *.log
 .vercel
+audit.py
+fix_failures.py
+search_sitemap.py
+test_cats.py
+test_urls.py
+test_urls2.py
+test_urls3.py
+test_urls4.py
