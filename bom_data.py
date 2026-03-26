@@ -634,6 +634,12 @@ DIVISION_8 = {
             "image_url": "/static/images/1202042.jpg",
         },
         {
+            "name": "Matte Black Single-Handle Bathroom Faucet",
+            "qty": 2, "unit": "EA", "unit_price": 132.00,
+            "url": f"{KENT_BASE}/principals-shower-faucet-1202042",
+            "notes": "Principals matte black single-handle lavatory faucet — matches shower valve and vanity. Single-hole mount.",
+        },
+        {
             "name": "Kitchen Sink — 25\" Undermount Stainless Steel",
             "qty": 1, "unit": "EA", "unit_price": 299.99,
             "url": f"{KENT_BASE}/single-bowl-undermount-sink-1391411",
@@ -884,18 +890,12 @@ DIVISION_12 = {
     "name": "Laundry",
     "items": [
         {
-            "name": "GE 24\" Stacked Washer/Dryer Electric Laundry Center",
-            "qty": 1, "unit": "EA", "unit_price": 1595.00,
-            "url": f"{KENT_BASE}/24-stacked-washer-dryer-electric-laundry-center-white-1462201",
-            "sku": "1462201",
-            "notes": "GE GUD24ESSMWW, 24\" compact stacked unit. Electric dryer, fits hallway closet.",
-        },
-        {
-            "name": "Dryer Vent Kit (4\" rigid + wall cap)",
-            "qty": 1, "unit": "EA", "unit_price": 40.00,
-            "url": f"{KENT_BASE}/dryer-vent-block-scalloped-with-sleeve-bulk-black-1420879",
-            "notes": "4\" rigid aluminum duct + exterior wall cap. Short run to nearest exterior wall.",
-            "image_url": "/static/images/1420879.jpg",
+            "name": "GE 24\" Front Load Washer/Dryer Combo — Ventless",
+            "qty": 1, "unit": "EA", "unit_price": 1395.00,
+            "url": f"{KENT_BASE}/24-front-load-washer-dryer-combo-ventless-2-4-cu-ft-1462204",
+            "sku": "1462204",
+            "notes": "GE GFQ14ESSNWW, 24\" compact front-load combo. Ventless — no duct needed. Steam wash, auto wash+dry, fits closet.",
+            "image_url": "/static/images/1462204.jpg",
         },
     ],
 }

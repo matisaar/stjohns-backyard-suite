@@ -153,13 +153,14 @@ def finishes():
             "Vanity",
             "Shower Stall",
             "Shower Valve",
+            "Bathroom Faucet",
         ]),
         ("Kitchen Plumbing", "Plumbing", [
             "Kitchen Sink",
             "Kitchen Faucet",
         ]),
         ("Laundry", "Laundry", [
-            "Stacked Washer",
+            "Front Load Washer",
             "GE 24",
         ]),
     ]
