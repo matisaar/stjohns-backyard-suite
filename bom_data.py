@@ -468,7 +468,7 @@ DIVISION_7 = {
             "qty": 1, "unit": "EA", "unit_price": 84.00,
             "url": f"{KENT_BASE}/sico-pro-pva-primer-interior-white-18-9-l-1058991",
             "sku": "1058991",
-            "image_url": "https://kent.ca/media/catalog/product/1/0/1058991_1.jpg?quality=80&fit=bounds&height=300&width=300",
+            "image_url": "/static/images/paint-sico-primer.jpg",
             "notes": "White PVA primer — one coat all new drywall. ~1,800 sqft coverage per pail.",
         },
         {
@@ -476,7 +476,7 @@ DIVISION_7 = {
             "qty": 6, "unit": "EA", "unit_price": 68.99,
             "url": f"{KENT_BASE}/sico-evolution-interior-latex-eggshell-neutral-base-3-78-l-1015669-NEU",
             "sku": "1015669-NEU",
-            "image_url": "https://kent.ca/media/catalog/product/1/0/1015669-NEU_1.jpg?quality=80&fit=bounds&height=300&width=300",
+            "image_url": "/static/images/paint-sico-evolution.jpg",
             "notes": "Bright white walls throughout — modern B&W aesthetic. 6 cans × 400 sqft = 2,400 sqft (2 coats on ~1,200 sqft).",
         },
         {
@@ -484,7 +484,7 @@ DIVISION_7 = {
             "qty": 26, "unit": "BX", "unit_price": 62.12,
             "url": f"{KENT_BASE}/clarovista-5-0mm-stone-core-vinyl-plank-aged-european-oak-1142112-AEO",
             "sku": "1142112-AEO",
-            "image_url": "https://kent.ca/media/catalog/product/1/1/1142112-AEO_1.jpg?quality=80&fit=bounds&height=300&width=300",
+            "image_url": "/static/images/lvp-clarovista.jpg",
             "notes": "Dark brown European Oak LVP — 18.94 sqft/box × 26 = 492 sqft (430 + 15% waste). Waterproof click-lock throughout.",
         },
         {
@@ -510,7 +510,7 @@ DIVISION_7 = {
             "qty": 3, "unit": "PK", "unit_price": 50.89,
             "url": f"{KENT_BASE}/1-2-x-3-1-2-x-96-modern-mdf-baseboard-primed-valupak-1447728",
             "sku": "1447728",
-            "image_url": "https://kent.ca/media/catalog/product/1/4/1447728_1_1.jpg?quality=80&fit=bounds&height=300&width=300",
+            "image_url": "/static/images/baseboard-alexandria.jpg",
             "notes": "Clean modern profile, pre-primed white. 10×8' per pack = 80 LF × 3 packs = 240 LF (covers 200 LF + waste).",
         },
         {
@@ -757,7 +757,7 @@ DIVISION_11 = {
             "name": "IKEA METOD + NICKEBO Matte Anthracite Kitchen (8 LF)",
             "qty": 1, "unit": "SET", "unit_price": 2500.00,
             "url": "https://www.ikea.com/ca/en/p/nickebo-door-matte-anthracite-70537861/",
-            "image_url": "https://www.ikea.com/ca/en/images/products/nickebo-door-matte-anthracite__1013735_pe829891_s5.jpg",
+            "image_url": "/static/images/kitchen-nickebo.jpg",
             "notes": "8 LF: base (4 LF) + upper (4 LF). METOD frames + NICKEBO matte anthracite doors — sleek modern black kitchen.",
         },
         {
