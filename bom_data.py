@@ -27,31 +27,31 @@ DIVISION_1 = {
     "items": [
         {
             "name": "Building Permit — City of St. John's",
-            "qty": 1, "unit": "EA", "unit_price": 1500.00,
+            "qty": 1, "unit": "EA", "unit_price": 1500.00, "estimate": True,
             "url": "https://www.stjohns.ca/en/building-development/building-renovation-and-repair.aspx",
             "notes": "Backyard suite permit, contact City of St. John's Development Dept.",
         },
         {
             "name": "Engineered Drawings & Stamps",
-            "qty": 1, "unit": "EA", "unit_price": 2500.00,
+            "qty": 1, "unit": "EA", "unit_price": 2500.00, "estimate": True,
             "url": "https://pegnl.ca/",
             "notes": "Structural engineer + architectural drawings for permit submission",
         },
         {
             "name": "Site Survey",
-            "qty": 1, "unit": "EA", "unit_price": 500.00,
+            "qty": 1, "unit": "EA", "unit_price": 500.00, "estimate": True,
             "url": "https://www.anls.ca/",
             "notes": "Licensed NL land surveyor — confirm lot lines and setbacks",
         },
         {
             "name": "Portable Toilet Rental (3 months)",
-            "qty": 1, "unit": "EA", "unit_price": 600.00,
+            "qty": 1, "unit": "EA", "unit_price": 600.00, "estimate": True,
             "url": "https://www.yellowpages.ca/search/si/1/Portable+Toilet+Rental/St+John%27s+NL",
             "notes": "Construction-duration rental from local provider",
         },
         {
             "name": "Dumpster Rental (2 hauls)",
-            "qty": 2, "unit": "EA", "unit_price": 500.00,
+            "qty": 2, "unit": "EA", "unit_price": 500.00, "estimate": True,
             "url": "https://www.yellowpages.ca/search/si/1/Waste+Bins+%26+Containers/St+John%27s+NL",
             "notes": "20-yard bin, construction debris disposal",
         },
@@ -66,7 +66,7 @@ DIVISION_2 = {
     "items": [
         {
             "name": "Excavation (local contractor)",
-            "qty": 430, "unit": "sqft", "unit_price": 8.00,
+            "qty": 430, "unit": "sqft", "unit_price": 8.00, "estimate": True,
             "url": "https://www.yellowpages.ca/search/si/1/Excavation+Contractors/St+John%27s+NL",
             "notes": "Strip topsoil, excavate to 18\" depth for FPSF, grade for drainage",
         },
@@ -121,7 +121,7 @@ DIVISION_2 = {
         },
         {
             "name": "Backfill & Final Grading (allowance)",
-            "qty": 1, "unit": "EA", "unit_price": 500.00,
+            "qty": 1, "unit": "EA", "unit_price": 500.00, "estimate": True,
             "url": "https://www.yellowpages.ca/search/si/1/Excavation+Contractors/St+John%27s+NL",
             "notes": "Machine backfill and grade for drainage away from building",
         },
@@ -176,13 +176,13 @@ DIVISION_3 = {
         },
         {
             "name": "Engineered I-Joists / Rafters (roof, ~22' span)",
-            "qty": 24, "unit": "EA", "unit_price": 25.00,
+            "qty": 24, "unit": "EA", "unit_price": 25.00, "estimate": True,
             "url": "https://www.weyerhaeuser.com/woodproducts/engineered-lumber/tji-joists/",
             "notes": "Special order — 9.5\" or 11-7/8\" TJI joists for mono-slope roof, 16\" OC over 21.5' span",
         },
         {
             "name": "LVL Beam (3.5×9.5\" for headers/ridge)",
-            "qty": 2, "unit": "EA", "unit_price": 150.00,
+            "qty": 2, "unit": "EA", "unit_price": 150.00, "estimate": True,
             "url": "https://www.weyerhaeuser.com/woodproducts/engineered-lumber/microllam-lvl/",
             "notes": "Laminated veneer lumber for window/door headers and any concentrated loads",
         },
@@ -683,7 +683,7 @@ DIVISION_8 = {
         },
         {
             "name": "Plumber Labor — Rough-in + Finish",
-            "qty": 1, "unit": "EA", "unit_price": 4000.00,
+            "qty": 1, "unit": "EA", "unit_price": 4000.00, "estimate": True,
             "url": "https://www.yellowpages.ca/search/si/1/Plumbers/St+John%27s+NL",
             "notes": "Licensed NL plumber. Rough-in: supply, DWV, venting. Finish: set fixtures. ~2 visits.",
         },
@@ -782,7 +782,7 @@ DIVISION_9 = {
         },
         {
             "name": "Electrician Labor — Rough-in + Finish",
-            "qty": 1, "unit": "EA", "unit_price": 3500.00,
+            "qty": 1, "unit": "EA", "unit_price": 3500.00, "estimate": True,
             "url": "https://www.yellowpages.ca/search/si/1/Electricians/St+John%27s+NL",
             "notes": "Licensed NL electrician. Rough-in wiring, panel hookup, inspection. Finish: devices + fixtures.",
         },
@@ -825,7 +825,7 @@ DIVISION_10 = {
         },
         {
             "name": "HVAC Installation Labor",
-            "qty": 1, "unit": "EA", "unit_price": 2000.00,
+            "qty": 1, "unit": "EA", "unit_price": 2000.00, "estimate": True,
             "url": "https://www.yellowpages.ca/search/si/1/Heating+Contractors/St+John%27s+NL",
             "notes": "Licensed HVAC tech for mini-split line set, refrigerant charge, HRV ducting, baseboard wiring.",
         },

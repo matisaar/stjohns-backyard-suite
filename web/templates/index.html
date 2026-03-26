@@ -233,6 +233,10 @@
                         <span>{% if item.url %}<a href="{{ item.url }}" target="_blank" rel="noopener">{{ item.name }}</a>{% else %}{{ item.name }}{% endif %}{% if item.sku is defined and item.sku %}<span style="color:var(--dim);font-size:0.8em"> #{{ item.sku }}</span>{% endif %}</span>
                     </div>
                     <div class="item-qty">{{ item.qty }}&nbsp;{{ item.unit }}</div>
+                    {% if item.get('estimate') %}
+                    <div class="item-price" style="color:#e74c3c"><span style="font-size:0.75em">est.</span></div>
+                    <div class="item-ext" style="color:#e74c3c"><span style="font-size:0.75em">est.</span></div>
+                    {% else %}
                     <div class="item-price">
                         ${{ "{:,.2f}".format(item.unit_price) }}
                         {% if item.price_changed is defined and item.price_changed %}
@@ -240,6 +244,7 @@
                         {% endif %}
                     </div>
                     <div class="item-ext">${{ "{:,.0f}".format(item.extended) }}</div>
+                    {% endif %}
                 </div>
                 {% if item.notes %}
                 <div class="item-notes">
