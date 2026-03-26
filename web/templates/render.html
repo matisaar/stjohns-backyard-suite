@@ -249,21 +249,21 @@
     border-top: 2px solid rgba(255,255,255,0.04);
   }
 
-  /* LVP Flooring */
+  /* LVP Flooring — dark European oak */
   .tex-lvp {
     height: 18px;
     background:
       repeating-linear-gradient(90deg,
-        #6b4c30 0px, #6b4c30 3px,
-        #7a5a3a 3px, #7a5a3a 28px,
-        #6b4c30 28px, #6b4c30 31px,
-        #8a6842 31px, #8a6842 62px,
-        #6b4c30 62px, #6b4c30 65px,
-        #745435 65px, #745435 95px
+        #2e2117 0px, #2e2117 3px,
+        #3a2a1c 3px, #3a2a1c 28px,
+        #2e2117 28px, #2e2117 31px,
+        #44321f 31px, #44321f 62px,
+        #2e2117 62px, #2e2117 65px,
+        #352818 65px, #352818 95px
       );
     border-radius: 4px 4px 0 0;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.4);
   }
   .tex-lvp::after {
     content: '';
@@ -271,7 +271,7 @@
     inset: 0;
     background: repeating-linear-gradient(95deg,
       transparent 0px, transparent 90px,
-      rgba(0,0,0,0.1) 90px, rgba(0,0,0,0.1) 91px
+      rgba(0,0,0,0.15) 90px, rgba(0,0,0,0.15) 91px
     );
     border-radius: inherit;
   }
@@ -286,6 +286,12 @@
       radial-gradient(circle 1px at 50% 80%, rgba(255,255,255,0.09) 0%, transparent 100%),
       linear-gradient(90deg, #c96499, #b5557e, #c96499);
     z-index: 5;
+    cursor: pointer;
+    transition: filter 0.2s;
+  }
+  .perimeter:hover, .perimeter.active {
+    filter: brightness(1.3);
+    box-shadow: 0 0 12px rgba(201, 100, 153, 0.4);
   }
   .perim-left {
     left: -1px;
@@ -507,7 +513,7 @@
 </div>
 
 <div class="legend">
-  <div class="legend-item"><div class="legend-swatch" style="background:#7a5a3a"></div>LVP Flooring</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#3a2a1c"></div>LVP Flooring</div>
   <div class="legend-item"><div class="legend-swatch" style="background:#757575"></div>Concrete</div>
   <div class="legend-item"><div class="legend-swatch" style="background:#888"></div>Wire Mesh</div>
   <div class="legend-item"><div class="legend-swatch" style="background:#333"></div>Vapour Barrier</div>
@@ -554,8 +560,8 @@
            style="position:relative;">
         <span class="layer-label">XPS Insulation (R-10)</span>
         <!-- Perimeter insulation side pieces -->
-        <div class="perimeter perim-left" style="top:-56px; height: 112px;"></div>
-        <div class="perimeter perim-right" style="top:-56px; height: 112px;"></div>
+        <div class="perimeter perim-left" style="top:-56px; height: 112px;" data-idx="perim" tabindex="0"></div>
+        <div class="perimeter perim-right" style="top:-56px; height: 112px;" data-idx="perim" tabindex="0"></div>
       </div>
 
       <!-- ─── Gravel Base ────────────────── -->
@@ -653,6 +659,16 @@ const materials = {
     url: "https://kent.ca/en/3-4-gravel-bag-30-kg-1017010",
     notes: "Well-graded 3/4\" clear crushed stone, compacted in 2\" lifts to 95% Proctor density. Provides drainage and uniform bearing for slab. Perimeter drain tile at base."
   },
+  perim: {
+    name: "2\" XPS Perimeter / Wing Insulation",
+    badge: "Thermal", badgeColor: "#c96499",
+    qty: "8 SH", price: "$45.00 / sheet",
+    total: "$360",
+    coverage: "4'×8' sheets — vertical perimeter around slab edge",
+    image: "{{ url_for('static', filename='images/1133346.jpg') }}",
+    url: "https://kent.ca/en/2-x-2-x-8-xps-60-insulation-1133346",
+    notes: "Frost-protected shallow foundation perimeter insulation. Extends horizontally as wing insulation to prevent frost heave. Same XPS board as under-slab, installed vertically at slab edges."
+  },
   earth: {
     name: "Excavation & Subgrade Preparation",
     badge: "Earthwork", badgeColor: "#4a3422",
@@ -675,6 +691,7 @@ function showDetail(key) {
   if (!m) return;
 
   layers.forEach(l => l.classList.toggle('active', l.dataset.idx === key));
+  document.querySelectorAll('.perimeter').forEach(p => p.classList.toggle('active', key === 'perim'));
 
   const imgHtml = m.image
     ? `<img class="thumb" src="${m.image}" alt="${m.name}" onerror="this.style.display='none'">`
@@ -713,6 +730,12 @@ function showDetail(key) {
 layers.forEach(layer => {
   layer.addEventListener('click', () => showDetail(layer.dataset.idx));
   layer.addEventListener('mouseenter', () => showDetail(layer.dataset.idx));
+});
+
+// Perimeter XPS pieces
+document.querySelectorAll('.perimeter').forEach(p => {
+  p.addEventListener('click', (e) => { e.stopPropagation(); showDetail('perim'); });
+  p.addEventListener('mouseenter', (e) => { e.stopPropagation(); showDetail('perim'); });
 });
 
 // Show concrete by default
