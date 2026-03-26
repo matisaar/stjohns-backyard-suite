@@ -144,7 +144,7 @@ DIVISION_3 = {
         },
         {
             "name": "2×6×10' SPF #2 & Better KD (headers, corners)",
-            "qty": 20, "unit": "EA", "unit_price": 10.88,
+            "qty": 20, "unit": "EA", "unit_price": 8.82,
             "url": f"{KENT_BASE}/2-x-6-x-10-2-better-spf-lumber-kiln-dried-1016313",
             "notes": "Built-up headers over windows/doors, corner assemblies",
             "sku": "1016313",
@@ -188,7 +188,7 @@ DIVISION_3 = {
         },
         {
             "name": "1/2\" × 4' × 8' Spruce Plywood (wall sheathing)",
-            "qty": 30, "unit": "SH", "unit_price": 39.98,
+            "qty": 30, "unit": "SH", "unit_price": 40.19,
             "url": f"{KENT_BASE}/1-2-x-4-x-8-12-5mm-spruce-plywood-standard-1015823",
             "notes": "Exterior wall sheathing: ~82 LF perimeter × 8' H = 656 sqft ÷ 32 = ~21 sheets + gable ends = 30",
             "sku": "1015823",
@@ -196,7 +196,7 @@ DIVISION_3 = {
         },
         {
             "name": "5/8\" × 4' × 8' Spruce Plywood (roof deck)",
-            "qty": 18, "unit": "SH", "unit_price": 54.38,
+            "qty": 18, "unit": "SH", "unit_price": 51.22,
             "url": f"{KENT_BASE}/5-8-4-x-8-15-5mm-spruce-plywood-standard-1015826",
             "notes": "Roof sheathing: 430 sqft + slope factor + 2' overhang = ~530 sqft ÷ 32 = 17 sheets → 18",
             "sku": "1015826",
@@ -204,7 +204,7 @@ DIVISION_3 = {
         },
         {
             "name": "3/4\" × 4' × 8' Spruce Plywood (subfloor — if raised)",
-            "qty": 0, "unit": "SH", "unit_price": 63.98,
+            "qty": 0, "unit": "SH", "unit_price": 60.26,
             "url": f"{KENT_BASE}/3-4-x-4-x-8-18-5mm-spruce-plywood-standard-1015824",
             "notes": "NOT NEEDED for slab-on-grade. Included at qty=0 as reference for future scope change.",
             "image_url": "/static/images/1015824.jpg",
@@ -285,7 +285,7 @@ DIVISION_4 = {
         },
         {
             "name": "Double 5\" Perforated Soffit (12' pieces)",
-            "qty": 16, "unit": "EA", "unit_price": 2.48,
+            "qty": 16, "unit": "EA", "unit_price": 12.42,
             "url": f"{KENT_BASE}/double-5-perforated-soffit-standard-1021390",
             "notes": "Soffit for 2' overhang on all sides: (82 LF perimeter × 2' ÷ ~10 sqft per piece = ~16 pcs)",
             "sku": "1021390",
@@ -337,7 +337,7 @@ DIVISION_5 = {
     "items": [
         {
             "name": "IKO Cambridge Architectural Shingles (Dual Black)",
-            "qty": 16, "unit": "BD", "unit_price": 40.99,
+            "qty": 16, "unit": "BD", "unit_price": 42.99,
             "url": f"{KENT_BASE}/40-7-8-x-13-3-4-cambridge-shingle-1010785",
             "notes": "~530 sqft roof area ÷ 33.3 sqft/bundle = 16 bundles (~5 squares). Architectural style, 30-yr warranty.",
             "sku": "1010785",
@@ -345,7 +345,7 @@ DIVISION_5 = {
         },
         {
             "name": "IKO StormShield Ice & Water Protector 36\"×65'",
-            "qty": 2, "unit": "RL", "unit_price": 84.99,
+            "qty": 2, "unit": "RL", "unit_price": 70.98,
             "url": f"{KENT_BASE}/stormshield-ice-water-protector-36-x-65-1026762",
             "notes": "Full coverage on mono-slope roof at 3:12 pitch recommended in NL. 2 rolls = 390 sqft. May need 3 for full coverage.",
             "sku": "1026762",
@@ -361,7 +361,7 @@ DIVISION_5 = {
         },
         {
             "name": "Drip Edge 10' (Pebble)",
-            "qty": 12, "unit": "EA", "unit_price": 8.29,
+            "qty": 12, "unit": "EA", "unit_price": 10.99,
             "url": f"{KENT_BASE}/10-x-2-1-2-x-1-roof-edge-drip-cap-1021389",
             "notes": "Full perimeter of roof: ~82 LF + 2 × 22' rakes = 126 LF → 13 pieces, use 12 + offcuts",
             "sku": "1021389",
@@ -408,7 +408,7 @@ DIVISION_6 = {
     "items": [
         {
             "name": "Owens Corning R-20 Fiberglass Batt 15\" (78.3 sqft/bag)",
-            "qty": 10, "unit": "BG", "unit_price": 89.57,
+            "qty": 10, "unit": "BG", "unit_price": 93.99,
             "url": f"{KENT_BASE}/owens-corning-insulation-ws-r20-47-x-15-x-6-78-3-sqft-1024741",
             "notes": "Exterior wall cavities: ~650 sqft net wall area ÷ 78.3 = 8.3 bags + 15% waste = 10 bags",
             "sku": "1024741",
@@ -416,7 +416,7 @@ DIVISION_6 = {
         },
         {
             "name": "Owens Corning R-20 Fiberglass Batt 23\" (120.1 sqft/bag)",
-            "qty": 2, "unit": "BG", "unit_price": 137.00,
+            "qty": 2, "unit": "BG", "unit_price": 144.99,
             "url": f"{KENT_BASE}/owens-corning-insulation-ws-r20-47-x-23-x-6-120-1-sqft-1024744",
             "notes": "24\" OC areas if any, or for wider bays. 2 bags supplementary.",
             "sku": "1024744",
@@ -424,7 +424,7 @@ DIVISION_6 = {
         },
         {
             "name": "Owens Corning R-28 Fiberglass Batt 24\" (80 sqft/bag)",
-            "qty": 6, "unit": "BG", "unit_price": 126.00,
+            "qty": 6, "unit": "BG", "unit_price": 132.99,
             "url": f"{KENT_BASE}/owens-corning-insulation-ws-r28-48-x-24-x-8-1-2-80-sqft-1024751",
             "notes": "Ceiling / roof cavity — first layer. 6 × 80 = 480 sqft covers full ceiling.",
             "sku": "1024751",
@@ -432,7 +432,7 @@ DIVISION_6 = {
         },
         {
             "name": "Owens Corning R-31 Fiberglass Batt 16\" (42.7 sqft/bag)",
-            "qty": 4, "unit": "BG", "unit_price": 79.99,
+            "qty": 4, "unit": "BG", "unit_price": 88.07,
             "url": f"{KENT_BASE}/owens-corning-insulation-ws-r31-48-x-16-x-9-1-2-42-7-sqft-1024752",
             "notes": "Ceiling top-up layer to achieve effective R-50+. 4 × 42.7 = 171 sqft (supplement where depth allows).",
             "sku": "1024752",
@@ -559,7 +559,7 @@ DIVISION_7 = {
         },
         {
             "name": "Alexandria 1/2\"×3-1/2\"×96\" Modern MDF Baseboard Valupak (10-pack)",
-            "qty": 3, "unit": "PK", "unit_price": 50.89,
+            "qty": 3, "unit": "PK", "unit_price": 62.89,
             "url": f"{KENT_BASE}/1-2-x-3-1-2-x-8-modern-mdf-baseboard-valupak-10-pack-1447728",
             "sku": "1447728",
             "image_url": "/static/images/1447728.jpg",
