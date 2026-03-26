@@ -1,120 +1,284 @@
 #!/usr/bin/env python3
-"""Scrape Kent.ca prices for St. John's store (10 Stavanger Dr) for all SKU'd BOM items."""
-import urllib.request
+"""Scrape live Kent.ca prices for every BOM item and update the database.
+
+Reads all items from bom_data.py, extracts SKUs from URLs, scrapes current
+prices from Kent.ca product pages, stores results in SQLite, and optionally
+patches bom_data.py with corrected prices.
+
+Usage:
+    python scrape_stjohns.py              # scrape + report diffs
+    python scrape_stjohns.py --update     # scrape + auto-patch bom_data.py
+"""
 import json
+import os
 import re
+import sqlite3
+import sys
 import time
+import urllib.request
+from datetime import datetime
 
-# St. John's store cookie — Kent uses "store_code" cookie
-# We need to find the right store ID first, then pass it as a cookie
-STORE_COOKIE = "store=st_johns"  # try common patterns
+# ── project imports ──────────────────────────────────────────────────────────
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from bom_data import ALL_DIVISIONS
 
-SKUS_AND_URLS = [
-    ("1016278", "2x6x8 SPF Stud", 6.48, "/en/2-x-6-x-8-spf-stud-kiln-dried-1016278"),
-    ("1016313", "2x6x10 SPF", 10.88, "/en/2-x-6-x-10-spf-no-2-better-kd-1016313"),
-    ("1016318", "2x4x8 SPF Stud", 3.98, "/en/2-x-4-x-8-spf-stud-kiln-dried-1016318"),
-    ("1016339", "2x4x12 SPF", 7.66, "/en/2-x-4-x-12-spf-no-2-better-kd-1016339"),
-    ("1016338", "2x4x10 SPF", 6.38, "/en/2-x-4-x-10-spf-no-2-better-kd-1016338"),
-    ("1015823", "1/2 Spruce Plywood", 39.98, "/en/1-2-x-4-x-8-spruce-plywood-1015823"),
-    ("1015826", "5/8 Spruce Plywood", 54.38, "/en/5-8-x-4-x-8-spruce-plywood-1015826"),
-    ("1015824", "3/4 Spruce Plywood", 63.98, "/en/3-4-x-4-x-8-spruce-plywood-1015824"),
-    ("1010820", "Vinyl Siding", 11.19, "/en/mitten-oregon-pride-dutchlap-vinyl-siding-12-1-1010820"),
-    ("1021390", "Perforated Soffit", 2.48, "/en/double-5-perforated-soffit-12-pieces-1021390"),
-    ("1010785", "IKO Cambridge Shingles", 40.99, "/en/iko-cambridge-shingles-dual-black-1010785"),
-    ("1026762", "IKO Ice & Water", 84.99, "/en/iko-stormshield-ice-water-protector-36-x65-1026762"),
-    ("1026830", "Felt Underlayment", 44.99, "/en/organic-felt-underlayment-36-x131-1026830"),
-    ("1021389", "Drip Edge", 8.29, "/en/drip-edge-10-pebble-1021389"),
-    ("1016918", "Step Flashing", 3.49, "/en/step-flashing-4-x4-x8-1016918"),
-    ("1042887", "Thermocell Air Chutes", 2.19, "/en/thermocell-air-chutes-22-5-x27-1042887"),
-    ("1024741", "R-20 Batt 15in", 89.57, "/en/owens-corning-r-20-fiberglass-batt-15-78-3-sqft-bag-1024741"),
-    ("1024744", "R-20 Batt 23in", 137.00, "/en/owens-corning-r-20-fiberglass-batt-23-120-1-sqft-bag-1024744"),
-    ("1024751", "R-28 Batt", 126.00, "/en/owens-corning-r-28-fiberglass-batt-24-80-sqft-bag-1024751"),
-    ("1024752", "R-31 Batt", 79.99, "/en/owens-corning-r-31-fiberglass-batt-16-42-7-sqft-bag-1024752"),
-    ("1016148", "1/2 UltraLight Drywall", 17.82, "/en/cgc-1-2-x-4-x-8-ultralight-drywall-1016148"),
-    ("1016149", "1/2 12ft Drywall", 26.73, "/en/cgc-1-2-x-4-x-12-tapered-edge-drywall-1016149"),
-    ("1016160", "5/8 Type X Drywall", 31.99, "/en/cgc-5-8-x-4-x-8-type-x-firecode-drywall-1016160"),
-    ("1021974", "Drywall Compound 17L", 32.87, "/en/cgc-17l-all-purpose-lite-drywall-compound-1021974"),
-    ("1058991", "Sico Primer 18.9L", 84.00, "/en/sico-pro-pva-drywall-primer-white-18-9l-1058991"),
-    ("1015669-NEU", "Sico Evolution Paint", 68.99, "/en/sico-evolution-interior-eggshell-pure-white-3-78l-1015669-neu"),
-    ("1080257-PWT", "Volcano Pewter LVP", 88.19, "/en/5-3mm-volcano-pewter-engineered-stone-core-vinyl-23-33-sf-1080257-pwt"),
-    ("1447728", "MDF Baseboard Valupak", 50.89, "/en/alexandria-1-2-x3-1-2-x96-modern-mdf-baseboard-valupak-1447728"),
-]
+# ── constants ────────────────────────────────────────────────────────────────
+DB_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+DB_PATH = os.path.join(DB_DIR, "building_materials.db")
+BOM_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "bom_data.py")
+REQUEST_DELAY = 0.4          # seconds between requests — be polite
+TIMEOUT = 20                 # per-request timeout
+TODAY = datetime.now().strftime("%Y-%m-%d")
 
-BASE = "https://kent.ca"
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-CA,en;q=0.9",
+}
 
-results = []
-for sku, name, bom_price, path in SKUS_AND_URLS:
-    url = BASE + path
+
+# ── helpers ──────────────────────────────────────────────────────────────────
+
+def extract_sku_from_url(url: str) -> str:
+    """Pull the Kent.ca SKU from a product URL.
+
+    Patterns:
+      kent.ca/en/…-1016278
+      kent.ca/en/…-1015669-neu
+      kent.ca/en/…-1080257-pwt
+    """
+    if "kent.ca" not in url:
+        return ""
+    m = re.search(r'-(\d{6,8}(?:-[a-z]+)?)(?:\?|$)', url)
+    return m.group(1) if m else ""
+
+
+def scrape_price(url: str) -> float | None:
+    """Fetch a Kent.ca product page and extract the price.
+
+    Tries multiple extraction strategies in order of reliability:
+      1. JSON-LD structured data (most reliable)
+      2. <meta property="product:price:amount">
+      3. data-price-amount attribute
+      4. <span class="price">$X.XX</span>
+      5. Regex pattern: "price":X.XX anywhere in page source
+    """
+    req = urllib.request.Request(url, headers=HEADERS)
     try:
-        req = urllib.request.Request(url, headers={
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
-            "Cookie": "store_view=en; selected_store=st-johns",
-            "Accept": "text/html",
-        })
-        resp = urllib.request.urlopen(req, timeout=15)
+        resp = urllib.request.urlopen(req, timeout=TIMEOUT)
         html = resp.read().decode("utf-8", errors="replace")
+    except Exception as exc:
+        raise RuntimeError(f"HTTP error: {exc}") from exc
 
-        # Try to find price in JSON-LD or meta tags
-        price = None
+    # Strategy 1: JSON-LD
+    for blob in re.findall(
+        r'<script type="application/ld\+json">(.*?)</script>', html, re.DOTALL
+    ):
+        try:
+            data = json.loads(blob)
+            offers = data.get("offers") if isinstance(data, dict) else None
+            if isinstance(offers, dict) and "price" in offers:
+                return float(offers["price"])
+            if isinstance(offers, list):
+                for o in offers:
+                    if "price" in o:
+                        return float(o["price"])
+        except (json.JSONDecodeError, ValueError, TypeError):
+            pass
 
-        # Look for "price" in JSON-LD structured data
-        json_ld = re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.DOTALL)
-        for blob in json_ld:
-            try:
-                data = json.loads(blob)
-                if isinstance(data, dict):
-                    offers = data.get("offers", {})
-                    if isinstance(offers, dict) and "price" in offers:
-                        price = float(offers["price"])
-                        break
-                    elif isinstance(offers, list):
-                        for o in offers:
-                            if "price" in o:
-                                price = float(o["price"])
-                                break
-            except (json.JSONDecodeError, ValueError):
-                pass
+    # Strategy 2: Open Graph meta
+    m = re.search(
+        r'<meta\s+(?:property|name)="product:price:amount"\s+content="([^"]+)"', html
+    )
+    if m:
+        return float(m.group(1))
 
-        # Fallback: look for meta property="product:price:amount"
-        if price is None:
-            m = re.search(r'<meta\s+property="product:price:amount"\s+content="([^"]+)"', html)
-            if m:
-                price = float(m.group(1))
+    # Strategy 3: data-price-amount (Magento)
+    m = re.search(r'data-price-amount="([^"]+)"', html)
+    if m:
+        return float(m.group(1))
 
-        # Fallback: look for data-price-amount
-        if price is None:
-            m = re.search(r'data-price-amount="([^"]+)"', html)
-            if m:
-                price = float(m.group(1))
+    # Strategy 4: <span class="price">
+    m = re.search(r'<span[^>]*class="price"[^>]*>\s*\$\s*([0-9,]+\.[0-9]{2})', html)
+    if m:
+        return float(m.group(1).replace(",", ""))
 
-        # Fallback: span.price pattern
-        if price is None:
-            m = re.search(r'<span[^>]*class="price"[^>]*>\s*\$([0-9]+\.[0-9]+)', html)
-            if m:
-                price = float(m.group(1))
+    # Strategy 5: raw JSON "price": anywhere
+    m = re.search(r'"price"\s*:\s*"?([0-9]+(?:\.[0-9]{1,2}))"?', html)
+    if m:
+        return float(m.group(1))
 
-        if price is not None:
-            diff = price - bom_price
-            flag = "" if abs(diff) < 0.01 else f"  DIFF {diff:+.2f}"
-            results.append((sku, name, bom_price, price, diff))
-            print(f"{sku:15s} {name:30s}  BOM ${bom_price:>8.2f}  Kent ${price:>8.2f}{flag}")
+    return None
+
+
+# ── database ─────────────────────────────────────────────────────────────────
+
+def init_db():
+    """Create the materials table if it doesn't exist."""
+    os.makedirs(DB_DIR, exist_ok=True)
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS materials (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            sku         TEXT NOT NULL,
+            name        TEXT NOT NULL,
+            price       REAL,
+            bom_price   REAL,
+            url         TEXT,
+            division    TEXT,
+            scraped_date TEXT NOT NULL
+        )
+    """)
+    conn.execute("""
+        CREATE INDEX IF NOT EXISTS idx_materials_sku ON materials(sku)
+    """)
+    conn.commit()
+    return conn
+
+
+def save_result(conn, sku, name, price, bom_price, url, division):
+    """Insert one scraped result."""
+    conn.execute(
+        "INSERT INTO materials (sku, name, price, bom_price, url, division, scraped_date) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?)",
+        (sku, name, price, bom_price, url, division, TODAY),
+    )
+
+
+# ── BOM auto-patcher ────────────────────────────────────────────────────────
+
+def patch_bom_file(updates: list[tuple[str, float, float]]):
+    """Replace unit_price values in bom_data.py for items whose prices changed.
+
+    Each entry in `updates` is (item_name, old_price, new_price).
+    """
+    with open(BOM_FILE, "r") as f:
+        src = f.read()
+
+    patched = 0
+    for name, old_price, new_price in updates:
+        # Use a regex that finds this item's name nearby the unit_price
+        pattern = re.compile(
+            r'("name":\s*"[^"]*' + re.escape(name[:30]) + r'[^"]*"'
+            r'.*?'
+            r'"unit_price":\s*)' + re.escape(str(old_price)),
+            re.DOTALL
+        )
+        new_src = pattern.sub(r'\g<1>' + str(new_price), src, count=1)
+        if new_src != src:
+            src = new_src
+            patched += 1
+
+    if patched > 0:
+        with open(BOM_FILE, "w") as f:
+            f.write(src)
+        print(f"\n✅ Patched {patched} price(s) in bom_data.py")
+    else:
+        print("\nNo prices needed patching in bom_data.py")
+
+
+# ── main ─────────────────────────────────────────────────────────────────────
+
+def collect_kent_items():
+    """Build list of all Kent.ca-linked items with extractable SKUs."""
+    items = []
+    seen_urls = set()
+    for div in ALL_DIVISIONS:
+        for item in div["items"]:
+            url = item.get("url", "")
+            if "kent.ca" not in url:
+                continue
+            # Skip search pages
+            if "/search?" in url:
+                continue
+            # Deduplicate by URL (e.g. bathroom faucet reuses shower valve URL)
+            if url in seen_urls:
+                continue
+            seen_urls.add(url)
+            sku = item.get("sku") or extract_sku_from_url(url)
+            if not sku:
+                continue
+            items.append({
+                "division": div["name"],
+                "name": item["name"],
+                "bom_price": item["unit_price"],
+                "url": url,
+                "sku": sku,
+            })
+    return items
+
+
+def main():
+    auto_update = "--update" in sys.argv
+
+    items = collect_kent_items()
+    print(f"Found {len(items)} Kent.ca items to scrape\n")
+    print(f"{'SKU':<16} {'Item':<55} {'BOM $':>9} {'Kent $':>9} {'Diff':>8}")
+    print("─" * 100)
+
+    conn = init_db()
+    results = []
+    errors = []
+    price_changes = []
+
+    for i, it in enumerate(items, 1):
+        sku, name, bom_price, url = it["sku"], it["name"], it["bom_price"], it["url"]
+        try:
+            kent_price = scrape_price(url)
+            if kent_price is None:
+                errors.append((sku, name, "price not found on page"))
+                print(f"{sku:<16} {name[:55]:<55} ${bom_price:>8.2f}  {'NOT FOUND':>9}")
+            else:
+                diff = kent_price - bom_price
+                flag = "" if abs(diff) < 0.01 else f"{'':>1}{'↑' if diff > 0 else '↓'}"
+                print(
+                    f"{sku:<16} {name[:55]:<55} ${bom_price:>8.2f} ${kent_price:>8.2f} "
+                    f"{'—' if abs(diff) < 0.01 else f'{diff:+.2f}'} {flag}"
+                )
+                results.append((sku, name, bom_price, kent_price, diff))
+                save_result(conn, sku, name, kent_price, bom_price, url, it["division"])
+
+                if abs(diff) >= 0.01:
+                    price_changes.append((name, bom_price, kent_price))
+
+        except RuntimeError as exc:
+            errors.append((sku, name, str(exc)))
+            print(f"{sku:<16} {name[:55]:<55} ${bom_price:>8.2f}  {'ERROR':>9}")
+
+        if i < len(items):
+            time.sleep(REQUEST_DELAY)
+
+    conn.commit()
+    conn.close()
+
+    # ── Summary ──────────────────────────────────────────────────────────────
+    print("\n" + "═" * 100)
+    print(f"Scraped:  {len(results)}/{len(items)} prices found")
+    print(f"Errors:   {len(errors)}")
+    print(f"Changed:  {len(price_changes)}")
+
+    if price_changes:
+        total_delta = sum(new - old for _, old, new in price_changes)
+        print(f"\nPrice differences ({'+' if total_delta >= 0 else ''}{total_delta:.2f} total delta):")
+        for name, old, new in sorted(price_changes, key=lambda x: abs(x[2] - x[1]), reverse=True):
+            diff = new - old
+            print(f"  {name[:60]:<60} ${old:>9.2f} → ${new:>9.2f}  ({diff:+.2f})")
+
+        if auto_update:
+            patch_bom_file(price_changes)
         else:
-            results.append((sku, name, bom_price, None, None))
-            print(f"{sku:15s} {name:30s}  BOM ${bom_price:>8.2f}  Kent: PRICE NOT FOUND")
+            print("\nRun with --update to auto-patch bom_data.py")
 
-    except Exception as e:
-        results.append((sku, name, bom_price, None, None))
-        print(f"{sku:15s} {name:30s}  BOM ${bom_price:>8.2f}  ERROR: {e}")
+    if errors:
+        print(f"\nFailed items:")
+        for sku, name, err in errors:
+            print(f"  {sku}: {name[:50]} — {err}")
 
-    time.sleep(0.15)
+    print(f"\nResults saved to {DB_PATH}")
 
-# Summary
-print("\n" + "=" * 80)
-changed = [(r[0], r[1], r[2], r[3], r[4]) for r in results if r[3] is not None and abs(r[4]) >= 0.01]
-print(f"\nTotal items checked: {len(results)}")
-print(f"Prices found: {sum(1 for r in results if r[3] is not None)}")
-print(f"Prices that differ: {len(changed)}")
-if changed:
-    print("\nItems needing update:")
-    for sku, name, old, new, diff in changed:
-        print(f"  {sku}: ${old:.2f} -> ${new:.2f} ({diff:+.2f})")
+
+if __name__ == "__main__":
+    main()

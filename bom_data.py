@@ -79,21 +79,21 @@ DIVISION_2 = {
         },
         {
             "name": "2\" XPS Rigid Insulation Under Slab (R-10)",
-            "qty": 14, "unit": "SH", "unit_price": 45.00,
+            "qty": 14, "unit": "SH", "unit_price": 50.39,
             "url": f"{KENT_BASE}/2-x-2-x-8-xps-60-insulation-1133346",
             "notes": "4'x8' sheets, covers 430 sqft slab area (14 × 32 sqft = 448 sqft)",
             "image_url": "/static/images/1133346.jpg",
         },
         {
             "name": "2\" XPS Perimeter / Wing Insulation",
-            "qty": 8, "unit": "SH", "unit_price": 45.00,
+            "qty": 8, "unit": "SH", "unit_price": 50.39,
             "url": f"{KENT_BASE}/2-x-2-x-8-xps-60-insulation-1133346",
             "notes": "Frost-protected shallow foundation perimeter insulation",
             "image_url": "/static/images/1133346.jpg",
         },
         {
             "name": "10-mil Poly Vapour Barrier (under slab)",
-            "qty": 1, "unit": "RL", "unit_price": 89.00,
+            "qty": 1, "unit": "RL", "unit_price": 112.50,
             "url": f"{KENT_BASE}/100-x-240-x-6-mil-clear-vapour-barrier-2000-sqft-1028030",
             "notes": "20'x50' roll, moisture barrier under concrete slab",
             "image_url": "/static/images/1028030.jpg",
@@ -144,7 +144,7 @@ DIVISION_3 = {
         },
         {
             "name": "2×6×10' SPF #2 & Better KD (headers, corners)",
-            "qty": 20, "unit": "EA", "unit_price": 8.82,
+            "qty": 20, "unit": "EA", "unit_price": 10.88,
             "url": f"{KENT_BASE}/2-x-6-x-10-2-better-spf-lumber-kiln-dried-1016313",
             "notes": "Built-up headers over windows/doors, corner assemblies",
             "sku": "1016313",
@@ -152,7 +152,7 @@ DIVISION_3 = {
         },
         {
             "name": "2×4×8' SPF Stud Kiln Dried (interior partitions)",
-            "qty": 60, "unit": "EA", "unit_price": 3.98,
+            "qty": 60, "unit": "EA", "unit_price": 4.28,
             "url": f"{KENT_BASE}/2-x-4-x-8-spf-stud-kiln-dried-1016318",
             "notes": "Interior walls: 2 bathroom walls + 2 bedroom walls + kitchen partition ≈60 LF / 1.33 = 45 + extras",
             "sku": "1016318",
@@ -168,7 +168,7 @@ DIVISION_3 = {
         },
         {
             "name": "2×4×10' SPF #2 & Better KD",
-            "qty": 12, "unit": "EA", "unit_price": 6.38,
+            "qty": 12, "unit": "EA", "unit_price": 5.97,
             "url": f"{KENT_BASE}/2-x-4-x-10-2-better-spf-lumber-kiln-dried-1016338",
             "notes": "Top plates (doubled), additional blocking",
             "sku": "1016338",
@@ -176,7 +176,7 @@ DIVISION_3 = {
         },
         {
             "name": "2\u00d712\u00d716' SPF #2 & Better KD (roof rafters)",
-            "qty": 24, "unit": "EA", "unit_price": 55.13,
+            "qty": 24, "unit": "EA", "unit_price": 62.27,
             "url": f"{KENT_BASE}/2-x-12-x-16-2-better-spf-lumber-kiln-dried-1016290",
             "sku": "1016290",
             "notes": "Mono-slope roof rafters 16\" OC, 20' span w/ mid-span LVL beam support.",
@@ -189,7 +189,7 @@ DIVISION_3 = {
         },
         {
             "name": "1/2\" × 4' × 8' Spruce Plywood (wall sheathing)",
-            "qty": 30, "unit": "SH", "unit_price": 40.19,
+            "qty": 30, "unit": "SH", "unit_price": 39.98,
             "url": f"{KENT_BASE}/1-2-x-4-x-8-12-5mm-spruce-plywood-standard-1015823",
             "notes": "Exterior wall sheathing: ~82 LF perimeter × 8' H = 656 sqft ÷ 32 = ~21 sheets + gable ends = 30",
             "sku": "1015823",
@@ -197,7 +197,7 @@ DIVISION_3 = {
         },
         {
             "name": "5/8\" × 4' × 8' Spruce Plywood (roof deck)",
-            "qty": 18, "unit": "SH", "unit_price": 51.22,
+            "qty": 18, "unit": "SH", "unit_price": 54.38,
             "url": f"{KENT_BASE}/5-8-4-x-8-15-5mm-spruce-plywood-standard-1015826",
             "notes": "Roof sheathing: 430 sqft + slope factor + 2' overhang = ~530 sqft ÷ 32 = 17 sheets → 18",
             "sku": "1015826",
@@ -205,7 +205,7 @@ DIVISION_3 = {
         },
         {
             "name": "3/4\" × 4' × 8' Spruce Plywood (subfloor — if raised)",
-            "qty": 0, "unit": "SH", "unit_price": 60.26,
+            "qty": 0, "unit": "SH", "unit_price": 63.98,
             "url": f"{KENT_BASE}/3-4-x-4-x-8-18-5mm-spruce-plywood-standard-1015824",
             "notes": "NOT NEEDED for slab-on-grade. Included at qty=0 as reference for future scope change.",
             "image_url": "/static/images/1015824.jpg",
@@ -213,7 +213,7 @@ DIVISION_3 = {
         },
         {
             "name": "Pressure Treated 2×6 Sill Plates",
-            "qty": 12, "unit": "EA", "unit_price": 14.00,
+            "qty": 12, "unit": "EA", "unit_price": 14.25,
             "url": f"{KENT_BASE}/2-x-6-x-8-pressure-treated-lumber-1016514",
             "notes": "Bottom plates on concrete — must be pressure treated. ~82 LF = 12 × 8' pieces",
             "image_url": "/static/images/1016514.jpg",
@@ -227,7 +227,7 @@ DIVISION_3 = {
         },
         {
             "name": "Framing Nails — 3.25\" (16d sinker, 50 lb)",
-            "qty": 2, "unit": "BX", "unit_price": 65.00,
+            "qty": 2, "unit": "BX", "unit_price": 74.99,
             "url": f"{KENT_BASE}/3-1-4-prostrip-framing-nail-3000-box-1006763",
             "notes": "~100 lbs total for wall and roof framing",
             "image_url": "/static/images/1006763.jpg",
@@ -241,7 +241,7 @@ DIVISION_3 = {
         },
         {
             "name": "PL Premium Construction Adhesive",
-            "qty": 10, "unit": "EA", "unit_price": 8.00,
+            "qty": 10, "unit": "EA", "unit_price": 16.99,
             "url": f"{KENT_BASE}/pl-premium-max-1030223",
             "notes": "Subfloor/sheathing adhesive — glue-and-screw for rigidity",
             "image_url": "/static/images/1030223.jpg",
@@ -257,7 +257,7 @@ DIVISION_4 = {
     "items": [
         {
             "name": "Tyvek HomeWrap 9' × 100'",
-            "qty": 2, "unit": "RL", "unit_price": 180.00,
+            "qty": 2, "unit": "RL", "unit_price": 129.99,
             "url": f"{KENT_BASE}/tyvek-homewrap-100-x-9-house-wrap-1021749",
             "notes": "Weather-resistant barrier over wall sheathing. 2 rolls covers ~1,800 sqft (need ~700 sqft + overlaps)",
             "image_url": "/static/images/1021749.jpg",
@@ -302,21 +302,21 @@ DIVISION_4 = {
         },
         {
             "name": "Triple-Pane Vinyl Casement Windows (~30\"×48\")",
-            "qty": 6, "unit": "EA", "unit_price": 450.00,
+            "qty": 6, "unit": "EA", "unit_price": 431.10,
             "url": f"{KENT_BASE}/36-x-40-vision-left-hand-casement-window-1107802",
             "notes": "6 windows: 2 bedrooms (egress-sized, min 3.8 sqft openable), 2 bathrooms (small), 2 kitchen. Get local quotes from Kohltech or JELD-WEN NL dealers for triple-pane.",
             "image_url": "/static/images/1107802.jpg",
         },
         {
             "name": "Steel Insulated Entry Door — 36\" Black with Frame",
-            "qty": 1, "unit": "EA", "unit_price": 450.00,
+            "qty": 1, "unit": "EA", "unit_price": 593.99,
             "url": f"{KENT_BASE}/36-x80-6-panel-vinyl-clad-inswing-door-4-5-8-pvc-sill-1606274",
             "notes": "Pre-hung insulated steel door, black exterior finish. Modern B&W aesthetic. Single entrance.",
             "image_url": "/static/images/1606274.jpg",
         },
         {
             "name": "Window & Door Flashing Tape",
-            "qty": 2, "unit": "RL", "unit_price": 30.00,
+            "qty": 2, "unit": "RL", "unit_price": 47.39,
             "url": f"{KENT_BASE}/dupont-flashing-tape-75-x-4-1005887",
             "notes": "Self-adhering membrane flashing, 4\" × 75' — flash all window and door rough openings",
             "image_url": "/static/images/1005887.jpg",
@@ -347,7 +347,7 @@ DIVISION_5 = {
         },
         {
             "name": "IKO StormShield Ice & Water Protector 36\"×65'",
-            "qty": 2, "unit": "RL", "unit_price": 70.98,
+            "qty": 2, "unit": "RL", "unit_price": 84.99,
             "url": f"{KENT_BASE}/stormshield-ice-water-protector-36-x-65-1026762",
             "notes": "Full coverage on mono-slope roof at 3:12 pitch recommended in NL. 2 rolls = 390 sqft. May need 3 for full coverage.",
             "sku": "1026762",
@@ -363,7 +363,7 @@ DIVISION_5 = {
         },
         {
             "name": "Drip Edge 10' (Pebble)",
-            "qty": 12, "unit": "EA", "unit_price": 10.99,
+            "qty": 12, "unit": "EA", "unit_price": 8.29,
             "url": f"{KENT_BASE}/10-x-2-1-2-x-1-roof-edge-drip-cap-1021389",
             "notes": "Full perimeter of roof: ~82 LF + 2 × 22' rakes = 126 LF → 13 pieces, use 12 + offcuts",
             "sku": "1021389",
@@ -379,7 +379,7 @@ DIVISION_5 = {
         },
         {
             "name": "Roof Vent / Exhaust Vents",
-            "qty": 2, "unit": "EA", "unit_price": 40.00,
+            "qty": 2, "unit": "EA", "unit_price": 17.59,
             "url": f"{KENT_BASE}/duraflo-slantback-roof-vent-1021383",
             "notes": "Static roof vents or ridge vent for attic ventilation. Required for shingle warranty.",
             "image_url": "/static/images/1021383.jpg",
@@ -394,7 +394,7 @@ DIVISION_5 = {
         },
         {
             "name": "Roofing Nails (coil, 1-1/4\")",
-            "qty": 2, "unit": "BX", "unit_price": 30.00,
+            "qty": 2, "unit": "BX", "unit_price": 78.69,
             "url": f"{KENT_BASE}/1-1-4-ring-shank-15-mini-coil-nails-1052309",
             "notes": "Galvanized roofing nails for shingle and underlayment",
             "image_url": "/static/images/1052309.jpg",
@@ -418,7 +418,7 @@ DIVISION_6 = {
         },
         {
             "name": "Owens Corning R-20 Fiberglass Batt 23\" (120.1 sqft/bag)",
-            "qty": 2, "unit": "BG", "unit_price": 144.99,
+            "qty": 2, "unit": "BG", "unit_price": 137.00,
             "url": f"{KENT_BASE}/owens-corning-insulation-ws-r20-47-x-23-x-6-120-1-sqft-1024744",
             "notes": "24\" OC areas if any, or for wider bays. 2 bags supplementary.",
             "sku": "1024744",
@@ -426,7 +426,7 @@ DIVISION_6 = {
         },
         {
             "name": "Owens Corning R-28 Fiberglass Batt 24\" (80 sqft/bag)",
-            "qty": 6, "unit": "BG", "unit_price": 132.99,
+            "qty": 6, "unit": "BG", "unit_price": 126.00,
             "url": f"{KENT_BASE}/owens-corning-insulation-ws-r28-48-x-24-x-8-1-2-80-sqft-1024751",
             "notes": "Ceiling / roof cavity — first layer. 6 × 80 = 480 sqft covers full ceiling.",
             "sku": "1024751",
@@ -434,7 +434,7 @@ DIVISION_6 = {
         },
         {
             "name": "Owens Corning R-31 Fiberglass Batt 16\" (42.7 sqft/bag)",
-            "qty": 4, "unit": "BG", "unit_price": 88.07,
+            "qty": 4, "unit": "BG", "unit_price": 79.99,
             "url": f"{KENT_BASE}/owens-corning-insulation-ws-r31-48-x-16-x-9-1-2-42-7-sqft-1024752",
             "notes": "Ceiling top-up layer to achieve effective R-50+. 4 × 42.7 = 171 sqft (supplement where depth allows).",
             "sku": "1024752",
@@ -442,28 +442,28 @@ DIVISION_6 = {
         },
         {
             "name": "6-mil Polyethylene Vapour Barrier",
-            "qty": 2, "unit": "RL", "unit_price": 60.00,
+            "qty": 2, "unit": "RL", "unit_price": 89.99,
             "url": f"{KENT_BASE}/100-x-144-x-6-mil-clear-vapour-barrier-1200-sqft-1028019",
             "notes": "Interior side of walls and ceiling — continuous air/vapour barrier per NBC. 10'×100' rolls.",
             "image_url": "/static/images/1028019.jpg",
         },
         {
             "name": "Roxul Safe'n'Sound Acoustic Batt (bathroom walls)",
-            "qty": 3, "unit": "BG", "unit_price": 50.00,
+            "qty": 3, "unit": "BG", "unit_price": 153.72,
             "url": f"{KENT_BASE}/safe-n-sound-3-x-16-25-x-48-65-sqft-1021690",
             "notes": "Sound insulation in shared bathroom/bedroom partition walls — mineral wool batts",
             "image_url": "/static/images/1021690.jpg",
         },
         {
             "name": "Great Stuff Gaps & Cracks Foam Sealant 12oz",
-            "qty": 6, "unit": "EA", "unit_price": 13.99,
+            "qty": 6, "unit": "EA", "unit_price": 13.44,
             "url": f"{KENT_BASE}/great-stuff-gaps-cracks-smart-dispenser-foam-sealant-12oz-1080226",
             "sku": "1080226",
             "notes": "Smart Dispenser spray foam — seal pipes, wires, rim joists, sill plate to slab.",
         },
         {
             "name": "Tuck Tape (Red Sheathing Tape)",
-            "qty": 4, "unit": "RL", "unit_price": 10.00,
+            "qty": 4, "unit": "RL", "unit_price": 10.66,
             "url": f"{KENT_BASE}/tuck-tape-contractor-grade-sheathing-tape-red-60mm-x-55m-1194944",
             "notes": "Seal all poly seams, sheathing joints. 60mm × 66m rolls.",
             "image_url": "/static/images/1194944.jpg",
@@ -518,7 +518,7 @@ DIVISION_7 = {
         },
         {
             "name": "Sico Pro PVA Drywall Primer White 18.9L",
-            "qty": 1, "unit": "EA", "unit_price": 84.00,
+            "qty": 1, "unit": "EA", "unit_price": 73.99,
             "url": f"{KENT_BASE}/sico-pro-pva-primer-white-18-9l-1058991",
             "sku": "1058991",
             "image_url": "/static/images/1058991.jpg",
@@ -534,7 +534,7 @@ DIVISION_7 = {
         },
         {
             "name": "Volcano 5.3mm Pewter Engineered Stone Core Vinyl Plank",
-            "qty": 22, "unit": "BX", "unit_price": 88.19,
+            "qty": 22, "unit": "BX", "unit_price": 74.96,
             "url": f"{KENT_BASE}/5-3mm-volcano-pewter-engineered-stone-core-vinyl-23-33-sf-1080257-pwt",
             "sku": "1080257-PWT",
             "image_url": "/static/images/1080257-PWT.jpg",
@@ -549,7 +549,7 @@ DIVISION_7 = {
         },
         {
             "name": "Cement Backer Board (Durock / HardieBacker)",
-            "qty": 8, "unit": "SH", "unit_price": 30.00,
+            "qty": 8, "unit": "SH", "unit_price": 39.98,
             "url": f"{KENT_BASE}/durock-1-2-x-3-x-5-cement-board-1021605",
             "notes": "1/2\" × 3' × 5' cement board behind all tiled shower areas — moisture-proof substrate.",
             "image_url": "/static/images/1021605.jpg",
@@ -562,7 +562,7 @@ DIVISION_7 = {
         },
         {
             "name": "Alexandria 1/2\"×3-1/2\"×96\" Modern MDF Baseboard Valupak (10-pack)",
-            "qty": 3, "unit": "PK", "unit_price": 62.89,
+            "qty": 3, "unit": "PK", "unit_price": 59.87,
             "url": f"{KENT_BASE}/1-2-x-3-1-2-x-8-modern-mdf-baseboard-valupak-10-pack-1447728",
             "sku": "1447728",
             "image_url": "/static/images/1447728.jpg",
@@ -584,7 +584,7 @@ DIVISION_7 = {
         },
         {
             "name": "Closet Shelving & Rods",
-            "qty": 2, "unit": "EA", "unit_price": 50.00,
+            "qty": 2, "unit": "EA", "unit_price": 232.99,
             "url": f"{KENT_BASE}/shelftrack-4-6-closet-organizer-kit-1032867",
             "notes": "Wire shelf + rod kit per bedroom closet. ~4' wide each.",
             "image_url": "/static/images/1032867.jpg",
@@ -614,7 +614,7 @@ DIVISION_8 = {
         },
         {
             "name": "24\" Modern Matte Black Vanity with White Ceramic Top",
-            "qty": 2, "unit": "EA", "unit_price": 549.00,
+            "qty": 2, "unit": "EA", "unit_price": 499.00,
             "url": f"{KENT_BASE}/24-vanity-with-drawer-1697660",
             "notes": "Matte black cabinet + white integrated sink top — B&W modern theme. 24\" fits compact bathrooms.",
             "image_url": "/static/images/1697660.jpg",
@@ -655,14 +655,14 @@ DIVISION_8 = {
         },
         {
             "name": "PEX Plumbing — 1/2\" × 100' (red + blue)",
-            "qty": 2, "unit": "RL", "unit_price": 60.00,
+            "qty": 2, "unit": "RL", "unit_price": 44.89,
             "url": f"{KENT_BASE}/super-pex-red-1-2-x-100-coil-1036755",
             "notes": "Hot and cold supply — 200 LF total. PEX-A or PEX-B with expansion or crimp fittings.",
             "image_url": "/static/images/1036755.jpg",
         },
         {
             "name": "PEX Plumbing — 3/4\" × 50' (main supply)",
-            "qty": 1, "unit": "RL", "unit_price": 80.00,
+            "qty": 1, "unit": "RL", "unit_price": 39.98,
             "url": f"{KENT_BASE}/superpex-3-4-x-50-white-pex-pipe-1013992",
             "notes": "3/4\" main supply from house to manifold.",
             "image_url": "/static/images/1013992.jpg",
@@ -683,7 +683,7 @@ DIVISION_8 = {
         },
         {
             "name": "Washer Box (hot/cold supply + drain)",
-            "qty": 1, "unit": "EA", "unit_price": 50.00,
+            "qty": 1, "unit": "EA", "unit_price": 19.12,
             "url": f"{KENT_BASE}/washing-machine-box-1020149",
             "notes": "Recessed washer outlet box with supply valves and drain connection.",
             "image_url": "/static/images/1020149.jpg",
@@ -705,21 +705,21 @@ DIVISION_9 = {
     "items": [
         {
             "name": "100A Sub-Panel (20-space)",
-            "qty": 1, "unit": "EA", "unit_price": 250.00,
+            "qty": 1, "unit": "EA", "unit_price": 156.49,
             "url": f"{KENT_BASE}/100a-8-15-circuit-load-center-sub-panel-1013553",
             "notes": "Fed from main house panel or separate meter. 100A adequate for ~430 sqft suite.",
             "image_url": "/static/images/1013553.jpg",
         },
         {
             "name": "14/2 NMD90 Wire — 150m spool",
-            "qty": 2, "unit": "RL", "unit_price": 120.00,
+            "qty": 2, "unit": "RL", "unit_price": 163.00,
             "url": f"{KENT_BASE}/14-2-nmd90-75m-electrical-wire-blue-1026025",
             "notes": "General lighting + receptacle circuits (15A). 300m total covers ~10 circuits.",
             "image_url": "/static/images/1026025.jpg",
         },
         {
             "name": "12/2 NMD90 Wire — 75m spool",
-            "qty": 1, "unit": "RL", "unit_price": 150.00,
+            "qty": 1, "unit": "RL", "unit_price": 242.00,
             "url": f"{KENT_BASE}/12-2-nmd90-75m-romex-simpull-electrical-wire-1026699",
             "notes": "Kitchen small appliance circuits + bathroom circuits (20A) per CEC code.",
             "image_url": "/static/images/1026699.jpg",
@@ -733,42 +733,42 @@ DIVISION_9 = {
         },
         {
             "name": "Receptacles — 15A Tamper-Resistant",
-            "qty": 18, "unit": "EA", "unit_price": 3.00,
+            "qty": 18, "unit": "EA", "unit_price": 2.09,
             "url": f"{KENT_BASE}/15-a-duplex-receptacle-1004457",
             "notes": "General receptacles throughout — bedrooms, kitchen counter, hallway.",
             "image_url": "/static/images/1004457.jpg",
         },
         {
             "name": "GFCI Receptacles — 20A (kitchen & bath)",
-            "qty": 4, "unit": "EA", "unit_price": 25.00,
+            "qty": 4, "unit": "EA", "unit_price": 43.09,
             "url": f"{KENT_BASE}/tamper-resistant-gfci-20amp-1507459",
             "notes": "Required within 1.5m of sinks per CEC: 2 bathrooms + 2 kitchen counter locations.",
             "image_url": "/static/images/1507459.jpg",
         },
         {
             "name": "Light Switches (single-pole + 3-way)",
-            "qty": 10, "unit": "EA", "unit_price": 3.00,
+            "qty": 1, "unit": "PK", "unit_price": 34.95,
             "url": f"{KENT_BASE}/3-way-switch-10-pack-1029553",
             "notes": "Mix of single-pole and 3-way switches for each room + hallway.",
             "image_url": "/static/images/1029553.jpg",
         },
         {
             "name": "LED Slim Recessed Pot Lights 4\" (IC-rated, black trim)",
-            "qty": 12, "unit": "EA", "unit_price": 15.00,
+            "qty": 1, "unit": "PK", "unit_price": 87.99,
             "url": f"{KENT_BASE}/4-led-recessed-pro-12-pack-1519938",
             "notes": "Slim profile, matte black trim ring. 12 total: 3/bedroom, 2/bathroom, 2 kitchen, 2 hallway.",
             "image_url": "/static/images/1519938.jpg",
         },
         {
             "name": "Bathroom Exhaust Fans (80 CFM + light)",
-            "qty": 2, "unit": "EA", "unit_price": 80.00,
+            "qty": 2, "unit": "EA", "unit_price": 69.99,
             "url": f"{KENT_BASE}/80-cfm-0-6-sone-bathroom-fan-1685342",
             "notes": "Required in each bathroom. Vented to exterior through roof or wall.",
             "image_url": "/static/images/1685342.jpg",
         },
         {
             "name": "Smoke / CO Combination Detectors",
-            "qty": 4, "unit": "EA", "unit_price": 40.00,
+            "qty": 4, "unit": "EA", "unit_price": 139.00,
             "url": f"{KENT_BASE}/hardwired-interconnected-combination-smoke-co-alarm-1661640",
             "notes": "Interconnected: 1 per bedroom, 1 hallway outside bedrooms, 1 kitchen area. Per NBC/NFPA.",
             "image_url": "/static/images/1661640.jpg",
@@ -782,7 +782,7 @@ DIVISION_9 = {
         },
         {
             "name": "Weatherproof Exterior Receptacle + Cover",
-            "qty": 1, "unit": "EA", "unit_price": 30.00,
+            "qty": 1, "unit": "EA", "unit_price": 33.59,
             "url": f"{KENT_BASE}/kraloy-pvc-2-gang-weatherproof-switch-gfci-cover-1026018",
             "notes": "GFCI-protected exterior receptacle at entrance — required by code.",
             "image_url": "/static/images/1026018.jpg",
@@ -868,7 +868,7 @@ DIVISION_11 = {
         },
         {
             "name": "24\" Apartment-Size Refrigerator — Black/Stainless",
-            "qty": 1, "unit": "EA", "unit_price": 1445.00,
+            "qty": 1, "unit": "EA", "unit_price": 1395.00,
             "url": f"{KENT_BASE}/24-bottom-freezer-refrigerator-12-9cf-1461451",
             "notes": "24\" counter-depth, 10–12 cu ft. Black or black stainless to match kitchen theme.",
             "image_url": "/static/images/1461451.jpg",
