@@ -145,7 +145,7 @@
             vertical-align: top;
         }
         .items-table tr:hover { background: rgba(88,166,255,0.04); }
-        .items-table .name { max-width: 350px; }
+        .items-table .name { max-width: 400px; }
         .items-table .name a {
             color: var(--accent);
             text-decoration: none;
@@ -156,6 +156,18 @@
             color: var(--text-dim);
             margin-top: 4px;
         }
+        .product-thumb {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            border-radius: 6px;
+            background: #fff;
+            padding: 2px;
+            float: left;
+            margin-right: 12px;
+            margin-bottom: 4px;
+        }
+        .name-cell { overflow: hidden; }
         .items-table .number { text-align: right; font-variant-numeric: tabular-nums; }
         .price-changed {
             color: var(--orange);
@@ -377,6 +389,9 @@
                         {% if item.qty > 0 %}
                         <tr>
                             <td class="name">
+                                {% if item.image_url is defined and item.image_url %}
+                                    <img src="{{ item.image_url }}" alt="{{ item.name }}" class="product-thumb" loading="lazy">
+                                {% endif %}
                                 {% if item.url %}
                                     <a href="{{ item.url }}" target="_blank" rel="noopener">{{ item.name }}</a>
                                 {% else %}
