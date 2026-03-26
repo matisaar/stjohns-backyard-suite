@@ -235,8 +235,8 @@
                     </div>
                     <div class="item-qty">{{ item.qty }}&nbsp;{{ item.unit }}</div>
                     {% if item.get('estimate') %}
-                    <div class="item-price" style="color:#e74c3c"><span style="font-size:0.75em">est.</span></div>
-                    <div class="item-ext" style="color:#e74c3c"><span style="font-size:0.75em">est.</span></div>
+                    <div class="item-price" style="color:#e74c3c">${{ "{:,.2f}".format(item.unit_price) }} <span style="font-size:0.7em;opacity:0.7">est.</span></div>
+                    <div class="item-ext" style="color:#e74c3c">${{ "{:,.0f}".format(item.extended) }} <span style="font-size:0.7em;opacity:0.7">est.</span></div>
                     {% else %}
                     <div class="item-price">
                         ${{ "{:,.2f}".format(item.unit_price) }}
