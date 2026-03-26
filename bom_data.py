@@ -530,12 +530,12 @@ DIVISION_7 = {
             "notes": "Bright white walls throughout — modern B&W aesthetic. 6 cans × 400 sqft = 2,400 sqft (2 coats on ~1,200 sqft).",
         },
         {
-            "name": "Clarovista 5.0mm Aged European Oak Stone Core Vinyl Plank",
-            "qty": 26, "unit": "BX", "unit_price": 62.12,
-            "url": f"{KENT_BASE}/5-0-mm-aged-european-oak-stone-core-vinyl-plank-18-94-sf-bx-1142112-aeo",
-            "sku": "1142112-AEO",
-            "image_url": "/static/images/1142112-AEO.jpg",
-            "notes": "Dark brown European Oak LVP — 18.94 sqft/box × 26 = 492 sqft (430 + 15% waste). Waterproof click-lock throughout.",
+            "name": "Volcano 5.3mm Pewter Engineered Stone Core Vinyl Plank",
+            "qty": 22, "unit": "BX", "unit_price": 88.19,
+            "url": f"{KENT_BASE}/5-3mm-volcano-pewter-engineered-stone-core-vinyl-23-33-sf-1080257-pwt",
+            "sku": "1080257-PWT",
+            "image_url": "/static/images/1080257-PWT.jpg",
+            "notes": "Dark walnut Pewter LVP — 23.33 sqft/box × 22 = 513 sqft (430 + 19% waste). Waterproof click-lock throughout.",
         },
         {
             "name": "White Large-Format Ceramic Wall Tile 12\"×24\" (shower walls)",

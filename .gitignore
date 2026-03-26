@@ -37,3 +37,7 @@ test_urls.py
 test_urls2.py
 test_urls3.py
 test_urls4.py
+check_dark.py
+download_candidates.py
+find_dark2.py
+find_dark_lvp.py
