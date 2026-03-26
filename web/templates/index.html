@@ -101,7 +101,7 @@
         .items { border-top: 1px solid var(--border); }
         .item {
             display: grid;
-            grid-template-columns: 44px 1fr auto auto auto;
+            grid-template-columns: 1fr auto auto auto;
             gap: 8px; align-items: center;
             padding: 7px 16px;
             border-bottom: 1px solid var(--border);
@@ -110,22 +110,17 @@
         .item:last-child { border-bottom: none; }
         .item:hover { background: rgba(77,166,255,0.03); }
         .item-img {
-            width: 40px; height: 40px; border-radius: 5px;
+            width: 36px; height: 36px; border-radius: 4px;
             object-fit: contain; background: #fff; padding: 1px;
+            vertical-align: middle; margin-right: 8px;
         }
-        .item-img-placeholder {
-            width: 40px; height: 40px; border-radius: 5px;
-            background: var(--card2); border: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.65em; color: var(--dim);
-        }
-        .item-name { font-weight: 500; }
+        .item-name { font-weight: 500; display: flex; align-items: center; }
         .item-qty { text-align: center; color: var(--dim); white-space: nowrap; font-size: 0.85em; }
         .item-price { text-align: right; white-space: nowrap; }
         .item-ext { text-align: right; font-weight: 600; white-space: nowrap; }
         .item-notes {
             grid-column: 1 / -1; font-size: 0.75em; color: var(--dim);
-            padding: 0 0 4px 52px; margin-top: -4px;
+            padding: 0 0 4px 16px; margin-top: -4px;
         }
         .item-notes summary { cursor: pointer; color: var(--dim); font-size: 0.9em; }
         .item-notes summary:hover { color: var(--text); }
@@ -140,9 +135,9 @@
             .regs { grid-template-columns: 1fr 1fr; }
             .grand { flex-direction: column; gap: 8px; text-align: center; }
             .grand-sub { justify-content: center; }
-            .item { grid-template-columns: 36px 1fr auto auto; font-size: 0.78em; }
+            .item { grid-template-columns: 1fr auto auto; font-size: 0.78em; }
             .item-qty { display: none; }
-            .item-notes { padding-left: 44px; }
+            .item-notes { padding-left: 12px; }
         }
     </style>
 </head>
@@ -231,14 +226,9 @@
                 {% for item in div.line_items %}
                 {% if item.qty > 0 %}
                 <div class="item">
-                    {% if item.image_url is defined and item.image_url %}
-                        <img src="{{ item.image_url }}" alt="" class="item-img" loading="lazy">
-                    {% else %}
-                        <div class="item-img-placeholder"></div>
-                    {% endif %}
                     <div class="item-name">
-                        {% if item.url %}<a href="{{ item.url }}" target="_blank" rel="noopener">{{ item.name }}</a>{% else %}{{ item.name }}{% endif %}
-                        {% if item.sku is defined and item.sku %}<span style="color:var(--dim);font-size:0.8em"> #{{ item.sku }}</span>{% endif %}
+                        {% if item.image_url is defined and item.image_url %}<img src="{{ item.image_url }}" alt="" class="item-img" loading="lazy">{% endif %}
+                        <span>{% if item.url %}<a href="{{ item.url }}" target="_blank" rel="noopener">{{ item.name }}</a>{% else %}{{ item.name }}{% endif %}{% if item.sku is defined and item.sku %}<span style="color:var(--dim);font-size:0.8em"> #{{ item.sku }}</span>{% endif %}</span>
                     </div>
                     <div class="item-qty">{{ item.qty }}&nbsp;{{ item.unit }}</div>
                     <div class="item-price">
