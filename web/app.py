@@ -135,6 +135,7 @@ def finishes():
             "Aluminum Fascia",
             "Triple-Pane Vinyl",
             "Steel Insulated Entry Door",
+            "Dusco Moderna",
         ]),
         ("Roofing", "Roofing", [
             "IKO Cambridge",

@@ -4,95 +4,166 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>St. John's Backyard Suite — BOM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #111;
-            --card: #191919;
-            --card2: #222;
-            --border: #2a2a2a;
-            --text: #eee;
-            --dim: #888;
+            --bg: #0a0a0a;
+            --card: rgba(255,255,255,0.03);
+            --card-solid: #141414;
+            --glass: rgba(255,255,255,0.05);
+            --glass-border: rgba(255,255,255,0.08);
+            --border: rgba(255,255,255,0.06);
+            --text: #f0f0f0;
+            --dim: #666;
+            --muted: #999;
             --accent: #4da6ff;
-            --green: #34d058;
-            --orange: #e3b341;
+            --green: #34d399;
+            --green2: #22c55e;
+            --orange: #f59e0b;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: var(--bg); color: var(--text);
-            line-height: 1.5; font-size: 14px;
+            line-height: 1.55; font-size: 14px;
+            -webkit-font-smoothing: antialiased;
         }
         a { color: var(--accent); text-decoration: none; }
         a:hover { text-decoration: underline; }
-        .wrap { max-width: 1100px; margin: 0 auto; padding: 16px; }
+        .wrap { max-width: 1120px; margin: 0 auto; padding: 20px; }
 
-        /* ── Header ── */
-        .hdr { padding: 28px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px; text-align: center; }
-        .hdr h1 { font-size: 1.4em; font-weight: 700; letter-spacing: -0.02em; }
-        .hdr p { color: var(--dim); font-size: 0.85em; margin-top: 4px; }
-        .tags { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
-        .tag { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 3px 12px; font-size: 0.75em; color: var(--dim); }
-        .tag b { color: var(--text); font-weight: 600; }
+        /* ── Hero / Header ── */
+        .hero {
+            position: relative;
+            padding: 48px 0 40px;
+            margin-bottom: 28px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(77,166,255,0.06) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .hero h1 {
+            font-size: 1.8em; font-weight: 300; letter-spacing: 0.06em;
+            text-transform: uppercase; color: var(--text);
+        }
+        .hero h1 span { font-weight: 700; }
+        .hero .sub {
+            color: var(--dim); font-size: 0.82em; margin-top: 8px;
+            letter-spacing: 0.12em; text-transform: uppercase;
+        }
+        .nav-row {
+            display: flex; gap: 6px; justify-content: center; margin-top: 20px;
+        }
+        .nav-pill {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px; padding: 6px 18px;
+            font-size: 0.72em; color: var(--muted);
+            text-decoration: none; transition: all 0.2s;
+            letter-spacing: 0.04em; text-transform: uppercase;
+        }
+        .nav-pill:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+        .nav-pill.active {
+            background: rgba(77,166,255,0.1); border-color: rgba(77,166,255,0.25);
+            color: var(--accent); font-weight: 600;
+        }
+
+        /* ── Tags ── */
+        .tags { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+        .tag {
+            background: transparent; border: 1px solid var(--border);
+            border-radius: 3px; padding: 3px 10px;
+            font-size: 0.68em; color: var(--dim);
+            letter-spacing: 0.04em; text-transform: uppercase;
+        }
+        .tag b { color: var(--muted); font-weight: 600; }
 
         /* ── Grand Total Banner ── */
         .grand {
-            background: linear-gradient(135deg, #0d2818, #132a13);
-            border: 1px solid #1e4620;
-            border-radius: 10px; padding: 16px 20px;
+            background: linear-gradient(135deg, rgba(34,197,94,0.08), rgba(34,211,153,0.04));
+            border: 1px solid rgba(34,197,94,0.15);
+            border-radius: 12px; padding: 24px 28px;
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
         }
-        .grand .label { color: #8fce8f; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.05em; }
-        .grand .amt { font-size: 1.6em; font-weight: 800; color: var(--green); }
-        .grand-sub { display: flex; gap: 24px; }
+        .grand .label {
+            color: rgba(34,197,94,0.6); font-size: 0.7em;
+            text-transform: uppercase; letter-spacing: 0.12em; font-weight: 500;
+        }
+        .grand .amt { font-size: 2em; font-weight: 800; color: var(--green2); letter-spacing: -0.02em; }
+        .grand-sub { display: flex; gap: 28px; }
         .grand-sub .gs { text-align: right; }
-        .grand-sub .gs .l { font-size: 0.7em; color: #8fce8f; }
-        .grand-sub .gs .v { font-size: 0.95em; font-weight: 600; color: #c5e8c5; }
+        .grand-sub .gs .l { font-size: 0.65em; color: rgba(34,197,94,0.5); text-transform: uppercase; letter-spacing: 0.08em; }
+        .grand-sub .gs .v { font-size: 1em; font-weight: 600; color: rgba(34,197,94,0.8); }
 
         /* ── Summary Grid ── */
-        .sg { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin-bottom: 20px; }
-        .si { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
-        .si .l { font-size: 0.68em; color: var(--dim); text-transform: uppercase; letter-spacing: 0.04em; }
-        .si .v { font-size: 1em; font-weight: 700; margin-top: 2px; }
+        .sg { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 8px; margin-bottom: 24px; }
+        .si {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-radius: 8px; padding: 12px 14px;
+            transition: border-color 0.2s;
+        }
+        .si:hover { border-color: rgba(255,255,255,0.12); }
+        .si .l { font-size: 0.62em; color: var(--dim); text-transform: uppercase; letter-spacing: 0.06em; }
+        .si .v { font-size: 1.05em; font-weight: 700; margin-top: 3px; }
 
         /* ── Floor Plan ── */
-        .fp-toggle { background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; }
-        .fp-toggle summary {
-            padding: 10px 16px; cursor: pointer; font-size: 0.85em; font-weight: 600;
-            color: var(--dim); list-style: none; display: flex; justify-content: space-between; align-items: center;
+        .fp-toggle {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-radius: 10px; margin-bottom: 24px;
         }
-        .fp-toggle summary::after { content: '▸'; transition: transform 0.2s; }
-        .fp-toggle[open] summary::after { transform: rotate(90deg); }
+        .fp-toggle summary {
+            padding: 12px 18px; cursor: pointer; font-size: 0.75em; font-weight: 500;
+            color: var(--dim); list-style: none; display: flex; justify-content: space-between; align-items: center;
+            letter-spacing: 0.06em; text-transform: uppercase;
+        }
+        .fp-toggle summary::after { content: '+'; font-size: 1.2em; font-weight: 300; transition: transform 0.2s; }
+        .fp-toggle[open] summary::after { content: '\2212'; }
         .fp-grid {
             display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr;
-            gap: 3px; padding: 0 12px 12px; max-width: 480px; margin: 0 auto; aspect-ratio: 20/21.5;
+            gap: 3px; padding: 0 14px 14px; max-width: 480px; margin: 0 auto; aspect-ratio: 20/21.5;
         }
         .rm {
-            background: var(--card2); border: 2px solid var(--border); border-radius: 5px;
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 4px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             padding: 6px; text-align: center; font-size: 0.72em;
         }
         .rm b { font-size: 0.85em; }
         .rm span { color: var(--dim); font-size: 0.8em; }
-        .rm.bed { border-color: var(--accent); }
-        .rm.bath { border-color: #b388ff; }
-        .rm.kit { border-color: var(--orange); }
-        .rm.ent { border-color: var(--green); }
-        .regs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 0 12px 12px; }
-        .rg { background: var(--card2); border-radius: 6px; padding: 8px; }
-        .rg .l { font-size: 0.62em; color: var(--dim); text-transform: uppercase; letter-spacing: 0.03em; }
+        .rm.bed { border-color: rgba(77,166,255,0.3); }
+        .rm.bath { border-color: rgba(168,85,247,0.3); }
+        .rm.kit { border-color: rgba(245,158,11,0.3); }
+        .rm.ent { border-color: rgba(34,197,94,0.3); }
+        .regs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 0 14px 14px; }
+        .rg { background: rgba(255,255,255,0.02); border-radius: 4px; padding: 8px; }
+        .rg .l { font-size: 0.6em; color: var(--dim); text-transform: uppercase; letter-spacing: 0.04em; }
         .rg .v { font-size: 0.78em; font-weight: 600; }
 
         /* ── Division Sections ── */
-        .div-sec { background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+        .div-sec {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-radius: 10px; margin-bottom: 8px; overflow: hidden;
+            transition: border-color 0.2s;
+        }
+        .div-sec:hover { border-color: rgba(255,255,255,0.1); }
         .div-hdr {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 16px; cursor: pointer; user-select: none;
+            padding: 14px 20px; cursor: pointer; user-select: none;
         }
-        .div-hdr:hover { background: var(--card2); }
-        .div-hdr h3 { font-size: 0.88em; font-weight: 600; }
-        .div-hdr .cost { color: var(--green); font-weight: 700; font-size: 0.92em; }
-        .div-hdr .arr { color: var(--dim); font-size: 0.8em; transition: transform 0.2s; }
+        .div-hdr:hover { background: rgba(255,255,255,0.02); }
+        .div-hdr h3 { font-size: 0.82em; font-weight: 500; letter-spacing: 0.02em; }
+        .div-hdr .cost { color: var(--green); font-weight: 700; font-size: 0.9em; }
+        .div-hdr .arr { color: var(--dim); font-size: 0.7em; transition: transform 0.25s; }
         .div-sec.open .div-hdr .arr { transform: rotate(180deg); }
         .div-body { display: none; }
         .div-sec.open .div-body { display: block; }
@@ -103,63 +174,84 @@
             display: grid;
             grid-template-columns: 1fr auto auto auto;
             gap: 8px; align-items: center;
-            padding: 7px 16px;
-            border-bottom: 1px solid var(--border);
+            padding: 10px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
             font-size: 0.82em;
+            transition: background 0.15s;
         }
         .item:last-child { border-bottom: none; }
-        .item:hover { background: rgba(77,166,255,0.03); }
+        .item:hover { background: rgba(255,255,255,0.02); }
         .item-img {
-            width: 56px; height: 56px; border-radius: 6px;
+            width: 52px; height: 52px; border-radius: 6px;
             object-fit: contain; background: #fff; padding: 2px;
             vertical-align: middle; margin-right: 10px;
             flex-shrink: 0;
         }
         .item-img[src=""], .item-img:not([src]) { display: none; }
-        .item-name { font-weight: 500; display: flex; align-items: center; }
+        .item-name { font-weight: 400; display: flex; align-items: center; }
+        .item-name a { color: var(--text); }
+        .item-name a:hover { color: var(--accent); }
         .item-qty { text-align: center; color: var(--dim); white-space: nowrap; font-size: 0.85em; }
-        .item-price { text-align: right; white-space: nowrap; }
+        .item-price { text-align: right; white-space: nowrap; color: var(--muted); }
         .item-ext { text-align: right; font-weight: 600; white-space: nowrap; }
         .item-notes {
-            grid-column: 1 / -1; font-size: 0.75em; color: var(--dim);
-            padding: 0 0 4px 16px; margin-top: -4px;
+            grid-column: 1 / -1; font-size: 0.72em; color: var(--dim);
+            padding: 0 0 4px 18px; margin-top: -4px;
         }
         .item-notes summary { cursor: pointer; color: var(--dim); font-size: 0.9em; }
         .item-notes summary:hover { color: var(--text); }
         .price-old { text-decoration: line-through; color: var(--dim); font-size: 0.85em; }
 
+        /* ── Estimate badge ── */
+        .est-badge {
+            display: inline-block; font-size: 0.6em; font-weight: 600;
+            color: #ef4444; background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.2);
+            border-radius: 3px; padding: 1px 5px; margin-left: 6px;
+            letter-spacing: 0.04em; text-transform: uppercase; vertical-align: middle;
+        }
+
         /* ── Footer ── */
-        .ft { text-align: center; padding: 20px; color: var(--dim); font-size: 0.72em; border-top: 1px solid var(--border); margin-top: 20px; }
-        .ft a { color: var(--accent); }
+        .ft {
+            text-align: center; padding: 28px 0; color: var(--dim);
+            font-size: 0.68em; border-top: 1px solid var(--border); margin-top: 28px;
+            letter-spacing: 0.04em;
+        }
+        .ft a { color: var(--muted); }
+        .ft a:hover { color: var(--accent); }
 
         @media (max-width: 700px) {
+            .hero h1 { font-size: 1.3em; }
             .sg { grid-template-columns: repeat(2, 1fr); }
             .regs { grid-template-columns: 1fr 1fr; }
-            .grand { flex-direction: column; gap: 8px; text-align: center; }
+            .grand { flex-direction: column; gap: 12px; text-align: center; }
             .grand-sub { justify-content: center; }
-            .item { grid-template-columns: 1fr auto auto; font-size: 0.78em; }
+            .item { grid-template-columns: 1fr auto auto; font-size: 0.78em; padding: 8px 14px; }
             .item-qty { display: none; }
             .item-notes { padding-left: 12px; }
+            .nav-pill { padding: 5px 12px; font-size: 0.68em; }
         }
     </style>
 </head>
 <body>
 <div class="wrap">
 
-    <!-- Header -->
-    <div class="hdr">
-        <h1>St. John's Backyard Suite</h1>
-        <p>430 sqft &middot; 2 Bed &middot; 2 Bath &middot; Kitchen &middot; Laundry</p>
+    <!-- Hero -->
+    <div class="hero">
+        <h1>St. John's <span>Backyard Suite</span></h1>
+        <div class="sub">430 sqft &middot; 2 Bed &middot; 1 Bath &middot; Kitchen &middot; Laundry</div>
+        <div class="nav-row">
+            <a href="/" class="nav-pill active">Bill of Materials</a>
+            <a href="/render" class="nav-pill">Material Stack</a>
+            <a href="/finishes" class="nav-pill">Finish Board</a>
+        </div>
         <div class="tags">
             <span class="tag"><b>St. John's, NL</b></span>
             <span class="tag"><b>20'&times;21.5'</b></span>
             <span class="tag"><b>2&times;6</b> frame</span>
             <span class="tag">Zone <b>7A</b></span>
-            <span class="tag">Mono-slope roof</span>
+            <span class="tag">Mono-slope</span>
             <span class="tag">Max <b>5m</b></span>
-            <span class="tag">B&amp;W modern</span>
-            <a href="/render" class="tag" style="background:rgba(77,166,255,0.12); border-color:rgba(77,166,255,0.3); color:var(--accent); font-weight:600; cursor:pointer;">&#9783; Material Stack</a>
-            <a href="/finishes" class="tag" style="background:rgba(77,166,255,0.12); border-color:rgba(77,166,255,0.3); color:var(--accent); font-weight:600; cursor:pointer;">&#127912; Finishes</a>
         </div>
     </div>
 
@@ -195,9 +287,9 @@
         {% endfor %}
     </div>
 
-    <!-- Floor Plan & Specs (collapsed by default) -->
+    <!-- Floor Plan & Specs -->
     <details class="fp-toggle">
-        <summary>Floor Plan &amp; Specs</summary>
+        <summary>Floor Plan &amp; Specifications</summary>
         <div class="fp-grid">
             <div class="rm bed"><b>Bed 1</b><span>9'&times;10'</span></div>
             <div class="rm ent"><b>Entry</b><span>Hall + W/D</span></div>
@@ -232,17 +324,17 @@
                 <div class="item">
                     <div class="item-name">
                         {% if item.get('image_url') %}<img src="{{ item.image_url }}" alt="" class="item-img" loading="lazy" onerror="this.style.display='none'">{% endif %}
-                        <span>{% if item.url %}<a href="{{ item.url }}" target="_blank" rel="noopener">{{ item.name }}</a>{% else %}{{ item.name }}{% endif %}{% if item.sku is defined and item.sku %}<span style="color:var(--dim);font-size:0.8em"> #{{ item.sku }}</span>{% endif %}</span>
+                        <span>{% if item.url %}<a href="{{ item.url }}" target="_blank" rel="noopener">{{ item.name }}</a>{% else %}{{ item.name }}{% endif %}{% if item.sku is defined and item.sku %}<span style="color:var(--dim);font-size:0.78em;margin-left:6px">#{{ item.sku }}</span>{% endif %}</span>
                     </div>
                     <div class="item-qty">{{ item.qty }}&nbsp;{{ item.unit }}</div>
                     {% if item.get('estimate') %}
-                    <div class="item-price" style="color:#e74c3c">${{ "{:,.2f}".format(item.unit_price) }} <span style="font-size:0.7em;opacity:0.7">est.</span></div>
-                    <div class="item-ext" style="color:#e74c3c">${{ "{:,.0f}".format(item.extended) }} <span style="font-size:0.7em;opacity:0.7">est.</span></div>
+                    <div class="item-price">${{ "{:,.2f}".format(item.unit_price) }}<span class="est-badge">est</span></div>
+                    <div class="item-ext">${{ "{:,.0f}".format(item.extended) }}</div>
                     {% else %}
                     <div class="item-price">
                         ${{ "{:,.2f}".format(item.unit_price) }}
                         {% if item.price_changed is defined and item.price_changed %}
-                            <br><span style="color:var(--orange);font-size:0.8em">Now ${{ "{:,.2f}".format(item.scraped_price) }}</span>
+                            <br><span style="color:var(--orange);font-size:0.78em">Now ${{ "{:,.2f}".format(item.scraped_price) }}</span>
                         {% endif %}
                     </div>
                     <div class="item-ext">${{ "{:,.0f}".format(item.extended) }}</div>

@@ -308,11 +308,12 @@ DIVISION_4 = {
             "image_url": "/static/images/1107802.jpg",
         },
         {
-            "name": "Steel Insulated Entry Door — 36\" Black with Frame",
-            "qty": 1, "unit": "EA", "unit_price": 593.99,
-            "url": f"{KENT_BASE}/36-x80-6-panel-vinyl-clad-inswing-door-4-5-8-pvc-sill-1606274",
-            "notes": "Pre-hung insulated steel door, black exterior finish. Modern B&W aesthetic. Single entrance.",
-            "image_url": "/static/images/1606274.jpg",
+            "name": "Dusco Moderna 34\" \u00d7 80\" Full Lite Black Steel Prehung Door",
+            "qty": 1, "unit": "EA", "unit_price": 850.00,
+            "estimate": True,
+            "url": "https://www.homedepot.ca/product/dusco-34-in-x-80-in-x-7-1-4-in-moderna-black-full-lite-steel-prehung-front-door/1001728121",
+            "notes": "Moderna full-lite frosted glass, matte black steel frame. Contemporary entrance statement. Home Depot SKU 1001728121 — verify local availability.",
+            "image_url": "/static/images/moderna-door.jpg",
         },
         {
             "name": "Window & Door Flashing Tape",

@@ -4,117 +4,252 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finish Board — St. John's Backyard Suite</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #111; --card: #191919; --card2: #222;
-            --border: #2a2a2a; --text: #eee; --dim: #888;
-            --accent: #4da6ff; --green: #34d058; --orange: #e3b341;
+            --bg: #0a0a0a;
+            --glass: rgba(255,255,255,0.05);
+            --glass-border: rgba(255,255,255,0.08);
+            --border: rgba(255,255,255,0.06);
+            --text: #f0f0f0;
+            --dim: #666;
+            --muted: #999;
+            --accent: #4da6ff;
+            --green: #34d399;
+            --green2: #22c55e;
+            --orange: #f59e0b;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--bg); color: var(--text); line-height: 1.5; font-size: 14px;
+            background: var(--bg); color: var(--text);
+            line-height: 1.55; font-size: 14px;
+            -webkit-font-smoothing: antialiased;
         }
         a { color: var(--accent); text-decoration: none; }
         a:hover { text-decoration: underline; }
-        .wrap { max-width: 1100px; margin: 0 auto; padding: 16px; }
+        .wrap { max-width: 1120px; margin: 0 auto; padding: 20px; }
 
-        /* ── Header ── */
-        .hdr { padding: 28px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 24px; text-align: center; }
-        .hdr h1 { font-size: 1.4em; font-weight: 700; letter-spacing: -0.02em; }
-        .hdr p { color: var(--dim); font-size: 0.85em; margin-top: 4px; }
-        .nav-row { display: flex; gap: 8px; justify-content: center; margin-top: 12px; }
-        .nav-btn {
-            background: var(--card); border: 1px solid var(--border); border-radius: 16px;
-            padding: 3px 14px; font-size: 0.75em; color: var(--dim); text-decoration: none;
+        /* ── Hero ── */
+        .hero {
+            position: relative;
+            padding: 48px 0 40px;
+            margin-bottom: 36px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
         }
-        .nav-btn:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
-        .nav-active {
-            background: rgba(77,166,255,0.12); border-color: rgba(77,166,255,0.3);
+        .hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(77,166,255,0.06) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .hero h1 {
+            font-size: 1.8em; font-weight: 300; letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+        .hero h1 span { font-weight: 700; }
+        .hero .sub {
+            color: var(--dim); font-size: 0.82em; margin-top: 8px;
+            letter-spacing: 0.12em; text-transform: uppercase;
+        }
+        .nav-row {
+            display: flex; gap: 6px; justify-content: center; margin-top: 20px;
+        }
+        .nav-pill {
+            background: var(--glass); border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px; padding: 6px 18px;
+            font-size: 0.72em; color: var(--muted);
+            text-decoration: none; transition: all 0.2s;
+            letter-spacing: 0.04em; text-transform: uppercase;
+        }
+        .nav-pill:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+        .nav-pill.active {
+            background: rgba(77,166,255,0.1); border-color: rgba(77,166,255,0.25);
             color: var(--accent); font-weight: 600;
         }
 
         /* ── Palette Strip ── */
-        .palette {
-            display: flex; height: 48px; border-radius: 10px; overflow: hidden;
-            margin-bottom: 28px; border: 1px solid var(--border);
+        .palette-wrap { margin-bottom: 36px; }
+        .palette-label {
+            font-size: 0.6em; color: var(--dim); text-transform: uppercase;
+            letter-spacing: 0.12em; margin-bottom: 8px; text-align: center;
         }
-        .palette div { flex: 1; position: relative; }
+        .palette {
+            display: flex; height: 56px; border-radius: 12px; overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+        .palette div {
+            flex: 1; position: relative;
+            transition: flex 0.3s ease;
+        }
+        .palette div:hover { flex: 1.5; }
         .palette div span {
-            position: absolute; bottom: 4px; left: 0; right: 0;
-            text-align: center; font-size: 0.6em; color: rgba(255,255,255,0.7);
-            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            position: absolute; bottom: 6px; left: 0; right: 0;
+            text-align: center; font-size: 0.58em; color: rgba(255,255,255,0.6);
+            text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+            letter-spacing: 0.04em; text-transform: uppercase;
+            opacity: 0; transition: opacity 0.2s;
+        }
+        .palette div:hover span { opacity: 1; }
+
+        /* ── Design Statement ── */
+        .statement {
+            text-align: center; margin-bottom: 40px;
+            padding: 0 40px;
+        }
+        .statement p {
+            font-size: 0.85em; color: var(--dim);
+            font-weight: 300; line-height: 1.7;
+            max-width: 600px; margin: 0 auto;
+        }
+        .statement p em {
+            color: var(--muted); font-style: normal;
+            font-weight: 500;
         }
 
         /* ── Section ── */
-        .section { margin-bottom: 32px; }
-        .section-title {
-            font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.06em;
-            color: var(--dim); margin-bottom: 12px; padding-bottom: 6px;
+        .section { margin-bottom: 48px; }
+        .section-hdr {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 16px; padding-bottom: 10px;
             border-bottom: 1px solid var(--border);
         }
-        .section-title span { color: var(--text); font-weight: 600; }
+        .section-num {
+            font-size: 0.6em; font-weight: 700; color: var(--dim);
+            border: 1px solid var(--border); border-radius: 3px;
+            width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+            letter-spacing: 0;
+        }
+        .section-title {
+            font-size: 0.78em; text-transform: uppercase; letter-spacing: 0.1em;
+            color: var(--muted); font-weight: 500;
+        }
 
         /* ── Card Grid ── */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
         .card {
-            background: var(--card); border: 1px solid var(--border); border-radius: 10px;
-            overflow: hidden; transition: border-color 0.2s;
+            background: var(--glass); border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-radius: 12px; overflow: hidden;
+            transition: all 0.3s; text-decoration: none; color: inherit;
+            position: relative;
         }
-        .card:hover { border-color: var(--accent); }
+        .card:hover {
+            border-color: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+            text-decoration: none;
+        }
+        .card-img-wrap {
+            position: relative; overflow: hidden;
+            background: #fff;
+        }
         .card-img {
-            width: 100%; aspect-ratio: 1; object-fit: contain;
-            background: #fff; padding: 8px;
+            width: 100%; aspect-ratio: 4/3; object-fit: contain;
+            padding: 12px;
+            transition: transform 0.4s;
         }
-        .card-body { padding: 10px 12px; }
-        .card-name { font-size: 0.82em; font-weight: 600; line-height: 1.35; }
-        .card-meta { font-size: 0.7em; color: var(--dim); margin-top: 4px; }
-        .card-price { font-size: 0.78em; color: var(--green); font-weight: 600; margin-top: 2px; }
+        .card:hover .card-img { transform: scale(1.05); }
+        .card-body { padding: 14px 16px; }
+        .card-name {
+            font-size: 0.8em; font-weight: 500; line-height: 1.4;
+            color: var(--text);
+        }
+        .card-meta {
+            font-size: 0.68em; color: var(--dim); margin-top: 6px;
+            line-height: 1.5;
+        }
+        .card-price {
+            font-size: 0.75em; color: var(--green); font-weight: 600;
+            margin-top: 8px; padding-top: 8px;
+            border-top: 1px solid var(--border);
+        }
+        .card-no-img {
+            width: 100%; aspect-ratio: 4/3;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.02); color: var(--dim); font-size: 0.75em;
+        }
 
         /* ── Footer ── */
         .ft {
-            text-align: center; padding: 20px 0; margin-top: 24px;
-            border-top: 1px solid var(--border); font-size: 0.7em; color: var(--dim);
+            text-align: center; padding: 28px 0; margin-top: 16px;
+            border-top: 1px solid var(--border);
+            font-size: 0.68em; color: var(--dim);
+            letter-spacing: 0.04em;
+        }
+        .ft a { color: var(--muted); }
+
+        @media (max-width: 700px) {
+            .hero h1 { font-size: 1.3em; }
+            .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+            .statement { padding: 0 16px; }
+            .palette { height: 40px; }
+            .nav-pill { padding: 5px 12px; font-size: 0.68em; }
         }
     </style>
 </head>
 <body>
 <div class="wrap">
-    <div class="hdr">
-        <h1>&#127912; Finish Board</h1>
-        <p>Every material you'll see &amp; touch — does it go together?</p>
+
+    <!-- Hero -->
+    <div class="hero">
+        <h1><span>Finish</span> Board</h1>
+        <div class="sub">Every material you'll see &amp; touch</div>
         <div class="nav-row">
-            <a href="/" class="nav-btn">&#9776; BOM</a>
-            <a href="/render" class="nav-btn">&#9783; Material Stack</a>
-            <a href="/finishes" class="nav-btn nav-active">&#127912; Finishes</a>
+            <a href="/" class="nav-pill">Bill of Materials</a>
+            <a href="/render" class="nav-pill">Material Stack</a>
+            <a href="/finishes" class="nav-pill active">Finish Board</a>
         </div>
     </div>
 
-    <!-- Colour Palette Strip -->
-    <div class="palette">
-        <div style="background:#1a1a1a"><span>Anthracite</span></div>
-        <div style="background:#3a3a3a"><span>Pewter LVP</span></div>
-        <div style="background:#f5f5f5"><span>Pure White</span></div>
-        <div style="background:#222"><span>Matte Black</span></div>
-        <div style="background:#e8e0d4"><span>White Tile</span></div>
-        <div style="background:#4a4a4a"><span>Dual Black</span></div>
+    <!-- Colour Palette -->
+    <div class="palette-wrap">
+        <div class="palette-label">Material Palette</div>
+        <div class="palette">
+            <div style="background:#1a1a1a"><span>Anthracite</span></div>
+            <div style="background:#3a3a3a"><span>Pewter LVP</span></div>
+            <div style="background:#f5f5f5"><span>Pure White</span></div>
+            <div style="background:#222"><span>Matte Black</span></div>
+            <div style="background:#e8e0d4"><span>Ceramic</span></div>
+            <div style="background:#4a4a4a"><span>Steel + Glass</span></div>
+        </div>
     </div>
 
+    <!-- Design Statement -->
+    <div class="statement">
+        <p>
+            <em>Matte black steel</em>, <em>frosted glass</em>, and <em>clean geometry</em> —
+            a modern B&amp;W palette that makes 430 sqft feel deliberate, not small.
+            Every finish was chosen to disappear into one quiet, cohesive surface.
+        </p>
+    </div>
+
+    <!-- Sections -->
     {% for section in sections %}
     <div class="section">
-        <div class="section-title"><span>{{ section.name }}</span></div>
+        <div class="section-hdr">
+            <span class="section-num">{{ loop.index }}</span>
+            <span class="section-title">{{ section.name }}</span>
+        </div>
         <div class="grid">
             {% for item in section.products %}
-            <a href="{{ item.url }}" target="_blank" class="card" style="text-decoration:none; color:inherit;">
+            <a href="{{ item.url }}" target="_blank" class="card">
                 {% if item.image_url %}
-                <img class="card-img" src="{{ item.image_url }}" alt="{{ item.name }}" loading="lazy">
+                <div class="card-img-wrap">
+                    <img class="card-img" src="{{ item.image_url }}" alt="{{ item.name }}" loading="lazy"
+                         onerror="this.parentElement.outerHTML='<div class=card-no-img>No image</div>'">
+                </div>
                 {% else %}
-                <div class="card-img" style="display:flex;align-items:center;justify-content:center;background:var(--card2);color:var(--dim);font-size:0.8em;">No image</div>
+                <div class="card-no-img">No image</div>
                 {% endif %}
                 <div class="card-body">
                     <div class="card-name">{{ item.name }}</div>
-                    <div class="card-meta">{{ item.notes }}</div>
-                    <div class="card-price">${{ "%.2f"|format(item.unit_price) }} /{{ item.unit }}</div>
+                    {% if item.notes %}<div class="card-meta">{{ item.notes }}</div>{% endif %}
+                    <div class="card-price">${{ "%.2f"|format(item.unit_price) }} / {{ item.unit }}</div>
                 </div>
             </a>
             {% endfor %}
@@ -122,9 +257,10 @@
     </div>
     {% endfor %}
 
+    <!-- Footer -->
     <div class="ft">
         Finish Board &middot; St. John's Backyard Suite &middot;
-        B&amp;W Modern &middot; March 2026
+        Matte Black + Frosted Glass &middot; March 2026
     </div>
 </div>
 </body>
