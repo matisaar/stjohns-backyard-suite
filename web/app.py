@@ -125,6 +125,78 @@ def render_view():
     return render_template("render.html", layers=layers)
 
 
+@app.route("/finishes")
+def finishes():
+    """Finish board — every visible surface and fixture."""
+    # Define which items a human sees, grouped by area
+    FINISH_CATEGORIES = [
+        ("Exterior", "Exterior Envelope", [
+            "Mitten Oregon Pride",
+            "Aluminum Fascia",
+            "Triple-Pane Vinyl",
+            "Steel Insulated Entry Door",
+        ]),
+        ("Roofing", "Roofing", [
+            "IKO Cambridge",
+        ]),
+        ("Flooring & Tile", "Interior Finishes", [
+            "Volcano",
+            "White Large-Format Ceramic",
+            "Thin-Set Mortar",
+        ]),
+        ("Walls & Trim", "Interior Finishes", [
+            "Sico Evolution",
+            "Alexandria",
+        ]),
+        ("Doors & Hardware", "Interior Finishes", [
+            "Pocket Door",
+            "Matte Black Pocket Door Pull",
+        ]),
+        ("Kitchen", "Kitchen", None),  # all items
+        ("Bathroom Fixtures", "Plumbing", [
+            "Toilet",
+            "Vanity",
+            "Shower Stall",
+            "Shower Valve",
+        ]),
+        ("Kitchen Plumbing", "Plumbing", [
+            "Kitchen Sink",
+            "Kitchen Faucet",
+        ]),
+        ("Lighting & Electrical", "Electrical", [
+            "LED Slim Recessed",
+            "Bathroom Exhaust",
+            "Light Switches",
+            "GFCI",
+            "Receptacles",
+            "Weatherproof",
+        ]),
+        ("HVAC", "HVAC", [
+            "Mini-Split",
+            "Baseboard Heaters",
+        ]),
+        ("Laundry", "Laundry", [
+            "Stacked Washer",
+            "GE 24",
+        ]),
+    ]
+
+    div_map = {d["name"]: d for d in ALL_DIVISIONS}
+    sections = []
+    for section_name, div_name, keywords in FINISH_CATEGORIES:
+        div = div_map.get(div_name, {})
+        items = []
+        for item in div.get("items", []):
+            if keywords is None:
+                items.append(item)
+            elif any(kw.lower() in item["name"].lower() for kw in keywords):
+                items.append(item)
+        if items:
+            sections.append({"name": section_name, "products": items})
+
+    return render_template("finishes.html", sections=sections)
+
+
 @app.route("/api/summary")
 def api_summary():
     """JSON API for BOM summary."""
