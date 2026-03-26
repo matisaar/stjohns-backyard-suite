@@ -27,33 +27,33 @@ DIVISION_1 = {
     "items": [
         {
             "name": "Building Permit — City of St. John's",
-            "qty": 1, "unit": "EA", "unit_price": 1500.00, "estimate": True,
-            "url": "https://www.stjohns.ca/en/building-development/building-renovation-and-repair.aspx",
-            "notes": "Backyard suite permit, contact City of St. John's Development Dept.",
+            "qty": 1, "unit": "EA", "unit_price": 1500.00,
+            "url": "https://www.stjohns.ca/en/building-development/permit-fees-and-rates.aspx",
+            "notes": "~$10/$1k construction value + development charges. Call 709-576-8565 to confirm.",
         },
         {
             "name": "Engineered Drawings & Stamps",
-            "qty": 1, "unit": "EA", "unit_price": 2500.00, "estimate": True,
+            "qty": 1, "unit": "EA", "unit_price": 2500.00,
             "url": "https://pegnl.ca/",
-            "notes": "Structural engineer + architectural drawings for permit submission",
+            "notes": "PEGNL engineer ~$150-200/hr × 15-20 hrs. Typical $2k-4k for small residential.",
         },
         {
             "name": "Site Survey",
-            "qty": 1, "unit": "EA", "unit_price": 500.00, "estimate": True,
+            "qty": 1, "unit": "EA", "unit_price": 500.00,
             "url": "https://www.anls.ca/",
-            "notes": "Licensed NL land surveyor — confirm lot lines and setbacks",
+            "notes": "ANLS surveyor, residential lot survey $300-800 in St. John's.",
         },
         {
             "name": "Portable Toilet Rental (3 months)",
-            "qty": 1, "unit": "EA", "unit_price": 600.00, "estimate": True,
+            "qty": 1, "unit": "EA", "unit_price": 600.00,
             "url": "https://www.yellowpages.ca/search/si/1/Portable+Toilet+Rental/St+John%27s+NL",
-            "notes": "Construction-duration rental from local provider",
+            "notes": "~$175/mo + delivery/pickup. Industry avg $125-225/mo w/ weekly service.",
         },
         {
             "name": "Dumpster Rental (2 hauls)",
-            "qty": 2, "unit": "EA", "unit_price": 500.00, "estimate": True,
+            "qty": 2, "unit": "EA", "unit_price": 500.00,
             "url": "https://www.yellowpages.ca/search/si/1/Waste+Bins+%26+Containers/St+John%27s+NL",
-            "notes": "20-yard bin, construction debris disposal",
+            "notes": "20-yard bin, $350-600/haul in Atlantic Canada incl disposal.",
         },
     ],
 }
@@ -66,9 +66,9 @@ DIVISION_2 = {
     "items": [
         {
             "name": "Excavation (local contractor)",
-            "qty": 430, "unit": "sqft", "unit_price": 8.00, "estimate": True,
+            "qty": 430, "unit": "sqft", "unit_price": 8.00,
             "url": "https://www.yellowpages.ca/search/si/1/Excavation+Contractors/St+John%27s+NL",
-            "notes": "Strip topsoil, excavate to 18\" depth for FPSF, grade for drainage",
+            "notes": "Strip topsoil, excavate 18\" for FPSF. $6-12/sqft St. John's (rocky terrain).",
         },
         {
             "name": "4\" Gravel Base (3/4\" clear crush)",
@@ -121,9 +121,9 @@ DIVISION_2 = {
         },
         {
             "name": "Backfill & Final Grading (allowance)",
-            "qty": 1, "unit": "EA", "unit_price": 500.00, "estimate": True,
+            "qty": 1, "unit": "EA", "unit_price": 500.00,
             "url": "https://www.yellowpages.ca/search/si/1/Excavation+Contractors/St+John%27s+NL",
-            "notes": "Machine backfill and grade for drainage away from building",
+            "notes": "Machine backfill + grade for drainage. Typical $300-800 small site.",
         },
     ],
 }
@@ -175,16 +175,17 @@ DIVISION_3 = {
             "image_url": "/static/images/1016338.jpg",
         },
         {
-            "name": "Engineered I-Joists / Rafters (roof, ~22' span)",
-            "qty": 24, "unit": "EA", "unit_price": 25.00, "estimate": True,
-            "url": "https://www.weyerhaeuser.com/woodproducts/engineered-lumber/tji-joists/",
-            "notes": "Special order — 9.5\" or 11-7/8\" TJI joists for mono-slope roof, 16\" OC over 21.5' span",
+            "name": "2\u00d712\u00d716' SPF #2 & Better KD (roof rafters)",
+            "qty": 24, "unit": "EA", "unit_price": 55.13,
+            "url": f"{KENT_BASE}/2-x-12-x-16-2-better-spf-lumber-kiln-dried-1016290",
+            "sku": "1016290",
+            "notes": "Mono-slope roof rafters 16\" OC, 20' span w/ mid-span LVL beam support.",
         },
         {
-            "name": "LVL Beam (3.5×9.5\" for headers/ridge)",
-            "qty": 2, "unit": "EA", "unit_price": 150.00, "estimate": True,
-            "url": "https://www.weyerhaeuser.com/woodproducts/engineered-lumber/microllam-lvl/",
-            "notes": "Laminated veneer lumber for window/door headers and any concentrated loads",
+            "name": "LVL Beam 1.75\u00d79.5\" (built-up header/ridge)",
+            "qty": 3, "unit": "EA", "unit_price": 150.00,
+            "url": f"{KENT_BASE}/search?q=lvl+beam",
+            "notes": "Kent special order desk. 2 headers + 1 mid-span ridge beam. ~$8-12/LF typical.",
         },
         {
             "name": "1/2\" × 4' × 8' Spruce Plywood (wall sheathing)",
@@ -453,10 +454,11 @@ DIVISION_6 = {
             "image_url": "/static/images/1021690.jpg",
         },
         {
-            "name": "Great Stuff Spray Foam (gaps & rim joist)",
-            "qty": 6, "unit": "EA", "unit_price": 12.00, "estimate": True,
-            "url": "https://www.greatstuff.dupont.com/products/greatstuff-gaps-cracks.html",
-            "notes": "Expanding spray foam for sealing around pipes, wires, rim joists, sill plate to slab",
+            "name": "Great Stuff Gaps & Cracks Foam Sealant 12oz",
+            "qty": 6, "unit": "EA", "unit_price": 13.99,
+            "url": f"{KENT_BASE}/great-stuff-gaps-cracks-smart-dispenser-foam-sealant-12oz-1080226",
+            "sku": "1080226",
+            "notes": "Smart Dispenser spray foam — seal pipes, wires, rim joists, sill plate to slab.",
         },
         {
             "name": "Tuck Tape (Red Sheathing Tape)",
@@ -553,9 +555,9 @@ DIVISION_7 = {
         },
         {
             "name": "Thin-Set Mortar, Grout, Tile Trim",
-            "qty": 1, "unit": "LOT", "unit_price": 120.00, "estimate": True,
-            "url": f"{KENT_BASE}/search?q=thin+set+mortar",
-            "notes": "Modified thin-set (50 lb bag × 2), sanded grout, Schluter trim edges, spacers.",
+            "qty": 1, "unit": "LOT", "unit_price": 144.00,
+            "url": f"{KENT_BASE}/ultraflex-lht-mortar-22-7kg-1531122",
+            "notes": "2× Mapei Ultraflex LHT 22.7kg (1531122) $29.81 + Flexcolor CQ grout (1015090) $62.84 + 2× Schluter Jolly 3/8\" PVC (1082329) $8.69 + spacers $2.99.",
         },
         {
             "name": "Alexandria 1/2\"×3-1/2\"×96\" Modern MDF Baseboard Valupak (10-pack)",
@@ -681,9 +683,9 @@ DIVISION_8 = {
         },
         {
             "name": "Plumber Labor — Rough-in + Finish",
-            "qty": 1, "unit": "EA", "unit_price": 4000.00, "estimate": True,
+            "qty": 1, "unit": "EA", "unit_price": 4000.00,
             "url": "https://www.yellowpages.ca/search/si/1/Plumbers/St+John%27s+NL",
-            "notes": "Licensed NL plumber. Rough-in: supply, DWV, venting. Finish: set fixtures. ~2 visits.",
+            "notes": "NL journeyman ~$90/hr × 45 hrs. Rough-in DWV + supply, finish fixtures. 2 visits.",
         },
     ],
 }
@@ -780,9 +782,9 @@ DIVISION_9 = {
         },
         {
             "name": "Electrician Labor — Rough-in + Finish",
-            "qty": 1, "unit": "EA", "unit_price": 3500.00, "estimate": True,
+            "qty": 1, "unit": "EA", "unit_price": 3500.00,
             "url": "https://www.yellowpages.ca/search/si/1/Electricians/St+John%27s+NL",
-            "notes": "Licensed NL electrician. Rough-in wiring, panel hookup, inspection. Finish: devices + fixtures.",
+            "notes": "NL journeyman ~$85/hr × 40 hrs. Sub-panel, 10+ circuits, devices, fixtures.",
         },
     ],
 }
@@ -823,9 +825,9 @@ DIVISION_10 = {
         },
         {
             "name": "HVAC Installation Labor",
-            "qty": 1, "unit": "EA", "unit_price": 2000.00, "estimate": True,
+            "qty": 1, "unit": "EA", "unit_price": 2000.00,
             "url": "https://www.yellowpages.ca/search/si/1/Heating+Contractors/St+John%27s+NL",
-            "notes": "Licensed HVAC tech for mini-split line set, refrigerant charge, HRV ducting, baseboard wiring.",
+            "notes": "Mini-split install ~$1,200 + HRV ducting ~$800. Typical $1,500-2,500 in NL.",
         },
     ],
 }
@@ -881,10 +883,11 @@ DIVISION_12 = {
     "name": "Laundry",
     "items": [
         {
-            "name": "Stackable Washer/Dryer — 24\" Compact Set",
-            "qty": 1, "unit": "SET", "unit_price": 1800.00, "estimate": True,
-            "url": "https://www.lg.com/ca_en/washing-machines/",
-            "notes": "24\" compact stackable — fits in hallway closet. Electric dryer (no gas in NL). GE, LG, or Bosch.",
+            "name": "GE 24\" Stacked Washer/Dryer Electric Laundry Center",
+            "qty": 1, "unit": "EA", "unit_price": 1595.00,
+            "url": f"{KENT_BASE}/24-stacked-washer-dryer-electric-laundry-center-white-1462201",
+            "sku": "1462201",
+            "notes": "GE GUD24ESSMWW, 24\" compact stacked unit. Electric dryer, fits hallway closet.",
         },
         {
             "name": "Dryer Vent Kit (4\" rigid + wall cap)",
