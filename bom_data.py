@@ -294,9 +294,10 @@ DIVISION_4 = {
         },
         {
             "name": "Aluminum Fascia & Trim",
-            "qty": 82, "unit": "LF", "unit_price": 3.00,
+            "qty": 7, "unit": "EA", "unit_price": 20.39,
             "url": f"{KENT_BASE}/8-x-12-fascia-frost-white-1016978",
-            "notes": "Pre-bent aluminum fascia covers, full perimeter + gable rake",
+            "sku": "1016978",
+            "notes": "8\" × 12' vinyl fascia, Frost White. 7 pcs × 12' = 84 LF (covers 82 LF perimeter + gable rake).",
             "image_url": "/static/images/1016978.jpg",
         },
         {
@@ -569,14 +570,14 @@ DIVISION_7 = {
         },
         {
             "name": "Pocket Door Kit — 30\" Modern White",
-            "qty": 4, "unit": "EA", "unit_price": 150.00,
+            "qty": 4, "unit": "EA", "unit_price": 159.00,
             "url": f"{KENT_BASE}/pocket-door-30-pre-assembled-1389850",
             "notes": "4 pocket doors: 2 bedrooms + 2 bathrooms. White flat-panel slab with matte black flush pulls.",
             "image_url": "/static/images/1389850.jpg",
         },
         {
             "name": "Matte Black Pocket Door Pull Sets (privacy + passage)",
-            "qty": 4, "unit": "EA", "unit_price": 25.00,
+            "qty": 4, "unit": "EA", "unit_price": 19.80,
             "url": f"{KENT_BASE}/pocket-door-lock-round-privacy-1010873",
             "notes": "2 privacy (bath) + 2 passage (bedroom). Matte black flush pulls — B&W modern theme.",
             "image_url": "/static/images/1010873.jpg",

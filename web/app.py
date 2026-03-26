@@ -147,10 +147,6 @@ def finishes():
             "Sico Evolution",
             "Alexandria",
         ]),
-        ("Doors & Hardware", "Interior Finishes", [
-            "Pocket Door",
-            "Matte Black Pocket Door Pull",
-        ]),
         ("Kitchen", "Kitchen", None),  # all items
         ("Bathroom Fixtures", "Plumbing", [
             "Toilet",
