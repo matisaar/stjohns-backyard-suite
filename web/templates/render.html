@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Material Stack — Foundation &amp; Flooring</title>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --card: #151515;
+    --panel: #1a1a1a;
+    --text: #e8e8e8;
+    --dim: #777;
+    --accent: #4da6ff;
+    --green: #34d058;
+    --orange: #e3b341;
+    --border: #2a2a2a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Header ────────────────────────────────────────────── */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+  }
+  .top-bar h1 {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .top-bar h1 span { color: var(--text); }
+  .top-bar a {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 13px;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+  .top-bar a:hover { opacity: 1; }
+
+  .subtitle {
+    text-align: center;
+    padding: 32px 20px 8px;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .subtitle small {
+    display: block;
+    font-size: 13px;
+    color: var(--dim);
+    font-weight: 400;
+    margin-top: 6px;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── Main Layout ───────────────────────────────────────── */
+  .renderer {
+    display: flex;
+    gap: 0;
+    max-width: 1400px;
+    margin: 24px auto 60px;
+    padding: 0 24px;
+  }
+
+  /* ── Cross-Section ─────────────────────────────────────── */
+  .section-view {
+    flex: 1;
+    position: relative;
+    min-height: 640px;
+  }
+
+  .stack {
+    position: relative;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .layer {
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    overflow: hidden;
+  }
+  .layer:hover {
+    transform: scaleX(1.015);
+    z-index: 10;
+  }
+  .layer.active {
+    transform: scaleX(1.02);
+    z-index: 11;
+    box-shadow: 0 0 30px rgba(77, 166, 255, 0.15);
+  }
+
+  /* Thickness indicator */
+  .layer::before {
+    content: attr(data-thickness);
+    position: absolute;
+    left: -72px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
+    color: var(--dim);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  .layer::after {
+    content: '';
+    position: absolute;
+    left: -18px;
+    top: 12%;
+    bottom: 12%;
+    width: 1px;
+    background: var(--dim);
+    opacity: 0.4;
+  }
+
+  .layer-label {
+    position: absolute;
+    right: -16px;
+    top: 50%;
+    transform: translate(100%, -50%);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--dim);
+    white-space: nowrap;
+    padding-left: 16px;
+    transition: color 0.2s;
+    pointer-events: none;
+  }
+  .layer-label::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 10px;
+    height: 1px;
+    background: var(--dim);
+    opacity: 0.4;
+  }
+  .layer:hover .layer-label,
+  .layer.active .layer-label {
+    color: var(--text);
+  }
+
+  /* ── Material Textures ─────────────────────────────────── */
+
+  /* Earth / Subgrade */
+  .tex-earth {
+    background:
+      repeating-conic-gradient(#3d2b1a 0% 25%, transparent 0% 50%) 0 0 / 6px 6px,
+      linear-gradient(170deg, #4a3422, #3a2818, #2d1f12);
+    height: 60px;
+    border-radius: 0 0 6px 6px;
+  }
+
+  /* Compacted Gravel */
+  .tex-gravel {
+    height: 56px;
+    background:
+      radial-gradient(circle 3px at 15% 40%, #8a8a8a 1px, transparent 2px),
+      radial-gradient(circle 4px at 35% 65%, #999 1px, transparent 2px),
+      radial-gradient(circle 3px at 55% 30%, #7a7a7a 1px, transparent 2px),
+      radial-gradient(circle 5px at 75% 55%, #888 1px, transparent 2px),
+      radial-gradient(circle 3px at 90% 35%, #9a9a9a 1px, transparent 2px),
+      radial-gradient(circle 4px at 25% 20%, #858585 1px, transparent 2px),
+      radial-gradient(circle 3px at 65% 75%, #7e7e7e 1px, transparent 2px),
+      radial-gradient(circle 4px at 45% 50%, #929292 1px, transparent 2px),
+      radial-gradient(circle 3px at 85% 70%, #868686 1px, transparent 2px),
+      linear-gradient(180deg, #5a5a5a, #4e4e4e, #555);
+  }
+
+  /* XPS Rigid Insulation */
+  .tex-xps {
+    height: 44px;
+    background:
+      radial-gradient(circle 1px at 10% 30%, rgba(255,255,255,0.08) 0%, transparent 100%),
+      radial-gradient(circle 1px at 30% 70%, rgba(255,255,255,0.06) 0%, transparent 100%),
+      radial-gradient(circle 1px at 60% 25%, rgba(255,255,255,0.09) 0%, transparent 100%),
+      radial-gradient(circle 1px at 80% 60%, rgba(255,255,255,0.05) 0%, transparent 100%),
+      radial-gradient(circle 1px at 50% 50%, rgba(255,255,255,0.07) 0%, transparent 100%),
+      linear-gradient(180deg, #2d7dce, #2570b8, #2d7dce);
+    border-top: 1px solid rgba(255,255,255, 0.06);
+  }
+
+  /* Vapour Barrier */
+  .tex-vapour {
+    height: 6px;
+    background: linear-gradient(90deg,
+      rgba(30,30,30,0.9) 0%,
+      rgba(50,50,50,0.85) 20%,
+      rgba(35,35,35,0.92) 40%,
+      rgba(55,55,55,0.8) 60%,
+      rgba(30,30,30,0.88) 80%,
+      rgba(45,45,45,0.9) 100%
+    );
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    position: relative;
+  }
+  .tex-vapour::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(90deg,
+      transparent, transparent 40px,
+      rgba(255,255,255,0.04) 40px,
+      rgba(255,255,255,0.04) 41px
+    );
+  }
+
+  /* Wire Mesh */
+  .tex-mesh {
+    height: 10px;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 8px, rgba(160,160,160,0.5) 8px, rgba(160,160,160,0.5) 9px),
+      repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(160,160,160,0.5) 8px, rgba(160,160,160,0.5) 9px),
+      linear-gradient(180deg, #484848, #484848);
+  }
+
+  /* Concrete Slab */
+  .tex-concrete {
+    height: 56px;
+    background:
+      radial-gradient(ellipse 2px 1px at 12% 35%, rgba(180,180,180,0.15) 0%, transparent 100%),
+      radial-gradient(ellipse 1px 2px at 28% 70%, rgba(200,200,200,0.1) 0%, transparent 100%),
+      radial-gradient(ellipse 2px 1px at 45% 25%, rgba(170,170,170,0.12) 0%, transparent 100%),
+      radial-gradient(ellipse 1px 1px at 62% 55%, rgba(190,190,190,0.08) 0%, transparent 100%),
+      radial-gradient(ellipse 2px 2px at 78% 40%, rgba(175,175,175,0.1) 0%, transparent 100%),
+      radial-gradient(ellipse 1px 1px at 88% 75%, rgba(160,160,160,0.12) 0%, transparent 100%),
+      linear-gradient(180deg, #7a7a7a, #6e6e6e, #757575);
+    border-top: 2px solid rgba(255,255,255,0.04);
+  }
+
+  /* LVP Flooring */
+  .tex-lvp {
+    height: 18px;
+    background:
+      repeating-linear-gradient(90deg,
+        #6b4c30 0px, #6b4c30 3px,
+        #7a5a3a 3px, #7a5a3a 28px,
+        #6b4c30 28px, #6b4c30 31px,
+        #8a6842 31px, #8a6842 62px,
+        #6b4c30 62px, #6b4c30 65px,
+        #745435 65px, #745435 95px
+      );
+    border-radius: 4px 4px 0 0;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
+  }
+  .tex-lvp::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(95deg,
+      transparent 0px, transparent 90px,
+      rgba(0,0,0,0.1) 90px, rgba(0,0,0,0.1) 91px
+    );
+    border-radius: inherit;
+  }
+
+  /* Perimeter insulation (vertical side pieces) */
+  .perimeter {
+    position: absolute;
+    width: 22px;
+    background:
+      radial-gradient(circle 1px at 50% 20%, rgba(255,255,255,0.08) 0%, transparent 100%),
+      radial-gradient(circle 1px at 50% 50%, rgba(255,255,255,0.06) 0%, transparent 100%),
+      radial-gradient(circle 1px at 50% 80%, rgba(255,255,255,0.09) 0%, transparent 100%),
+      linear-gradient(90deg, #c96499, #b5557e, #c96499);
+    z-index: 5;
+  }
+  .perim-left {
+    left: -1px;
+    border-radius: 3px 0 0 3px;
+  }
+  .perim-right {
+    right: -1px;
+    border-radius: 0 3px 3px 0;
+  }
+
+  /* Thickened edge markers */
+  .thick-edge {
+    position: absolute;
+    bottom: 0;
+    width: 40px;
+    height: 28px;
+    background: linear-gradient(180deg, #7a7a7a, #686868);
+    z-index: 4;
+    border-radius: 0 0 4px 4px;
+  }
+  .thick-edge.left { left: 0; }
+  .thick-edge.right { right: 0; }
+
+  /* Drain pipe */
+  .drain-pipe {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, #444, #222);
+    border: 2px solid #555;
+    z-index: 6;
+  }
+
+  /* Ground line */
+  .ground-line {
+    position: relative;
+    width: 100%;
+    height: 2px;
+    margin-top: 2px;
+  }
+  .ground-line::before {
+    content: '';
+    position: absolute;
+    left: -40px;
+    right: -40px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #5a4a38, #5a4a38, transparent);
+  }
+  .ground-line::after {
+    content: 'GRADE';
+    position: absolute;
+    left: -72px;
+    top: -7px;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: #5a4a38;
+    font-weight: 600;
+  }
+
+  /* ── Detail Panel ──────────────────────────────────────── */
+  .detail-panel {
+    width: 340px;
+    flex-shrink: 0;
+    padding: 0 0 0 24px;
+    position: sticky;
+    top: 24px;
+    align-self: flex-start;
+  }
+
+  .detail-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .detail-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .detail-card .mat-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .detail-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+
+  .detail-card .thumb {
+    width: 100%;
+    height: 140px;
+    object-fit: contain;
+    border-radius: 8px;
+    background: #111;
+    margin-bottom: 14px;
+    display: block;
+  }
+
+  .detail-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .detail-meta .meta-item {
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .detail-meta .meta-item .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--dim);
+    margin-bottom: 4px;
+  }
+  .detail-meta .meta-item .value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .detail-card .notes {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--dim);
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+
+  .detail-card .view-link {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 8px 16px;
+    background: rgba(77, 166, 255, 0.1);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .detail-card .view-link:hover {
+    background: rgba(77, 166, 255, 0.2);
+  }
+
+  /* ── Legend ─────────────────────────────────────────────── */
+  .legend {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin: 0 auto 24px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--dim);
+  }
+  .legend-swatch {
+    width: 16px;
+    height: 10px;
+    border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  /* ── Prompt Card ───────────────────────────────────────── */
+  .prompt-card {
+    text-align: center;
+    padding: 80px 24px;
+    color: var(--dim);
+    font-size: 13px;
+  }
+  .prompt-card .icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+  }
+
+  /* ── Responsive ────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .renderer { flex-direction: column; }
+    .detail-panel {
+      width: 100%;
+      padding: 24px 0 0;
+      position: static;
+    }
+    .layer::before { left: -60px; font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1><span>Material Stack</span> &mdash; Cross Section</h1>
+  <a href="/">&larr; Back to BOM</a>
+</div>
+
+<div class="subtitle">
+  Foundation &amp; Flooring Assembly
+  <small>430 sqft Slab-on-Grade &mdash; Frost-Protected Shallow Foundation (St. John's, NL)</small>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:#7a5a3a"></div>LVP Flooring</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#757575"></div>Concrete</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#888"></div>Wire Mesh</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#333"></div>Vapour Barrier</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#2d7dce"></div>XPS Insulation</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#666"></div>Gravel Base</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#c96499"></div>Perimeter XPS</div>
+</div>
+
+<div class="renderer">
+  <!-- Cross-section -->
+  <div class="section-view">
+    <div class="stack" style="padding: 40px 90px 40px 90px;">
+
+      <!-- ─── LVP Flooring ───────────────── -->
+      <div class="layer tex-lvp" data-thickness="5 mm"
+           data-idx="lvp" tabindex="0">
+        <span class="layer-label">LVP Flooring</span>
+      </div>
+
+      <!-- ─── Concrete Slab ──────────────── -->
+      <div class="layer tex-concrete" data-thickness="4 in"
+           data-idx="concrete" tabindex="0"
+           style="position:relative;">
+        <span class="layer-label">Concrete Slab (4")</span>
+        <div class="thick-edge left"></div>
+        <div class="thick-edge right"></div>
+      </div>
+
+      <!-- ─── Wire Mesh ─────────────────── -->
+      <div class="layer tex-mesh" data-thickness=""
+           data-idx="mesh" tabindex="0">
+        <span class="layer-label">Wire Mesh</span>
+      </div>
+
+      <!-- ─── Vapour Barrier ─────────────── -->
+      <div class="layer tex-vapour" data-thickness="10 mil"
+           data-idx="vapour" tabindex="0">
+        <span class="layer-label">Poly Vapour Barrier</span>
+      </div>
+
+      <!-- ─── XPS Under Slab ─────────────── -->
+      <div class="layer tex-xps" data-thickness='2 in'
+           data-idx="xps" tabindex="0"
+           style="position:relative;">
+        <span class="layer-label">XPS Insulation (R-10)</span>
+        <!-- Perimeter insulation side pieces -->
+        <div class="perimeter perim-left" style="top:-56px; height: 112px;"></div>
+        <div class="perimeter perim-right" style="top:-56px; height: 112px;"></div>
+      </div>
+
+      <!-- ─── Gravel Base ────────────────── -->
+      <div class="layer tex-gravel" data-thickness='4 in'
+           data-idx="gravel" tabindex="0">
+        <span class="layer-label">Compacted Gravel</span>
+        <!-- Drain pipes at gravel level -->
+        <div class="drain-pipe" style="left: 4px; bottom: 4px;"></div>
+        <div class="drain-pipe" style="right: 4px; bottom: 4px;"></div>
+      </div>
+
+      <!-- ─── Earth ──────────────────────── -->
+      <div class="layer tex-earth" data-thickness=""
+           data-idx="earth" tabindex="0">
+        <span class="layer-label">Subgrade</span>
+      </div>
+
+      <div class="ground-line"></div>
+
+    </div>
+  </div>
+
+  <!-- Detail panel -->
+  <div class="detail-panel">
+    <div class="detail-card" id="detailCard">
+      <!-- Populated by JS -->
+    </div>
+    <div class="prompt-card" id="promptCard">
+      <div class="icon">&#9783;</div>
+      Click or hover a layer to view material details
+    </div>
+  </div>
+</div>
+
+<script>
+// Material data keyed by layer index
+const materials = {
+  lvp: {
+    name: "Clarovista 5.0mm Aged European Oak Stone Core Vinyl Plank",
+    badge: "Finish", badgeColor: "#6b4c30",
+    qty: "26 BX", price: "$62.12 / box",
+    total: "$1,615",
+    coverage: "18.94 sqft/box — 492 sqft total (430 + 15% waste)",
+    image: "{{ url_for('static', filename='images/1142112-AEO.jpg') }}",
+    url: "https://kent.ca/en/5-0-mm-aged-european-oak-stone-core-vinyl-plank-18-94-sf-bx-1142112-aeo",
+    notes: "Dark brown European Oak LVP — waterproof click-lock throughout. Stone core for rigidity directly over concrete slab."
+  },
+  concrete: {
+    name: "Concrete — 4\" Slab + Thickened Edges",
+    badge: "Structural", badgeColor: "#757575",
+    qty: "5.5 cu m", price: "$250.00 / cu m",
+    total: "$1,375",
+    coverage: "430 sqft × 4\" slab with 12\" thickened edge perimeter",
+    image: "{{ url_for('static', filename='images/1022011.jpg') }}",
+    url: "https://kent.ca/en/80-lb-bag-concrete-mix-1022011",
+    notes: "Ready-mix delivery, 25 MPa. Thickened edges at perimeter carry wall loads. Frost-protected shallow foundation — no deep footings required in NL climate zone."
+  },
+  mesh: {
+    name: "Rebar / Welded Wire Mesh",
+    badge: "Reinforcement", badgeColor: "#888",
+    qty: "430 sqft", price: "$0.75 / sqft",
+    total: "$323",
+    coverage: "6×6 W2.9×W2.9 mesh over full 430 sqft slab",
+    image: "{{ url_for('static', filename='images/1015819.jpg') }}",
+    url: "https://kent.ca/en/reinforced-wire-mesh-6-x-6-x-4-x-8-1015819",
+    notes: "Continuous welded wire mesh embedded mid-slab for crack control. Rebar in thickened edges for structural capacity."
+  },
+  vapour: {
+    name: "10-mil Poly Vapour Barrier (under slab)",
+    badge: "Moisture", badgeColor: "#444",
+    qty: "1 RL", price: "$89.00",
+    total: "$89",
+    coverage: "20' × 50' roll (1,000 sqft) — covers 430 sqft + overlaps",
+    image: "{{ url_for('static', filename='images/1028030.jpg') }}",
+    url: "https://kent.ca/en/100-x-240-x-6-mil-clear-vapour-barrier-2000-sqft-1028030",
+    notes: "Continuous moisture barrier between insulation and concrete. Prevents ground moisture wicking into slab. All seams lapped 12\" and taped."
+  },
+  xps: {
+    name: "2\" XPS Rigid Insulation Under Slab (R-10)",
+    badge: "Thermal", badgeColor: "#2d7dce",
+    qty: "14 SH", price: "$45.00 / sheet",
+    total: "$630",
+    coverage: "4'×8' sheets — 14 sheets = 448 sqft",
+    image: "{{ url_for('static', filename='images/1133346.jpg') }}",
+    url: "https://kent.ca/en/2-x-2-x-8-xps-60-insulation-1133346",
+    notes: "Extruded polystyrene rigid foam beneath slab — R-10 thermal break from ground. Prevents frost heave energy loss. NL Building Code minimum for slab-on-grade."
+  },
+  gravel: {
+    name: "4\" Gravel Base (3/4\" clear crush)",
+    badge: "Base", badgeColor: "#666",
+    qty: "16 cu yd", price: "$45.00 / cu yd",
+    total: "$720",
+    coverage: "Compacted granular base under full slab footprint",
+    image: "{{ url_for('static', filename='images/1017010.jpg') }}",
+    url: "https://kent.ca/en/3-4-gravel-bag-30-kg-1017010",
+    notes: "Well-graded 3/4\" clear crushed stone, compacted in 2\" lifts to 95% Proctor density. Provides drainage and uniform bearing for slab. Perimeter drain tile at base."
+  },
+  earth: {
+    name: "Excavation & Subgrade Preparation",
+    badge: "Earthwork", badgeColor: "#4a3422",
+    qty: "430 sqft", price: "$8.00 / sqft",
+    total: "$3,440 (est.)",
+    coverage: "Stripped topsoil, excavated to 18\" depth",
+    image: null,
+    url: "https://www.yellowpages.ca/search/si/1/Excavation+Contractors/St+John%27s+NL",
+    notes: "Strip topsoil and excavate to 18\" depth for FPSF. Grade for drainage away from building. Includes haul-away of excavated material."
+  }
+};
+
+// ── Interactivity ──────────────────────────────────────
+const card = document.getElementById('detailCard');
+const prompt = document.getElementById('promptCard');
+const layers = document.querySelectorAll('.layer');
+
+function showDetail(key) {
+  const m = materials[key];
+  if (!m) return;
+
+  layers.forEach(l => l.classList.toggle('active', l.dataset.idx === key));
+
+  const imgHtml = m.image
+    ? `<img class="thumb" src="${m.image}" alt="${m.name}" onerror="this.style.display='none'">`
+    : '';
+
+  card.innerHTML = `
+    <span class="mat-badge" style="background:${m.badgeColor}; color:#fff;">${m.badge}</span>
+    ${imgHtml}
+    <h3>${m.name}</h3>
+    <div class="detail-meta">
+      <div class="meta-item">
+        <div class="label">Quantity</div>
+        <div class="value">${m.qty}</div>
+      </div>
+      <div class="meta-item">
+        <div class="label">Unit Price</div>
+        <div class="value">${m.price}</div>
+      </div>
+      <div class="meta-item">
+        <div class="label">Extended</div>
+        <div class="value" style="color:var(--green)">${m.total}</div>
+      </div>
+      <div class="meta-item">
+        <div class="label">Coverage</div>
+        <div class="value" style="font-size:11px; font-weight:500;">${m.coverage}</div>
+      </div>
+    </div>
+    <div class="notes">${m.notes}</div>
+    <a class="view-link" href="${m.url}" target="_blank" rel="noopener">View Product &rarr;</a>
+  `;
+
+  card.classList.add('visible');
+  prompt.style.display = 'none';
+}
+
+layers.forEach(layer => {
+  layer.addEventListener('click', () => showDetail(layer.dataset.idx));
+  layer.addEventListener('mouseenter', () => showDetail(layer.dataset.idx));
+});
+
+// Show concrete by default
+showDetail('concrete');
+</script>
+
+</body>
+</html>

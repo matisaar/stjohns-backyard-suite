@@ -100,6 +100,31 @@ def index():
     )
 
 
+@app.route("/render")
+def render_view():
+    """Interactive material stack cross-section renderer."""
+    # Pull foundation/flooring layers from BOM divisions
+    layers = []
+    div_map = {d["name"]: d for d in ALL_DIVISIONS}
+
+    # Division 2: Site Work & Foundation
+    site = div_map.get("Site Work & Foundation", {})
+    for item in site.get("items", []):
+        layers.append(dict(item))
+
+    # Division 6: Insulation & Air Barrier (floor-relevant items)
+    ins = div_map.get("Insulation & Air Barrier", {})
+    for item in ins.get("items", []):
+        layers.append(dict(item))
+
+    # Division 7: Interior Finishes (flooring)
+    fin = div_map.get("Interior Finishes", {})
+    for item in fin.get("items", []):
+        layers.append(dict(item))
+
+    return render_template("render.html", layers=layers)
+
+
 @app.route("/api/summary")
 def api_summary():
     """JSON API for BOM summary."""

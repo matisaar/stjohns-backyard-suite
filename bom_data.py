@@ -554,7 +554,7 @@ DIVISION_7 = {
         {
             "name": "Thin-Set Mortar, Grout, Tile Trim",
             "qty": 1, "unit": "LOT", "unit_price": 120.00, "estimate": True,
-            "url": "https://www.homedepot.ca/product/mapei-keracolor-u-unsanded-grout-25-lb/1000672694",
+            "url": f"{KENT_BASE}/search?q=thin+set+mortar",
             "notes": "Modified thin-set (50 lb bag × 2), sanded grout, Schluter trim edges, spacers.",
         },
         {
@@ -883,7 +883,7 @@ DIVISION_12 = {
         {
             "name": "Stackable Washer/Dryer — 24\" Compact Set",
             "qty": 1, "unit": "SET", "unit_price": 1800.00, "estimate": True,
-            "url": "https://www.homedepot.ca/en/home/categories/appliances/washers-and-dryers.html",
+            "url": "https://www.lg.com/ca_en/washing-machines/",
             "notes": "24\" compact stackable — fits in hallway closet. Electric dryer (no gas in NL). GE, LG, or Bosch.",
         },
         {

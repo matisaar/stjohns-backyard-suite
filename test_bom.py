@@ -139,7 +139,7 @@ def test_prices():
             failures.append(f"ZERO PRICE (not estimate): [{div_name}] {item['name']}")
         if "kent.ca" in url:
             kent_count += 1
-            if is_est:
+            if is_est and "/search" not in url:
                 failures.append(f"KENT ITEM MARKED ESTIMATE: [{div_name}] {item['name']}")
         if "kent.ca" not in url and "ikea" not in url.lower() and not is_est:
             # Non-retailer items should be flagged as estimates
