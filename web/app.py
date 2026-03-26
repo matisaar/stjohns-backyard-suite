@@ -142,7 +142,6 @@ def finishes():
         ("Flooring & Tile", "Interior Finishes", [
             "Volcano",
             "White Large-Format Ceramic",
-            "Thin-Set Mortar",
         ]),
         ("Walls & Trim", "Interior Finishes", [
             "Sico Evolution",
@@ -162,18 +161,6 @@ def finishes():
         ("Kitchen Plumbing", "Plumbing", [
             "Kitchen Sink",
             "Kitchen Faucet",
-        ]),
-        ("Lighting & Electrical", "Electrical", [
-            "LED Slim Recessed",
-            "Bathroom Exhaust",
-            "Light Switches",
-            "GFCI",
-            "Receptacles",
-            "Weatherproof",
-        ]),
-        ("HVAC", "HVAC", [
-            "Mini-Split",
-            "Baseboard Heaters",
         ]),
         ("Laundry", "Laundry", [
             "Stacked Washer",
