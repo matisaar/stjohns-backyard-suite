@@ -28,7 +28,7 @@ DIVISION_1 = {
         {
             "name": "Building Permit — City of St. John's",
             "qty": 1, "unit": "EA", "unit_price": 1500.00,
-            "url": "https://www.stjohns.ca/en/business-investment/building-permits.aspx",
+            "url": "https://www.stjohns.ca/en/building-development/building-renovation-and-repair.aspx",
             "notes": "Backyard suite permit, contact City of St. John's Development Dept.",
         },
         {
@@ -488,7 +488,7 @@ DIVISION_7 = {
         {
             "name": "Sico Pro PVA Drywall Primer White 18.9L",
             "qty": 1, "unit": "EA", "unit_price": 84.00,
-            "url": f"{KENT_BASE}/sico-pro-pva-primer-interior-white-18-9-l-1058991",
+            "url": f"{KENT_BASE}/sico-pro-pva-primer-white-18-9l-1058991",
             "sku": "1058991",
             "image_url": "/static/images/1058991.jpg",
             "notes": "White PVA primer — one coat all new drywall. ~1,800 sqft coverage per pail.",
@@ -496,7 +496,7 @@ DIVISION_7 = {
         {
             "name": "Sico Evolution Interior Eggshell Pure White 3.78L",
             "qty": 6, "unit": "EA", "unit_price": 68.99,
-            "url": f"{KENT_BASE}/sico-evolution-interior-latex-eggshell-neutral-base-3-78-l-1015669-NEU",
+            "url": f"{KENT_BASE}/evolution-3-78-l-interior-eggshell-neutral-base-1015669-neu",
             "sku": "1015669-NEU",
             "image_url": "/static/images/1015669-NEU.jpg",
             "notes": "Bright white walls throughout — modern B&W aesthetic. 6 cans × 400 sqft = 2,400 sqft (2 coats on ~1,200 sqft).",
@@ -504,7 +504,7 @@ DIVISION_7 = {
         {
             "name": "Clarovista 5.0mm Aged European Oak Stone Core Vinyl Plank",
             "qty": 26, "unit": "BX", "unit_price": 62.12,
-            "url": f"{KENT_BASE}/clarovista-5-0mm-stone-core-vinyl-plank-aged-european-oak-1142112-AEO",
+            "url": f"{KENT_BASE}/5-0-mm-aged-european-oak-stone-core-vinyl-plank-18-94-sf-bx-1142112-aeo",
             "sku": "1142112-AEO",
             "image_url": "/static/images/1142112-AEO.jpg",
             "notes": "Dark brown European Oak LVP — 18.94 sqft/box × 26 = 492 sqft (430 + 15% waste). Waterproof click-lock throughout.",
@@ -530,7 +530,7 @@ DIVISION_7 = {
         {
             "name": "Alexandria 1/2\"×3-1/2\"×96\" Modern MDF Baseboard Valupak (10-pack)",
             "qty": 3, "unit": "PK", "unit_price": 50.89,
-            "url": f"{KENT_BASE}/1-2-x-3-1-2-x-96-modern-mdf-baseboard-primed-valupak-1447728",
+            "url": f"{KENT_BASE}/1-2-x-3-1-2-x-8-modern-mdf-baseboard-valupak-10-pack-1447728",
             "sku": "1447728",
             "image_url": "/static/images/1447728.jpg",
             "notes": "Clean modern profile, pre-primed white. 10×8' per pack = 80 LF × 3 packs = 240 LF (covers 200 LF + waste).",
