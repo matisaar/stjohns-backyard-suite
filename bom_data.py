@@ -34,25 +34,25 @@ DIVISION_1 = {
         {
             "name": "Engineered Drawings & Stamps",
             "qty": 1, "unit": "EA", "unit_price": 2500.00,
-            "url": None,
+            "url": "https://pegnl.ca/",
             "notes": "Structural engineer + architectural drawings for permit submission",
         },
         {
             "name": "Site Survey",
             "qty": 1, "unit": "EA", "unit_price": 500.00,
-            "url": None,
+            "url": "https://www.anls.ca/",
             "notes": "Licensed NL land surveyor — confirm lot lines and setbacks",
         },
         {
             "name": "Portable Toilet Rental (3 months)",
             "qty": 1, "unit": "EA", "unit_price": 600.00,
-            "url": None,
+            "url": "https://www.yellowpages.ca/search/si/1/Portable+Toilet+Rental/St+John%27s+NL",
             "notes": "Construction-duration rental from local provider",
         },
         {
             "name": "Dumpster Rental (2 hauls)",
             "qty": 2, "unit": "EA", "unit_price": 500.00,
-            "url": None,
+            "url": "https://www.yellowpages.ca/search/si/1/Waste+Bins+%26+Containers/St+John%27s+NL",
             "notes": "20-yard bin, construction debris disposal",
         },
     ],
@@ -67,13 +67,13 @@ DIVISION_2 = {
         {
             "name": "Excavation (local contractor)",
             "qty": 430, "unit": "sqft", "unit_price": 8.00,
-            "url": None,
+            "url": "https://www.yellowpages.ca/search/si/1/Excavation+Contractors/St+John%27s+NL",
             "notes": "Strip topsoil, excavate to 18\" depth for FPSF, grade for drainage",
         },
         {
             "name": "4\" Gravel Base (3/4\" clear crush)",
             "qty": 16, "unit": "cu yd", "unit_price": 45.00,
-            "url": None,
+            "url": f"{KENT_BASE}/3-4-gravel-bag-30-kg-1017010",
             "notes": "Compacted granular base under slab — local aggregate supplier",
         },
         {
@@ -97,25 +97,25 @@ DIVISION_2 = {
         {
             "name": "Concrete — 4\" Slab + Thickened Edges",
             "qty": 5.5, "unit": "cu m", "unit_price": 250.00,
-            "url": None,
+            "url": f"{KENT_BASE}/80-lb-bag-concrete-mix-1022011",
             "notes": "Ready-mix delivery, 25 MPa. ~5.5 m³ for 430 sqft × 4\" + 12\" thickened edge perimeter",
         },
         {
             "name": "Rebar / Welded Wire Mesh",
             "qty": 430, "unit": "sqft", "unit_price": 0.75,
-            "url": "",
+            "url": f"{KENT_BASE}/reinforced-wire-mesh-6-x-6-x-4-x-8-1015819",
             "notes": "6×6 W2.9×W2.9 mesh over full slab, rebar in thickened edges",
         },
         {
             "name": "Perimeter Drain Tile + Filter Fabric + Gravel",
             "qty": 80, "unit": "LF", "unit_price": 3.00,
-            "url": "",
+            "url": f"{KENT_BASE}/4-x-10-275-kpa-pvc-perforated-sewer-pipe-1014140",
             "notes": "4\" perforated pipe around foundation perimeter to daylight / sump",
         },
         {
             "name": "Backfill & Final Grading (allowance)",
             "qty": 1, "unit": "EA", "unit_price": 500.00,
-            "url": None,
+            "url": "https://www.yellowpages.ca/search/si/1/Excavation+Contractors/St+John%27s+NL",
             "notes": "Machine backfill and grade for drainage away from building",
         },
     ],
@@ -170,13 +170,13 @@ DIVISION_3 = {
         {
             "name": "Engineered I-Joists / Rafters (roof, ~22' span)",
             "qty": 24, "unit": "EA", "unit_price": 25.00,
-            "url": "",
+            "url": "https://www.weyerhaeuser.com/woodproducts/engineered-lumber/tji-joists/",
             "notes": "Special order — 9.5\" or 11-7/8\" TJI joists for mono-slope roof, 16\" OC over 21.5' span",
         },
         {
             "name": "LVL Beam (3.5×9.5\" for headers/ridge)",
             "qty": 2, "unit": "EA", "unit_price": 150.00,
-            "url": "",
+            "url": "https://www.weyerhaeuser.com/woodproducts/engineered-lumber/microllam-lvl/",
             "notes": "Laminated veneer lumber for window/door headers and any concentrated loads",
         },
         {
@@ -217,7 +217,7 @@ DIVISION_3 = {
         {
             "name": "Framing Nails — 3.25\" (16d sinker, 50 lb)",
             "qty": 2, "unit": "BX", "unit_price": 65.00,
-            "url": "",
+            "url": f"{KENT_BASE}/3-1-4-prostrip-framing-nail-3000-box-1006763",
             "notes": "~100 lbs total for wall and roof framing",
         },
         {
@@ -278,19 +278,19 @@ DIVISION_4 = {
         {
             "name": "Aluminum Fascia & Trim",
             "qty": 82, "unit": "LF", "unit_price": 3.00,
-            "url": "",
+            "url": f"{KENT_BASE}/8-x-12-fascia-frost-white-1016978",
             "notes": "Pre-bent aluminum fascia covers, full perimeter + gable rake",
         },
         {
             "name": "Triple-Pane Vinyl Casement Windows (~30\"×48\")",
             "qty": 6, "unit": "EA", "unit_price": 450.00,
-            "url": "",
+            "url": f"{KENT_BASE}/36-x-40-vision-left-hand-casement-window-1107802",
             "notes": "6 windows: 2 bedrooms (egress-sized, min 3.8 sqft openable), 2 bathrooms (small), 2 kitchen. Get local quotes from Kohltech or JELD-WEN NL dealers for triple-pane.",
         },
         {
             "name": "Steel Insulated Entry Door — 36\" Black with Frame",
             "qty": 1, "unit": "EA", "unit_price": 450.00,
-            "url": "",
+            "url": f"{KENT_BASE}/36-x80-6-panel-vinyl-clad-inswing-door-4-5-8-pvc-sill-1606274",
             "notes": "Pre-hung insulated steel door, black exterior finish. Modern B&W aesthetic. Single entrance.",
         },
         {
@@ -637,7 +637,7 @@ DIVISION_8 = {
         {
             "name": "Plumber Labor — Rough-in + Finish",
             "qty": 1, "unit": "EA", "unit_price": 4000.00,
-            "url": None,
+            "url": "https://www.yellowpages.ca/search/si/1/Plumbers/St+John%27s+NL",
             "notes": "Licensed NL plumber. Rough-in: supply, DWV, venting. Finish: set fixtures. ~2 visits.",
         },
     ],
@@ -724,7 +724,7 @@ DIVISION_9 = {
         {
             "name": "Electrician Labor — Rough-in + Finish",
             "qty": 1, "unit": "EA", "unit_price": 3500.00,
-            "url": None,
+            "url": "https://www.yellowpages.ca/search/si/1/Electricians/St+John%27s+NL",
             "notes": "Licensed NL electrician. Rough-in wiring, panel hookup, inspection. Finish: devices + fixtures.",
         },
     ],
@@ -757,13 +757,13 @@ DIVISION_10 = {
         {
             "name": "HRV Ducting, Grilles & Dampers",
             "qty": 1, "unit": "LOT", "unit_price": 300.00,
-            "url": "",
+            "url": f"{KENT_BASE}/6-x-25-silver-insulated-air-duct-1014547",
             "notes": "6\" insulated flex duct, exterior wall caps, interior grilles (supply + exhaust), dampers.",
         },
         {
             "name": "HVAC Installation Labor",
             "qty": 1, "unit": "EA", "unit_price": 2000.00,
-            "url": None,
+            "url": "https://www.yellowpages.ca/search/si/1/Heating+Contractors/St+John%27s+NL",
             "notes": "Licensed HVAC tech for mini-split line set, refrigerant charge, HRV ducting, baseboard wiring.",
         },
     ],
