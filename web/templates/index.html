@@ -3,435 +3,271 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>St. John's 430 sqft Backyard Suite — Bill of Materials</title>
+    <title>St. John's Backyard Suite — BOM</title>
     <style>
         :root {
-            --bg: #0d1117;
-            --surface: #161b22;
-            --surface2: #1c2333;
-            --border: #30363d;
-            --text: #e6edf3;
-            --text-dim: #8b949e;
-            --accent: #58a6ff;
-            --green: #3fb950;
-            --red: #f85149;
-            --orange: #d29922;
-            --purple: #bc8cff;
+            --bg: #111;
+            --card: #191919;
+            --card2: #222;
+            --border: #2a2a2a;
+            --text: #eee;
+            --dim: #888;
+            --accent: #4da6ff;
+            --green: #34d058;
+            --orange: #e3b341;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg); color: var(--text);
+            line-height: 1.5; font-size: 14px;
         }
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .wrap { max-width: 1100px; margin: 0 auto; padding: 16px; }
 
-        /* Header */
-        .header {
-            text-align: center;
-            padding: 40px 20px;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 30px;
-        }
-        .header h1 { font-size: 1.8em; margin-bottom: 8px; }
-        .header .subtitle { color: var(--text-dim); font-size: 1.05em; }
-        .header .specs {
-            display: flex; gap: 16px; justify-content: center;
-            flex-wrap: wrap; margin-top: 16px;
-        }
-        .spec-badge {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 6px 16px;
-            font-size: 0.85em;
-            color: var(--text-dim);
-        }
-        .spec-badge strong { color: var(--accent); }
+        /* ── Header ── */
+        .hdr { padding: 28px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px; text-align: center; }
+        .hdr h1 { font-size: 1.4em; font-weight: 700; letter-spacing: -0.02em; }
+        .hdr p { color: var(--dim); font-size: 0.85em; margin-top: 4px; }
+        .tags { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
+        .tag { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 3px 12px; font-size: 0.75em; color: var(--dim); }
+        .tag b { color: var(--text); font-weight: 600; }
 
-        /* Summary Card */
-        .summary-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 30px;
-        }
-        .summary-card h2 {
-            font-size: 1.2em;
-            margin-bottom: 16px;
-            color: var(--accent);
-        }
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .summary-item {
-            background: var(--surface2);
-            border-radius: 8px;
-            padding: 12px;
-        }
-        .summary-item .label { font-size: 0.8em; color: var(--text-dim); }
-        .summary-item .value { font-size: 1.15em; font-weight: 600; }
-        .summary-totals {
-            border-top: 1px solid var(--border);
-            padding-top: 16px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-        .summary-totals .row {
-            display: flex; justify-content: space-between;
-            padding: 4px 0;
-        }
-        .summary-totals .row.grand {
-            font-size: 1.3em; font-weight: 700;
-            color: var(--green);
-            border-top: 2px solid var(--green);
-            padding-top: 8px; margin-top: 4px;
-            grid-column: 1 / -1;
-        }
-        .summary-totals .row .label { color: var(--text-dim); }
-
-        /* Division Sections */
-        .division {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-        .division-header {
+        /* ── Grand Total Banner ── */
+        .grand {
+            background: linear-gradient(135deg, #0d2818, #132a13);
+            border: 1px solid #1e4620;
+            border-radius: 10px; padding: 16px 20px;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 16px 20px;
-            background: var(--surface2);
-            cursor: pointer;
-            user-select: none;
+            margin-bottom: 20px;
         }
-        .division-header:hover { background: #22293a; }
-        .division-header h3 { font-size: 1.05em; }
-        .division-header .total {
-            font-weight: 700;
-            color: var(--green);
-            font-size: 1.1em;
-        }
-        .division-header .toggle { color: var(--text-dim); font-size: 1.2em; }
-        .division-body { display: none; }
-        .division.open .division-body { display: block; }
-        .division.open .toggle { transform: rotate(180deg); }
+        .grand .label { color: #8fce8f; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.05em; }
+        .grand .amt { font-size: 1.6em; font-weight: 800; color: var(--green); }
+        .grand-sub { display: flex; gap: 24px; }
+        .grand-sub .gs { text-align: right; }
+        .grand-sub .gs .l { font-size: 0.7em; color: #8fce8f; }
+        .grand-sub .gs .v { font-size: 0.95em; font-weight: 600; color: #c5e8c5; }
 
-        /* Items Table */
-        .items-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .items-table th {
-            text-align: left;
-            padding: 10px 16px;
-            font-size: 0.78em;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-dim);
-            background: var(--bg);
-            border-bottom: 1px solid var(--border);
-        }
-        .items-table td {
-            padding: 10px 16px;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.9em;
-            vertical-align: top;
-        }
-        .items-table tr:hover { background: rgba(88,166,255,0.04); }
-        .items-table .name { max-width: 400px; }
-        .items-table .name a {
-            color: var(--accent);
-            text-decoration: none;
-        }
-        .items-table .name a:hover { text-decoration: underline; }
-        .items-table .notes {
-            font-size: 0.8em;
-            color: var(--text-dim);
-            margin-top: 4px;
-        }
-        .product-thumb {
-            width: 64px;
-            height: 64px;
-            object-fit: contain;
-            border-radius: 6px;
-            background: #fff;
-            padding: 2px;
-            float: left;
-            margin-right: 12px;
-            margin-bottom: 4px;
-        }
-        .name-cell { overflow: hidden; }
-        .items-table .number { text-align: right; font-variant-numeric: tabular-nums; }
-        .price-changed {
-            color: var(--orange);
-            font-size: 0.75em;
-            display: block;
-        }
+        /* ── Summary Grid ── */
+        .sg { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin-bottom: 20px; }
+        .si { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+        .si .l { font-size: 0.68em; color: var(--dim); text-transform: uppercase; letter-spacing: 0.04em; }
+        .si .v { font-size: 1em; font-weight: 700; margin-top: 2px; }
 
-        /* Design Section */
-        .design-section {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 30px;
+        /* ── Floor Plan ── */
+        .fp-toggle { background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; }
+        .fp-toggle summary {
+            padding: 10px 16px; cursor: pointer; font-size: 0.85em; font-weight: 600;
+            color: var(--dim); list-style: none; display: flex; justify-content: space-between; align-items: center;
         }
-        .design-section h2 {
-            font-size: 1.2em;
-            margin-bottom: 16px;
-            color: var(--purple);
+        .fp-toggle summary::after { content: '▸'; transition: transform 0.2s; }
+        .fp-toggle[open] summary::after { transform: rotate(90deg); }
+        .fp-grid {
+            display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr;
+            gap: 3px; padding: 0 12px 12px; max-width: 480px; margin: 0 auto; aspect-ratio: 20/21.5;
         }
-        .floor-plan {
+        .rm {
+            background: var(--card2); border: 2px solid var(--border); border-radius: 5px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 6px; text-align: center; font-size: 0.72em;
+        }
+        .rm b { font-size: 0.85em; }
+        .rm span { color: var(--dim); font-size: 0.8em; }
+        .rm.bed { border-color: var(--accent); }
+        .rm.bath { border-color: #b388ff; }
+        .rm.kit { border-color: var(--orange); }
+        .rm.ent { border-color: var(--green); }
+        .regs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 0 12px 12px; }
+        .rg { background: var(--card2); border-radius: 6px; padding: 8px; }
+        .rg .l { font-size: 0.62em; color: var(--dim); text-transform: uppercase; letter-spacing: 0.03em; }
+        .rg .v { font-size: 0.78em; font-weight: 600; }
+
+        /* ── Division Sections ── */
+        .div-sec { background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+        .div-hdr {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 16px; cursor: pointer; user-select: none;
+        }
+        .div-hdr:hover { background: var(--card2); }
+        .div-hdr h3 { font-size: 0.88em; font-weight: 600; }
+        .div-hdr .cost { color: var(--green); font-weight: 700; font-size: 0.92em; }
+        .div-hdr .arr { color: var(--dim); font-size: 0.8em; transition: transform 0.2s; }
+        .div-sec.open .div-hdr .arr { transform: rotate(180deg); }
+        .div-body { display: none; }
+        .div-sec.open .div-body { display: block; }
+
+        /* ── Item Rows ── */
+        .items { border-top: 1px solid var(--border); }
+        .item {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
-            gap: 4px;
-            max-width: 600px;
-            margin: 0 auto 20px;
-            aspect-ratio: 20 / 21.5;
+            grid-template-columns: 44px 1fr auto auto auto;
+            gap: 8px; align-items: center;
+            padding: 7px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.82em;
         }
-        .room {
-            background: var(--surface2);
-            border: 2px solid var(--border);
-            border-radius: 6px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 8px;
-            text-align: center;
-            font-size: 0.8em;
+        .item:last-child { border-bottom: none; }
+        .item:hover { background: rgba(77,166,255,0.03); }
+        .item-img {
+            width: 40px; height: 40px; border-radius: 5px;
+            object-fit: contain; background: #fff; padding: 1px;
         }
-        .room .room-name { font-weight: 700; font-size: 0.95em; }
-        .room .room-size { color: var(--text-dim); font-size: 0.85em; }
-        .room.bedroom { border-color: var(--accent); }
-        .room.bathroom { border-color: var(--purple); }
-        .room.kitchen { border-color: var(--orange); }
-        .room.entry { border-color: var(--green); }
+        .item-img-placeholder {
+            width: 40px; height: 40px; border-radius: 5px;
+            background: var(--card2); border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.65em; color: var(--dim);
+        }
+        .item-name { font-weight: 500; }
+        .item-qty { text-align: center; color: var(--dim); white-space: nowrap; font-size: 0.85em; }
+        .item-price { text-align: right; white-space: nowrap; }
+        .item-ext { text-align: right; font-weight: 600; white-space: nowrap; }
+        .item-notes {
+            grid-column: 1 / -1; font-size: 0.75em; color: var(--dim);
+            padding: 0 0 4px 52px; margin-top: -4px;
+        }
+        .item-notes summary { cursor: pointer; color: var(--dim); font-size: 0.9em; }
+        .item-notes summary:hover { color: var(--text); }
+        .price-old { text-decoration: line-through; color: var(--dim); font-size: 0.85em; }
 
-        /* Regulations */
-        .regs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 16px;
-        }
-        .reg {
-            background: var(--surface2);
-            border-radius: 8px;
-            padding: 12px;
-        }
-        .reg .label { font-size: 0.78em; color: var(--text-dim); text-transform: uppercase; }
-        .reg .value { font-weight: 600; }
+        /* ── Footer ── */
+        .ft { text-align: center; padding: 20px; color: var(--dim); font-size: 0.72em; border-top: 1px solid var(--border); margin-top: 20px; }
+        .ft a { color: var(--accent); }
 
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 30px;
-            color: var(--text-dim);
-            font-size: 0.85em;
-            border-top: 1px solid var(--border);
-            margin-top: 30px;
-        }
-        .footer a { color: var(--accent); text-decoration: none; }
-
-        /* Scraper status */
-        .scraper-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.75em;
-            font-weight: 600;
-        }
-        .scraper-badge.live { background: rgba(63,185,80,0.15); color: var(--green); }
-        .scraper-badge.static { background: rgba(139,148,158,0.15); color: var(--text-dim); }
-
-        @media (max-width: 768px) {
-            .summary-grid { grid-template-columns: 1fr 1fr; }
-            .summary-totals { grid-template-columns: 1fr; }
-            .regs { grid-template-columns: 1fr; }
-            .floor-plan { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
-            .items-table .notes { display: none; }
+        @media (max-width: 700px) {
+            .sg { grid-template-columns: repeat(2, 1fr); }
+            .regs { grid-template-columns: 1fr 1fr; }
+            .grand { flex-direction: column; gap: 8px; text-align: center; }
+            .grand-sub { justify-content: center; }
+            .item { grid-template-columns: 36px 1fr auto auto; font-size: 0.78em; }
+            .item-qty { display: none; }
+            .item-notes { padding-left: 44px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+<div class="wrap">
 
-        <!-- Header -->
-        <div class="header">
-            <h1>St. John's Backyard Suite — Bill of Materials</h1>
-            <div class="subtitle">430 sqft · 2 Bed · 2 Bath · Kitchen · Laundry · Mono-Slope Roof</div>
-            <div class="specs">
-                <span class="spec-badge">📍 <strong>St. John's, NL</strong></span>
-                <span class="spec-badge">📏 <strong>20' × 21.5'</strong> footprint</span>
-                <span class="spec-badge">🏗️ <strong>2×6</strong> wood frame</span>
-                <span class="spec-badge">🧊 Zone <strong>7A</strong> insulation</span>
-                <span class="spec-badge">📐 Max <strong>5m</strong> height</span>
-                <span class="spec-badge">
-                    {% if has_scraped_data %}
-                        <span class="scraper-badge live">● Live Prices</span>
-                    {% else %}
-                        <span class="scraper-badge static">○ Static Prices</span>
-                    {% endif %}
-                </span>
+    <!-- Header -->
+    <div class="hdr">
+        <h1>St. John's Backyard Suite</h1>
+        <p>430 sqft &middot; 2 Bed &middot; 2 Bath &middot; Kitchen &middot; Laundry</p>
+        <div class="tags">
+            <span class="tag"><b>St. John's, NL</b></span>
+            <span class="tag"><b>20'&times;21.5'</b></span>
+            <span class="tag"><b>2&times;6</b> frame</span>
+            <span class="tag">Zone <b>7A</b></span>
+            <span class="tag">Mono-slope roof</span>
+            <span class="tag">Max <b>5m</b></span>
+            <span class="tag">B&amp;W modern</span>
+        </div>
+    </div>
+
+    <!-- Grand Total -->
+    <div class="grand">
+        <div>
+            <div class="label">Grand Total (incl. HST)</div>
+            <div class="amt">${{ "{:,.0f}".format(summary.grand_total) }}</div>
+        </div>
+        <div class="grand-sub">
+            <div class="gs">
+                <div class="l">Materials + Labor</div>
+                <div class="v">${{ "{:,.0f}".format(summary.materials_subtotal) }}</div>
+            </div>
+            <div class="gs">
+                <div class="l">{{ waste_rate|int }}% Contingency</div>
+                <div class="v">${{ "{:,.0f}".format(summary.waste_contingency) }}</div>
+            </div>
+            <div class="gs">
+                <div class="l">{{ hst_rate|int }}% HST</div>
+                <div class="v">${{ "{:,.0f}".format(summary.hst) }}</div>
             </div>
         </div>
+    </div>
 
-        <!-- Design Overview -->
-        <div class="design-section">
-            <h2>Floor Plan — Symmetrical Layout</h2>
-            <div class="floor-plan">
-                <div class="room bedroom" style="grid-column: 1; grid-row: 1;">
-                    <div class="room-name">Bedroom 1</div>
-                    <div class="room-size">9' × 10' = 90 sqft</div>
-                </div>
-                <div class="room entry" style="grid-column: 2; grid-row: 1;">
-                    <div class="room-name">Entry + Laundry</div>
-                    <div class="room-size">Hall + W/D closet<br>~50 sqft</div>
-                </div>
-                <div class="room bedroom" style="grid-column: 3; grid-row: 1;">
-                    <div class="room-name">Bedroom 2</div>
-                    <div class="room-size">9' × 10' = 90 sqft</div>
-                </div>
-                <div class="room bathroom" style="grid-column: 1; grid-row: 2;">
-                    <div class="room-name">Bath 1</div>
-                    <div class="room-size">5' × 7' = 35 sqft<br>¾ bath</div>
-                </div>
-                <div class="room kitchen" style="grid-column: 2; grid-row: 2;">
-                    <div class="room-name">Kitchen</div>
-                    <div class="room-size">8' × 10' = 80 sqft</div>
-                </div>
-                <div class="room bathroom" style="grid-column: 3; grid-row: 2;">
-                    <div class="room-name">Bath 2</div>
-                    <div class="room-size">5' × 7' = 35 sqft<br>¾ bath</div>
-                </div>
-            </div>
-
-            <h2>Regulations & Specs</h2>
-            <div class="regs">
-                <div class="reg"><div class="label">Max Height</div><div class="value">5.0 m (16.4')</div></div>
-                <div class="reg"><div class="label">Roof Style</div><div class="value">Mono-slope, 3:12 pitch, low side at entrance</div></div>
-                <div class="reg"><div class="label">Wall Insulation</div><div class="value">R-24 effective (R-20 batt + R-7.5 continuous)</div></div>
-                <div class="reg"><div class="label">Ceiling Insulation</div><div class="value">R-50+ (R-28 + R-31 layered batts)</div></div>
-                <div class="reg"><div class="label">Under-Slab</div><div class="value">R-10 (2" XPS rigid)</div></div>
-                <div class="reg"><div class="label">Windows</div><div class="value">Triple-pane vinyl, U ≤ 1.6</div></div>
-                <div class="reg"><div class="label">Foundation</div><div class="value">Frost-Protected Shallow Foundation (FPSF)</div></div>
-                <div class="reg"><div class="label">Heating</div><div class="value">Mini-split + electric baseboard backup</div></div>
-            </div>
-        </div>
-
-        <!-- Cost Summary -->
-        <div class="summary-card">
-            <h2>Cost Summary</h2>
-            <div class="summary-grid">
-                {% for div in summary.divisions %}
-                <div class="summary-item">
-                    <div class="label">{{ loop.index }}. {{ div.name }}</div>
-                    <div class="value">${{ "{:,.2f}".format(div.total) }}</div>
-                </div>
-                {% endfor %}
-            </div>
-            <div class="summary-totals">
-                <div class="row">
-                    <span class="label">Materials + Labor Subtotal</span>
-                    <span>${{ "{:,.2f}".format(summary.materials_subtotal) }}</span>
-                </div>
-                <div class="row">
-                    <span class="label">{{ waste_rate|int }}% Waste & Contingency</span>
-                    <span>${{ "{:,.2f}".format(summary.waste_contingency) }}</span>
-                </div>
-                <div class="row">
-                    <span class="label">Subtotal with Contingency</span>
-                    <span>${{ "{:,.2f}".format(summary.subtotal_with_waste) }}</span>
-                </div>
-                <div class="row">
-                    <span class="label">{{ hst_rate|int }}% NL HST</span>
-                    <span>${{ "{:,.2f}".format(summary.hst) }}</span>
-                </div>
-                <div class="row grand">
-                    <span>GRAND TOTAL</span>
-                    <span>${{ "{:,.2f}".format(summary.grand_total) }}</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Divisions -->
-        {% for div in divisions %}
-        <div class="division {% if loop.first %}open{% endif %}">
-            <div class="division-header" onclick="this.parentElement.classList.toggle('open')">
-                <h3>{{ loop.index }}. {{ div.name }}</h3>
-                <div>
-                    <span class="total">${{ "{:,.2f}".format(div.total) }}</span>
-                    <span class="toggle">▼</span>
-                </div>
-            </div>
-            <div class="division-body">
-                <table class="items-table">
-                    <thead>
-                        <tr>
-                            <th class="name">Item</th>
-                            <th class="number">Qty</th>
-                            <th>Unit</th>
-                            <th class="number">Unit Price</th>
-                            <th class="number">Extended</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in div.line_items %}
-                        {% if item.qty > 0 %}
-                        <tr>
-                            <td class="name">
-                                {% if item.image_url is defined and item.image_url %}
-                                    <img src="{{ item.image_url }}" alt="{{ item.name }}" class="product-thumb" loading="lazy">
-                                {% endif %}
-                                {% if item.url %}
-                                    <a href="{{ item.url }}" target="_blank" rel="noopener">{{ item.name }}</a>
-                                {% else %}
-                                    {{ item.name }}
-                                {% endif %}
-                                {% if item.notes %}
-                                    <div class="notes">{{ item.notes }}</div>
-                                {% endif %}
-                            </td>
-                            <td class="number">{{ item.qty }}</td>
-                            <td>{{ item.unit }}</td>
-                            <td class="number">
-                                ${{ "{:,.2f}".format(item.unit_price) }}
-                                {% if item.price_changed is defined and item.price_changed %}
-                                    <span class="price-changed">
-                                        Scraped: ${{ "{:,.2f}".format(item.scraped_price) }}
-                                        ({{ item.scraped_date }})
-                                    </span>
-                                {% endif %}
-                            </td>
-                            <td class="number">${{ "{:,.2f}".format(item.extended) }}</td>
-                        </tr>
-                        {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+    <!-- Division Summary Grid -->
+    <div class="sg">
+        {% for d in summary.divisions %}
+        <div class="si">
+            <div class="l">{{ loop.index }}. {{ d.name }}</div>
+            <div class="v">${{ "{:,.0f}".format(d.total) }}</div>
         </div>
         {% endfor %}
-
-        <!-- Footer -->
-        <div class="footer">
-            <p>Prices sourced from <a href="https://www.kent.ca" target="_blank">Kent Building Supplies</a>,
-               <a href="https://www.homedepot.ca" target="_blank">Home Depot Canada</a>, and
-               <a href="https://www.ikea.com/ca/en/" target="_blank">IKEA Canada</a>.
-            </p>
-            <p>All prices in CAD. Last updated: March 2026. Run <code>python run_scraper.py --all</code> to refresh Kent.ca prices.</p>
-            <p>Designed for St. John's, NL · Climate Zone 7A · NBC 2020 Part 9 · Max 5m height</p>
-        </div>
-
     </div>
+
+    <!-- Floor Plan & Specs (collapsed by default) -->
+    <details class="fp-toggle">
+        <summary>Floor Plan &amp; Specs</summary>
+        <div class="fp-grid">
+            <div class="rm bed"><b>Bed 1</b><span>9'&times;10'</span></div>
+            <div class="rm ent"><b>Entry</b><span>Hall + W/D</span></div>
+            <div class="rm bed"><b>Bed 2</b><span>9'&times;10'</span></div>
+            <div class="rm bath"><b>Bath 1</b><span>5'&times;7'</span></div>
+            <div class="rm kit"><b>Kitchen</b><span>8'&times;10'</span></div>
+            <div class="rm bath"><b>Bath 2</b><span>5'&times;7'</span></div>
+        </div>
+        <div class="regs">
+            <div class="rg"><div class="l">Height</div><div class="v">5.0m max</div></div>
+            <div class="rg"><div class="l">Roof</div><div class="v">Mono-slope 3:12</div></div>
+            <div class="rg"><div class="l">Walls</div><div class="v">R-24 eff.</div></div>
+            <div class="rg"><div class="l">Ceiling</div><div class="v">R-50+</div></div>
+            <div class="rg"><div class="l">Slab</div><div class="v">R-10 XPS</div></div>
+            <div class="rg"><div class="l">Windows</div><div class="v">Triple-pane</div></div>
+            <div class="rg"><div class="l">Foundation</div><div class="v">FPSF</div></div>
+            <div class="rg"><div class="l">Heat</div><div class="v">Mini-split + BB</div></div>
+        </div>
+    </details>
+
+    <!-- Division Line Items -->
+    {% for div in divisions %}
+    <div class="div-sec{% if loop.first %} open{% endif %}">
+        <div class="div-hdr" onclick="this.parentElement.classList.toggle('open')">
+            <h3>{{ loop.index }}. {{ div.name }}</h3>
+            <div><span class="cost">${{ "{:,.0f}".format(div.total) }}</span> <span class="arr">&#9660;</span></div>
+        </div>
+        <div class="div-body">
+            <div class="items">
+                {% for item in div.line_items %}
+                {% if item.qty > 0 %}
+                <div class="item">
+                    {% if item.image_url is defined and item.image_url %}
+                        <img src="{{ item.image_url }}" alt="" class="item-img" loading="lazy">
+                    {% else %}
+                        <div class="item-img-placeholder"></div>
+                    {% endif %}
+                    <div class="item-name">
+                        {% if item.url %}<a href="{{ item.url }}" target="_blank" rel="noopener">{{ item.name }}</a>{% else %}{{ item.name }}{% endif %}
+                        {% if item.sku is defined and item.sku %}<span style="color:var(--dim);font-size:0.8em"> #{{ item.sku }}</span>{% endif %}
+                    </div>
+                    <div class="item-qty">{{ item.qty }}&nbsp;{{ item.unit }}</div>
+                    <div class="item-price">
+                        ${{ "{:,.2f}".format(item.unit_price) }}
+                        {% if item.price_changed is defined and item.price_changed %}
+                            <br><span style="color:var(--orange);font-size:0.8em">Now ${{ "{:,.2f}".format(item.scraped_price) }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="item-ext">${{ "{:,.0f}".format(item.extended) }}</div>
+                </div>
+                {% if item.notes %}
+                <div class="item-notes">
+                    <details><summary>details</summary>{{ item.notes }}</details>
+                </div>
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Footer -->
+    <div class="ft">
+        Prices from <a href="https://www.kent.ca" target="_blank">Kent</a>,
+        <a href="https://www.homedepot.ca" target="_blank">Home Depot</a> &amp;
+        <a href="https://www.ikea.com/ca/en/" target="_blank">IKEA</a> &middot;
+        CAD &middot; March 2026 &middot; St. John's, NL &middot; NBC 2020
+    </div>
+</div>
 </body>
 </html>

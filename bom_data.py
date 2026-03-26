@@ -133,6 +133,7 @@ DIVISION_3 = {
             "url": f"{KENT_BASE}/2-x-6-x-8-spf-stud-kiln-dried-1016278",
             "notes": "Exterior walls @ 16\" OC. Perimeter ~82 LF ÷ 1.33 = 62 + corners/headers/extras = ~120",
             "sku": "1016278",
+            "image_url": "/static/images/1016278.jpg",
         },
         {
             "name": "2×6×10' SPF #2 & Better KD (headers, corners)",
@@ -140,6 +141,7 @@ DIVISION_3 = {
             "url": f"{KENT_BASE}/2-x-6-x-10-2-better-spf-lumber-kiln-dried-1016313",
             "notes": "Built-up headers over windows/doors, corner assemblies",
             "sku": "1016313",
+            "image_url": "/static/images/1016313.jpg",
         },
         {
             "name": "2×4×8' SPF Stud Kiln Dried (interior partitions)",
@@ -147,6 +149,7 @@ DIVISION_3 = {
             "url": f"{KENT_BASE}/2-x-4-x-8-spf-stud-kiln-dried-1016318",
             "notes": "Interior walls: 2 bathroom walls + 2 bedroom walls + kitchen partition ≈60 LF / 1.33 = 45 + extras",
             "sku": "1016318",
+            "image_url": "/static/images/1016318.jpg",
         },
         {
             "name": "2×4×12' SPF #2 & Better KD (misc framing)",
@@ -154,6 +157,7 @@ DIVISION_3 = {
             "url": f"{KENT_BASE}/2-x-4-x-12-2-better-spf-lumber-kiln-dried-1016339",
             "notes": "Blocking, backing, cripples, misc framing needs",
             "sku": "1016339",
+            "image_url": "/static/images/1016339.jpg",
         },
         {
             "name": "2×4×10' SPF #2 & Better KD",
@@ -161,6 +165,7 @@ DIVISION_3 = {
             "url": f"{KENT_BASE}/2-x-4-x-10-2-better-spf-lumber-kiln-dried-1016338",
             "notes": "Top plates (doubled), additional blocking",
             "sku": "1016338",
+            "image_url": "/static/images/1016338.jpg",
         },
         {
             "name": "Engineered I-Joists / Rafters (roof, ~22' span)",
@@ -180,6 +185,7 @@ DIVISION_3 = {
             "url": f"{KENT_BASE}/1-2-x-4-x-8-12-5mm-spruce-plywood-standard-1015823",
             "notes": "Exterior wall sheathing: ~82 LF perimeter × 8' H = 656 sqft ÷ 32 = ~21 sheets + gable ends = 30",
             "sku": "1015823",
+            "image_url": "/static/images/1015823.jpg",
         },
         {
             "name": "5/8\" × 4' × 8' Spruce Plywood (roof deck)",
@@ -187,6 +193,7 @@ DIVISION_3 = {
             "url": f"{KENT_BASE}/5-8-4-x-8-15-5mm-spruce-plywood-standard-1015826",
             "notes": "Roof sheathing: 430 sqft + slope factor + 2' overhang = ~530 sqft ÷ 32 = 17 sheets → 18",
             "sku": "1015826",
+            "image_url": "/static/images/1015826.jpg",
         },
         {
             "name": "3/4\" × 4' × 8' Spruce Plywood (subfloor — if raised)",
@@ -252,6 +259,7 @@ DIVISION_4 = {
             "url": f"{KENT_BASE}/oregon-pride-double-4-5-dutchlap-siding-1010820",
             "notes": "Exterior cladding — 50 pieces × ~9 sqft exposed = 450 sqft coverage (wall area ~650 sqft, minus windows/door)",
             "sku": "1010820",
+            "image_url": "/static/images/1010820.jpg",
         },
         {
             "name": "Vinyl Siding Starter Strip, J-Channel, Corners",
@@ -265,6 +273,7 @@ DIVISION_4 = {
             "url": f"{KENT_BASE}/double-5-perforated-soffit-standard-1021390",
             "notes": "Soffit for 2' overhang on all sides: (82 LF perimeter × 2' ÷ ~10 sqft per piece = ~16 pcs)",
             "sku": "1021390",
+            "image_url": "/static/images/1021390.jpg",
         },
         {
             "name": "Aluminum Fascia & Trim",
@@ -311,6 +320,7 @@ DIVISION_5 = {
             "url": f"{KENT_BASE}/40-7-8-x-13-3-4-cambridge-shingle-1010785",
             "notes": "~530 sqft roof area ÷ 33.3 sqft/bundle = 16 bundles (~5 squares). Architectural style, 30-yr warranty.",
             "sku": "1010785",
+            "image_url": "/static/images/1010785.jpg",
         },
         {
             "name": "IKO StormShield Ice & Water Protector 36\"×65'",
@@ -318,6 +328,7 @@ DIVISION_5 = {
             "url": f"{KENT_BASE}/stormshield-ice-water-protector-36-x-65-1026762",
             "notes": "Full coverage on mono-slope roof at 3:12 pitch recommended in NL. 2 rolls = 390 sqft. May need 3 for full coverage.",
             "sku": "1026762",
+            "image_url": "/static/images/1026762.jpg",
         },
         {
             "name": "Organic Felt Underlayment 36\"×131'",
@@ -325,6 +336,7 @@ DIVISION_5 = {
             "url": f"{KENT_BASE}/organic-fibers-black-saturated-felt-roofing-36-x-131-1026830",
             "notes": "#15 felt over remaining roof area not covered by ice & water shield",
             "sku": "1026830",
+            "image_url": "/static/images/1026830.jpg",
         },
         {
             "name": "Drip Edge 10' (Pebble)",
@@ -332,6 +344,7 @@ DIVISION_5 = {
             "url": f"{KENT_BASE}/10-x-2-1-2-x-1-roof-edge-drip-cap-1021389",
             "notes": "Full perimeter of roof: ~82 LF + 2 × 22' rakes = 126 LF → 13 pieces, use 12 + offcuts",
             "sku": "1021389",
+            "image_url": "/static/images/1021389.jpg",
         },
         {
             "name": "Step Flashing 4\"×4\"×8\"",
@@ -339,6 +352,7 @@ DIVISION_5 = {
             "url": f"{KENT_BASE}/step-flashing-4-x-4-x-8-1016918",
             "notes": "Where roof meets any wall projections or penetrations",
             "sku": "1016918",
+            "image_url": "/static/images/1016918.jpg",
         },
         {
             "name": "Roof Vent / Exhaust Vents",
@@ -352,6 +366,7 @@ DIVISION_5 = {
             "url": f"{KENT_BASE}/thermocell-air-chutes-22-5-x-27-max-r-value-r36-1042887",
             "notes": "Maintain airflow between insulation and roof deck in each rafter bay",
             "sku": "1042887",
+            "image_url": "/static/images/1042887.jpg",
         },
         {
             "name": "Roofing Nails (coil, 1-1/4\")",
@@ -374,6 +389,7 @@ DIVISION_6 = {
             "url": f"{KENT_BASE}/owens-corning-insulation-ws-r20-47-x-15-x-6-78-3-sqft-1024741",
             "notes": "Exterior wall cavities: ~650 sqft net wall area ÷ 78.3 = 8.3 bags + 15% waste = 10 bags",
             "sku": "1024741",
+            "image_url": "/static/images/1024741.jpg",
         },
         {
             "name": "Owens Corning R-20 Fiberglass Batt 23\" (120.1 sqft/bag)",
@@ -381,6 +397,7 @@ DIVISION_6 = {
             "url": f"{KENT_BASE}/owens-corning-insulation-ws-r20-47-x-23-x-6-120-1-sqft-1024744",
             "notes": "24\" OC areas if any, or for wider bays. 2 bags supplementary.",
             "sku": "1024744",
+            "image_url": "/static/images/1024744.jpg",
         },
         {
             "name": "Owens Corning R-28 Fiberglass Batt 24\" (80 sqft/bag)",
@@ -388,6 +405,7 @@ DIVISION_6 = {
             "url": f"{KENT_BASE}/owens-corning-insulation-ws-r28-48-x-24-x-8-1-2-80-sqft-1024751",
             "notes": "Ceiling / roof cavity — first layer. 6 × 80 = 480 sqft covers full ceiling.",
             "sku": "1024751",
+            "image_url": "/static/images/1024751.jpg",
         },
         {
             "name": "Owens Corning R-31 Fiberglass Batt 16\" (42.7 sqft/bag)",
@@ -395,6 +413,7 @@ DIVISION_6 = {
             "url": f"{KENT_BASE}/owens-corning-insulation-ws-r31-48-x-16-x-9-1-2-42-7-sqft-1024752",
             "notes": "Ceiling top-up layer to achieve effective R-50+. 4 × 42.7 = 171 sqft (supplement where depth allows).",
             "sku": "1024752",
+            "image_url": "/static/images/1024752.jpg",
         },
         {
             "name": "6-mil Polyethylene Vapour Barrier",
@@ -435,6 +454,7 @@ DIVISION_7 = {
             "url": f"{KENT_BASE}/drywall-1-2-x-4-x-8-ultra-light-panel-1016148",
             "notes": "Walls + ceilings: ~1,600 sqft walls + 430 sqft ceiling = 2,030 sqft ÷ 32 = 63 sheets. 45 for walls, rest for ceiling.",
             "sku": "1016148",
+            "image_url": "/static/images/1016148.jpg",
         },
         {
             "name": "CGC 1/2\" × 4' × 12' Tapered Edge Drywall",
@@ -442,6 +462,7 @@ DIVISION_7 = {
             "url": f"{KENT_BASE}/drywall-1-2-x-4-x-12-tapered-edge-panel-1016149",
             "notes": "Ceiling panels — 12' length reduces joints. 12 × 48 sqft = 576 sqft (ceiling 430 sqft + waste).",
             "sku": "1016149",
+            "image_url": "/static/images/1016149.jpg",
         },
         {
             "name": "CGC 5/8\" × 4' × 8' Type X Firecode Drywall",
@@ -449,6 +470,7 @@ DIVISION_7 = {
             "url": f"{KENT_BASE}/drywall-firecode-5-8-x-4-x-8-type-x-panel-1016160",
             "notes": "Fire-rated drywall for furnace/utility areas or where required by code.",
             "sku": "1016160",
+            "image_url": "/static/images/1016160.jpg",
         },
         {
             "name": "CGC 17L All-Purpose Lite Drywall Compound",
@@ -468,7 +490,7 @@ DIVISION_7 = {
             "qty": 1, "unit": "EA", "unit_price": 84.00,
             "url": f"{KENT_BASE}/sico-pro-pva-primer-interior-white-18-9-l-1058991",
             "sku": "1058991",
-            "image_url": "/static/images/paint-sico-primer.jpg",
+            "image_url": "/static/images/1058991.jpg",
             "notes": "White PVA primer — one coat all new drywall. ~1,800 sqft coverage per pail.",
         },
         {
@@ -476,7 +498,7 @@ DIVISION_7 = {
             "qty": 6, "unit": "EA", "unit_price": 68.99,
             "url": f"{KENT_BASE}/sico-evolution-interior-latex-eggshell-neutral-base-3-78-l-1015669-NEU",
             "sku": "1015669-NEU",
-            "image_url": "/static/images/paint-sico-evolution.jpg",
+            "image_url": "/static/images/1015669-NEU.jpg",
             "notes": "Bright white walls throughout — modern B&W aesthetic. 6 cans × 400 sqft = 2,400 sqft (2 coats on ~1,200 sqft).",
         },
         {
@@ -484,7 +506,7 @@ DIVISION_7 = {
             "qty": 26, "unit": "BX", "unit_price": 62.12,
             "url": f"{KENT_BASE}/clarovista-5-0mm-stone-core-vinyl-plank-aged-european-oak-1142112-AEO",
             "sku": "1142112-AEO",
-            "image_url": "/static/images/lvp-clarovista.jpg",
+            "image_url": "/static/images/1142112-AEO.jpg",
             "notes": "Dark brown European Oak LVP — 18.94 sqft/box × 26 = 492 sqft (430 + 15% waste). Waterproof click-lock throughout.",
         },
         {
@@ -510,7 +532,7 @@ DIVISION_7 = {
             "qty": 3, "unit": "PK", "unit_price": 50.89,
             "url": f"{KENT_BASE}/1-2-x-3-1-2-x-96-modern-mdf-baseboard-primed-valupak-1447728",
             "sku": "1447728",
-            "image_url": "/static/images/baseboard-alexandria.jpg",
+            "image_url": "/static/images/1447728.jpg",
             "notes": "Clean modern profile, pre-primed white. 10×8' per pack = 80 LF × 3 packs = 240 LF (covers 200 LF + waste).",
         },
         {
