@@ -335,10 +335,13 @@ def build_home_xml():
         room_elements.append(r)
 
     def add_piece(name, x, y, w, d, h, angle=0, elevation=0,
-                  color=0xCCCCCC, price=None, desc=None, model="Content/box.obj"):
+                  color=0xCCCCCC, price=None, desc=None,
+                  model="Content/box.obj", catalog_id=None):
         piece_counter[0] += 1
         f = ET.Element("pieceOfFurniture")
         f.set("id", f"piece-{piece_counter[0]}")
+        if catalog_id:
+            f.set("catalogId", catalog_id)
         f.set("name", name)
         f.set("model", model)
         f.set("x", str(cm(x)))
@@ -363,10 +366,13 @@ def build_home_xml():
         return f
 
     def add_opening(name, x, y, w, d, h, angle=0, elevation=0,
-                    color=0xCCCCCC, is_door=False, model="Content/box.obj"):
+                    color=0xCCCCCC, is_door=False,
+                    model="Content/box.obj", catalog_id=None):
         piece_counter[0] += 1
         f = ET.Element("doorOrWindow")
         f.set("id", f"piece-{piece_counter[0]}")
+        if catalog_id:
+            f.set("catalogId", catalog_id)
         f.set("name", name)
         f.set("model", model)
         f.set("x", str(cm(x)))
@@ -510,29 +516,29 @@ def build_home_xml():
     add_opening("Dusco Moderna 34×80 Steel Door",
                 DOOR_X, 0, DOOR_W, EXT_T, DOOR_H,
                 angle=math.pi, color=COL_DOOR, is_door=True,
-                model="Content/door.obj")
+                model="Content/door.obj", catalog_id="eTeks#frontDoor")
 
     # ── Exterior windows: Kent Atlantic 36×40 Casement (7 total) ──
     for wx in NORTH_WIN:
         add_opening("36×40 Casement",
                     wx, 0, WIN_W, EXT_T, WIN_H,
                     angle=math.pi, elevation=WIN_SILL, color=COL_WINDOW,
-                    model="Content/window.obj")
+                    model="Content/window.obj", catalog_id="eTeks#window85x123")
     for wy in WEST_WIN:
         add_opening("36×40 Casement",
                     0, wy, WIN_W, EXT_T, WIN_H,
                     angle=-math.pi / 2, elevation=WIN_SILL, color=COL_WINDOW,
-                    model="Content/window.obj")
+                    model="Content/window.obj", catalog_id="eTeks#window85x123")
     for wy in EAST_WIN:
         add_opening("36×40 Casement",
                     W, wy, WIN_W, EXT_T, WIN_H,
                     angle=math.pi / 2, elevation=WIN_SILL, color=COL_WINDOW,
-                    model="Content/window.obj")
+                    model="Content/window.obj", catalog_id="eTeks#window85x123")
     for wx in SOUTH_WIN:
         add_opening("36×40 Casement",
                     wx, D, WIN_W, EXT_T, WIN_H,
                     angle=0, elevation=WIN_SILL, color=COL_WINDOW,
-                    model="Content/window.obj")
+                    model="Content/window.obj", catalog_id="eTeks#window85x123")
 
     # ── Interior pocket doors (30×80) ──
     PD = POCKET_DOOR
@@ -541,31 +547,31 @@ def build_home_xml():
     add_opening("Pocket Door 30×80",
                 P1_X, 70, PD["w"], INT_T, PD["h"],
                 angle=math.pi / 2, color=COL_POCKET, is_door=True,
-                model="Content/door.obj")
+                model="Content/door.obj", catalog_id="eTeks#doorFrame")
 
     # Bedroom B → Kitchen (in P2_X partition, upper half)
     add_opening("Pocket Door 30×80",
                 P2_X, 70, PD["w"], INT_T, PD["h"],
                 angle=math.pi / 2, color=COL_POCKET, is_door=True,
-                model="Content/door.obj")
+                model="Content/door.obj", catalog_id="eTeks#doorFrame")
 
     # Bedroom A → Ensuite A (in DIV_Y partition, left portion)
     add_opening("Pocket Door 30×80",
                 44, DIV_Y, PD["w"], INT_T, PD["h"],
                 angle=0, color=COL_POCKET, is_door=True,
-                model="Content/door.obj")
+                model="Content/door.obj", catalog_id="eTeks#doorFrame")
 
     # Bedroom B → Ensuite B (in DIV_Y partition, right portion)
     add_opening("Pocket Door 30×80",
                 211, DIV_Y, PD["w"], INT_T, PD["h"],
                 angle=0, color=COL_POCKET, is_door=True,
-                model="Content/door.obj")
+                model="Content/door.obj", catalog_id="eTeks#doorFrame")
 
     # Kitchen → Utility (in DIV_Y partition, center)
     add_opening("Pocket Door 30×80",
                 W / 2, DIV_Y, PD["w"], INT_T, PD["h"],
                 angle=0, color=COL_POCKET, is_door=True,
-                model="Content/door.obj")
+                model="Content/door.obj", catalog_id="eTeks#doorFrame")
 
     # ═══════════════════════════════════════════
     #  BEDROOM A FIXTURES (top-left)
@@ -576,7 +582,8 @@ def build_home_xml():
     add_piece("Bed",
               bedA_x, bedA_y,
               BED["w"], BED["d"], BED["h"],
-              color=COL_BED, model="Content/bed.obj")
+              color=COL_BED, model="Content/bed.obj",
+              catalog_id="eTeks#bed")
 
     add_piece("Pillow",
               bedA_x, bedA_y - BED["d"] / 2 + 8,
@@ -586,7 +593,8 @@ def build_home_xml():
     add_piece("Nightstand",
               bedA_x + BED["w"] / 2 + NIGHTSTAND["w"] / 2 + 2, bedA_y - 15,
               NIGHTSTAND["w"], NIGHTSTAND["d"], NIGHTSTAND["h"],
-              color=COL_NSTAND, model="Content/table.obj")
+              color=COL_NSTAND, model="Content/table.obj",
+              catalog_id="eTeks#bedsideTable")
 
     add_piece("Baseboard",
               INNER_W + BASEBOARD["d"] / 2, (INNER_N + TOP_S) / 2,
@@ -602,7 +610,8 @@ def build_home_xml():
     add_piece("Bed",
               bedB_x, bedB_y,
               BED["w"], BED["d"], BED["h"],
-              color=COL_BED, model="Content/bed.obj")
+              color=COL_BED, model="Content/bed.obj",
+              catalog_id="eTeks#bed")
 
     add_piece("Pillow",
               bedB_x, bedB_y - BED["d"] / 2 + 8,
@@ -612,7 +621,8 @@ def build_home_xml():
     add_piece("Nightstand",
               bedB_x - BED["w"] / 2 - NIGHTSTAND["w"] / 2 - 2, bedB_y - 15,
               NIGHTSTAND["w"], NIGHTSTAND["d"], NIGHTSTAND["h"],
-              color=COL_NSTAND, model="Content/table.obj")
+              color=COL_NSTAND, model="Content/table.obj",
+              catalog_id="eTeks#bedsideTable")
 
     add_piece("Baseboard",
               INNER_E - BASEBOARD["d"] / 2, (INNER_N + TOP_S) / 2,
@@ -630,7 +640,8 @@ def build_home_xml():
               kit_cx, cab_y,
               cab_w, COUNTER["d"], COUNTER["h"],
               color=COL_CABINET, price=COUNTER["price"],
-              model="Content/counter.obj")
+              model="Content/counter.obj",
+              catalog_id="eTeks#kitchenCabinet")
 
     add_piece("White Laminate Counter",
               kit_cx, cab_y,
@@ -642,25 +653,29 @@ def build_home_xml():
               SINK["w"], SINK["d"], SINK["h"],
               elevation=COUNTER["h"] - SINK["h"],
               color=COL_SINK, price=SINK["price"],
-              desc=SINK["name"])
+              desc=SINK["name"],
+              catalog_id="eTeks#sink")
 
     add_piece("Range",
               kit_cx - 20, cab_y,
               RANGE["w"], RANGE["d"], RANGE["h"],
               color=COL_RANGE, price=RANGE["price"],
-              desc=RANGE["name"], model="Content/appliance.obj")
+              desc=RANGE["name"], model="Content/appliance.obj",
+              catalog_id="eTeks#cooker")
 
     add_piece("Hood",
               kit_cx - 20, cab_y,
               HOOD["w"], HOOD["d"], HOOD["h"],
               elevation=54, color=COL_HOOD, price=HOOD["price"],
-              desc=HOOD["name"])
+              desc=HOOD["name"],
+              catalog_id="eTeks#hood")
 
     add_piece("Fridge",
               P2_L - FRIDGE["d"] / 2, TOP_S - 40,
               FRIDGE["w"], FRIDGE["d"], FRIDGE["h"],
               angle=-math.pi / 2, color=COL_FRIDGE, price=FRIDGE["price"],
-              desc=FRIDGE["name"], model="Content/appliance.obj")
+              desc=FRIDGE["name"], model="Content/appliance.obj",
+              catalog_id="eTeks#fridge")
 
     # Dining area (north portion near entrance)
     table_y = INNER_N + 55
@@ -668,16 +683,19 @@ def build_home_xml():
     add_piece("Dining Table",
               kit_cx, table_y,
               DINING_TABLE["w"], DINING_TABLE["d"], DINING_TABLE["h"],
-              color=COL_TABLE, model="Content/table.obj")
+              color=COL_TABLE, model="Content/table.obj",
+              catalog_id="eTeks#table")
 
     add_piece("Chair",
               kit_cx - 14, table_y,
               DINING_CHAIR["w"], DINING_CHAIR["d"], DINING_CHAIR["h"],
-              color=COL_CHAIR)
+              color=COL_CHAIR,
+              catalog_id="eTeks#chair2")
     add_piece("Chair",
               kit_cx + 14, table_y,
               DINING_CHAIR["w"], DINING_CHAIR["d"], DINING_CHAIR["h"],
-              color=COL_CHAIR)
+              color=COL_CHAIR,
+              catalog_id="eTeks#chair2")
 
     # Mini-split head (high on north wall of kitchen)
     add_piece("Mini-Split Head",
@@ -695,19 +713,22 @@ def build_home_xml():
               ea_cx, INNER_S - SHOWER["d"] / 2,
               SHOWER["w"], SHOWER["d"], SHOWER["h"],
               color=COL_SHOWER, price=SHOWER["price"],
-              desc=SHOWER["name"], model="Content/shower.obj")
+              desc=SHOWER["name"], model="Content/shower.obj",
+              catalog_id="eTeks#shower")
 
     add_piece("Toilet",
               INNER_W + TOILET["w"] / 2 + 5, BOT_N + TOILET["d"] / 2 + 5,
               TOILET["w"], TOILET["d"], TOILET["h"],
               color=COL_TOILET, price=TOILET["price"],
-              desc=TOILET["name"], model="Content/toilet.obj")
+              desc=TOILET["name"], model="Content/toilet.obj",
+              catalog_id="eTeks#toiletUnit")
 
     add_piece("Vanity",
               INNER_W + 40 + VANITY["w"] / 2, BOT_N + VANITY["d"] / 2 + 5,
               VANITY["w"], VANITY["d"], VANITY["h"],
               color=COL_VANITY, price=VANITY["price"],
-              desc=VANITY["name"], model="Content/counter.obj")
+              desc=VANITY["name"], model="Content/counter.obj",
+              catalog_id="eTeks#washbasinWithCabinet")
 
     # ═══════════════════════════════════════════
     #  ENSUITE B FIXTURES (bottom-right)
@@ -718,19 +739,22 @@ def build_home_xml():
               eb_cx, INNER_S - SHOWER["d"] / 2,
               SHOWER["w"], SHOWER["d"], SHOWER["h"],
               color=COL_SHOWER, price=SHOWER["price"],
-              desc=SHOWER["name"], model="Content/shower.obj")
+              desc=SHOWER["name"], model="Content/shower.obj",
+              catalog_id="eTeks#shower")
 
     add_piece("Toilet",
               INNER_E - TOILET["w"] / 2 - 5, BOT_N + TOILET["d"] / 2 + 5,
               TOILET["w"], TOILET["d"], TOILET["h"],
               color=COL_TOILET, price=TOILET["price"],
-              desc=TOILET["name"], model="Content/toilet.obj")
+              desc=TOILET["name"], model="Content/toilet.obj",
+              catalog_id="eTeks#toiletUnit")
 
     add_piece("Vanity",
               INNER_E - 40 - VANITY["w"] / 2, BOT_N + VANITY["d"] / 2 + 5,
               VANITY["w"], VANITY["d"], VANITY["h"],
               color=COL_VANITY, price=VANITY["price"],
-              desc=VANITY["name"], model="Content/counter.obj")
+              desc=VANITY["name"], model="Content/counter.obj",
+              catalog_id="eTeks#washbasinWithCabinet")
 
     # ═══════════════════════════════════════════
     #  SHARED UTILITY ROOM FIXTURES (bottom-center)
@@ -741,7 +765,8 @@ def build_home_xml():
               util_cx, INNER_S - WASHER["d"] / 2 - 2,
               WASHER["w"], WASHER["d"], WASHER["h"],
               color=COL_WASHER, price=WASHER["price"],
-              desc=WASHER["name"], model="Content/appliance.obj")
+              desc=WASHER["name"], model="Content/appliance.obj",
+              catalog_id="eTeks#clothesWasher")
 
     add_piece("Water Heater",
               P1_R + 12, INNER_S - WATER_HEATER["d"] / 2 - 2,
