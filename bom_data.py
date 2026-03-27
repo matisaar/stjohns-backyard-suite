@@ -313,7 +313,7 @@ DIVISION_4 = {
             "estimate": True,
             "url": "https://www.homedepot.ca/product/dusco-34-in-x-80-in-x-7-1-4-in-moderna-black-full-lite-steel-prehung-front-door/1001728121",
             "notes": "Moderna full-lite frosted glass, matte black steel frame. Contemporary entrance statement. Home Depot SKU 1001728121 — verify local availability.",
-            "image_url": "/static/images/moderna-door.jpg",
+            "image_url": "/static/images/moderna-door.svg",
         },
         {
             "name": "Window & Door Flashing Tape",

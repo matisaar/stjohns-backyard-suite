@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" width="400" height="600">
+  <defs>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8eef5" stop-opacity="0.9"/>
+      <stop offset="50%" stop-color="#d4dde8" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#c8d4e0" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="frame" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2a2a2a"/>
+      <stop offset="50%" stop-color="#1a1a1a"/>
+      <stop offset="100%" stop-color="#222"/>
+    </linearGradient>
+    <filter id="frost">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" result="noise"/>
+      <feDiffuseLighting in="noise" lighting-color="#fff" surfaceScale="1" result="light">
+        <feDistantLight azimuth="45" elevation="55"/>
+      </feDiffuseLighting>
+      <feComposite in="SourceGraphic" in2="light" operator="arithmetic" k1="0.6" k2="0.4" k3="0" k4="0"/>
+    </filter>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f5f5f5"/>
+      <stop offset="100%" stop-color="#e8e8e8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="600" fill="url(#bg)"/>
+
+  <!-- Door frame outer -->
+  <rect x="80" y="30" width="240" height="540" rx="3" fill="url(#frame)"/>
+
+  <!-- Door panel -->
+  <rect x="90" y="40" width="220" height="520" rx="2" fill="#1a1a1a"/>
+
+  <!-- Frosted glass panel 1 -->
+  <rect x="108" y="58" width="184" height="105" rx="2" fill="url(#glass)" filter="url(#frost)"/>
+  <rect x="108" y="58" width="184" height="105" rx="2" fill="none" stroke="#333" stroke-width="0.5"/>
+
+  <!-- Divider bar 1 -->
+  <rect x="98" y="168" width="204" height="10" rx="1" fill="#1a1a1a"/>
+
+  <!-- Frosted glass panel 2 -->
+  <rect x="108" y="183" width="184" height="105" rx="2" fill="url(#glass)" filter="url(#frost)"/>
+  <rect x="108" y="183" width="184" height="105" rx="2" fill="none" stroke="#333" stroke-width="0.5"/>
+
+  <!-- Divider bar 2 -->
+  <rect x="98" y="293" width="204" height="10" rx="1" fill="#1a1a1a"/>
+
+  <!-- Frosted glass panel 3 -->
+  <rect x="108" y="308" width="184" height="105" rx="2" fill="url(#glass)" filter="url(#frost)"/>
+  <rect x="108" y="308" width="184" height="105" rx="2" fill="none" stroke="#333" stroke-width="0.5"/>
+
+  <!-- Divider bar 3 -->
+  <rect x="98" y="418" width="204" height="10" rx="1" fill="#1a1a1a"/>
+
+  <!-- Frosted glass panel 4 (bottom) -->
+  <rect x="108" y="433" width="184" height="105" rx="2" fill="url(#glass)" filter="url(#frost)"/>
+  <rect x="108" y="433" width="184" height="105" rx="2" fill="none" stroke="#333" stroke-width="0.5"/>
+
+  <!-- Door handle -->
+  <circle cx="280" cy="310" r="7" fill="#333" stroke="#444" stroke-width="1"/>
+  <rect x="275" y="285" width="10" height="50" rx="5" fill="#333" stroke="#444" stroke-width="0.5"/>
+
+  <!-- Subtle light reflection on glass -->
+  <rect x="120" y="62" width="60" height="2" rx="1" fill="white" opacity="0.3"/>
+  <rect x="120" y="187" width="50" height="2" rx="1" fill="white" opacity="0.25"/>
+  <rect x="120" y="312" width="55" height="2" rx="1" fill="white" opacity="0.25"/>
+  <rect x="120" y="437" width="45" height="2" rx="1" fill="white" opacity="0.2"/>
+</svg>
