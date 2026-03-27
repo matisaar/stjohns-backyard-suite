@@ -185,6 +185,12 @@ COL_POCKET = rgb_int(245, 245, 245)   # White interior door
 # ═══════════════════════════════════════════════════════
 #  XML GENERATION
 # ═══════════════════════════════════════════════════════
+# SH3D Home.xml element order (from source HomeXMLExporter.java):
+#   <home> attributes: version, name, camera, wallHeight, basePlanLocked, ...
+#   children (in order): furnitureVisibleProperty, environment, compass,
+#     camera(observerCamera), camera(topCamera),
+#     pieceOfFurniture/doorOrWindow, wall, room,
+#     dimensionLine, label
 
 def build_home_xml():
     """Build the complete Home.xml for Sweet Home 3D."""
@@ -192,6 +198,7 @@ def build_home_xml():
     root = ET.Element("home")
     root.set("version", "5300")
     root.set("name", "St. John's 430sqft Backyard Suite")
+    root.set("camera", "topCamera")
     root.set("wallHeight", str(cm(CEIL_H)))
     root.set("basePlanLocked", "false")
     root.set("furnitureSortedProperty", "NAME")
@@ -202,8 +209,71 @@ def build_home_xml():
         p = ET.SubElement(root, "furnitureVisibleProperty")
         p.set("name", prop)
 
-    # ── State tracking ──
+    # ── Environment (required by SH3D parser) ──
+    env = ET.SubElement(root, "environment")
+    env.set("groundColor", str(rgb_int(136, 166, 107)))   # grass green
+    env.set("skyColor", str(rgb_int(204, 228, 252)))       # light blue
+    env.set("lightColor", str(rgb_int(236, 236, 236)))     # soft white
+    env.set("wallsAlpha", "0")
+    env.set("drawingMode", "FILL")
+    env.set("photoWidth", "800")
+    env.set("photoHeight", "600")
+    env.set("photoAspectRatio", "VIEW_3D_RATIO")
+    env.set("photoQuality", "1")
+    env.set("videoWidth", "640")
+    env.set("videoAspectRatio", "RATIO_4_3")
+    env.set("videoQuality", "1")
+    env.set("videoFrameRate", "25")
+
+    # ── Compass (required by SH3D parser) ──
+    compass = ET.SubElement(root, "compass")
+    compass.set("x", str(cm(W/2)))
+    compass.set("y", str(cm(D/2)))
+    compass.set("diameter", "100")
+    compass.set("northDirection", "0")
+    compass.set("longitude", str(-0.8876))   # ~St. John's NL
+    compass.set("latitude", str(0.8284))     # ~47.5° N in radians
+    compass.set("timeZone", "America/St_Johns")
+    compass.set("visible", "true")
+
+    # ── Cameras (must come before furniture/walls/rooms) ──
+    # Observer camera (eye-level perspective from front)
+    obs_cam = ET.SubElement(root, "camera")
+    obs_cam.set("attribute", "observerCamera")
+    obs_cam.set("lens", "PINHOLE")
+    obs_cam.set("x", str(cm(W/2)))
+    obs_cam.set("y", str(cm(D + 120)))     # standing south of building
+    obs_cam.set("z", str(cm(66)))           # eye height 5'-6"
+    obs_cam.set("yaw", str(round(math.pi, 5)))   # looking north
+    obs_cam.set("pitch", str(round(0.15, 5)))
+    obs_cam.set("fieldOfView", str(round(math.radians(63), 4)))
+    obs_cam.set("time", "0")
+
+    # Top-down camera
+    top_cam = ET.SubElement(root, "camera")
+    top_cam.set("attribute", "topCamera")
+    top_cam.set("lens", "PINHOLE")
+    top_cam.set("x", str(cm(W/2)))
+    top_cam.set("y", str(cm(D/2)))
+    top_cam.set("z", str(cm(500)))          # high above
+    top_cam.set("yaw", str(round(math.pi, 5)))
+    top_cam.set("pitch", str(round(math.pi/2, 5)))
+    top_cam.set("fieldOfView", str(round(math.radians(63), 4)))
+    top_cam.set("time", "0")
+
+    # ── State tracking for deferred elements ──
+    # We collect furniture, walls, rooms, etc. then append in correct order
+    wall_elements = []
+    room_elements = []
+    furniture_elements = []
+    dimension_elements = []
+    label_elements = []
+
     wall_counter = [0]
+    piece_counter = [0]
+    room_counter = [0]
+    dim_counter = [0]
+    label_counter = [0]
     walls_by_id = {}
 
     # ── WALL HELPER ──
@@ -212,7 +282,7 @@ def build_home_xml():
         wall_counter[0] += 1
         wid = f"wall-{wall_counter[0]}"
 
-        w = ET.SubElement(root, "wall")
+        w = ET.Element("wall")
         w.set("id", wid)
         w.set("xStart", str(cm(x1)))
         w.set("yStart", str(cm(y1)))
@@ -226,21 +296,24 @@ def build_home_xml():
         if right_color is not None:
             w.set("rightSideColor", str(right_color))
 
+        wall_elements.append(w)
         walls_by_id[wid] = w
         return wid
 
     # ── ROOM HELPER ──
     def add_room(name, points, floor_color=COL_LVP, ceil_color=COL_CEILING):
-        room = ET.SubElement(root, "room")
+        room_counter[0] += 1
+        room = ET.Element("room")
+        room.set("id", f"room-{room_counter[0]}")
         room.set("name", name)
         room.set("nameVisible", "true")
         room.set("nameAngle", "0")
         room.set("nameXOffset", "0")
-        room.set("nameYOffset", "-10")
+        room.set("nameYOffset", "-40")
         room.set("areaVisible", "true")
         room.set("areaAngle", "0")
         room.set("areaXOffset", "0")
-        room.set("areaYOffset", "10")
+        room.set("areaYOffset", "0")
         room.set("floorVisible", "true")
         room.set("floorColor", str(floor_color))
         room.set("ceilingVisible", "true")
@@ -249,21 +322,16 @@ def build_home_xml():
             pt = ET.SubElement(room, "point")
             pt.set("x", str(cm(x)))
             pt.set("y", str(cm(y)))
+        room_elements.append(room)
 
     # ── FURNITURE HELPER ──
-    # Note: without a 'model' attribute, items appear in plan view as
-    # labeled colored rectangles and in the furniture list. In 3D view
-    # they'll be invisible — drag a model from SH3D's library or
-    # 3dwarehouse.sketchup.com to replace them.
     def add_piece(name, x, y, w, d, h, angle=0, elevation=0,
                   color=0xCCCCCC, price=None, model_ref=None):
         """Place a furniture piece. x,y = center position in inches."""
-        f = ET.SubElement(root, "pieceOfFurniture")
+        piece_counter[0] += 1
+        f = ET.Element("pieceOfFurniture")
+        f.set("id", f"piece-{piece_counter[0]}")
         f.set("name", name)
-        f.set("nameVisible", "true")
-        f.set("nameAngle", "0")
-        f.set("nameXOffset", "0")
-        f.set("nameYOffset", "0")
         f.set("x", str(cm(x)))
         f.set("y", str(cm(y)))
         f.set("elevation", str(cm(elevation)))
@@ -274,20 +342,25 @@ def build_home_xml():
         f.set("color", str(color))
         f.set("movable", "true")
         f.set("visible", "true")
+        f.set("nameVisible", "true")
+        f.set("nameAngle", "0")
+        f.set("nameXOffset", "0")
+        f.set("nameYOffset", "0")
         if price is not None:
             f.set("price", str(round(price, 2)))
         if model_ref:
             f.set("model", model_ref)
+        furniture_elements.append(f)
         return f
 
     # ── DOOR/WINDOW HELPER ──
     def add_opening(name, x, y, w, d, h, angle=0, elevation=0,
                     color=0xCCCCCC, is_door=False):
         """Place a door or window that cuts through a wall."""
-        tag = "doorOrWindow"
-        f = ET.SubElement(root, tag)
+        piece_counter[0] += 1
+        f = ET.Element("doorOrWindow")
+        f.set("id", f"piece-{piece_counter[0]}")
         f.set("name", name)
-        f.set("nameVisible", "false")
         f.set("x", str(cm(x)))
         f.set("y", str(cm(y)))
         f.set("elevation", str(cm(elevation)))
@@ -298,31 +371,42 @@ def build_home_xml():
         f.set("color", str(color))
         f.set("movable", "false")
         f.set("visible", "true")
-        f.set("doorOrWindow", "true")
         f.set("wallThickness", "1.0")
         f.set("wallDistance", "0.0")
         f.set("cutOutShape", "M0,0 L1,0 L1,1 L0,1 Z")
+        f.set("boundToWall", "true")
         if not is_door:
             f.set("wallCutOutOnBothSides", "false")
+        furniture_elements.append(f)
         return f
 
     # ── DIMENSION LINE HELPER ──
     def add_dimension(x1, y1, x2, y2, offset=20):
-        dim = ET.SubElement(root, "dimensionLine")
+        dim_counter[0] += 1
+        dim = ET.Element("dimensionLine")
+        dim.set("id", f"dim-{dim_counter[0]}")
         dim.set("xStart", str(cm(x1)))
         dim.set("yStart", str(cm(y1)))
         dim.set("xEnd", str(cm(x2)))
         dim.set("yEnd", str(cm(y2)))
         dim.set("offset", str(cm(offset)))
+        dimension_elements.append(dim)
 
     # ── LABEL HELPER ──
     def add_label(text, x, y, angle=0, size=14):
-        lbl = ET.SubElement(root, "label")
+        label_counter[0] += 1
+        lbl = ET.Element("label")
+        lbl.set("id", f"label-{label_counter[0]}")
         lbl.set("x", str(cm(x)))
         lbl.set("y", str(cm(y)))
         lbl.set("angle", str(round(angle, 5)))
-        lbl.set("text", text)
-        lbl.set("style", f"font-size:{size}")
+        # SH3D stores label text in a <text> child element
+        txt_el = ET.SubElement(lbl, "text")
+        txt_el.text = text
+        # Font style as <textStyle> child
+        style = ET.SubElement(lbl, "textStyle")
+        style.set("fontSize", str(size))
+        label_elements.append(lbl)
 
     # ══════════════════════════════════════════════
     #  EXTERIOR WALLS
@@ -644,31 +728,19 @@ def build_home_xml():
     add_label("Mono-slope roof: 9'-6\" (left) → 7'-0\" (right)", W/2, D + 65, size=12)
 
     # ══════════════════════════════════════════════
-    #  CAMERAS
+    #  ASSEMBLE XML IN CORRECT ORDER
     # ══════════════════════════════════════════════
-    # Top-down camera
-    top_cam = ET.SubElement(root, "observerCamera")
-    top_cam.set("attribute", "topCamera")
-    top_cam.set("x", str(cm(W/2)))
-    top_cam.set("y", str(cm(D/2)))
-    top_cam.set("z", str(cm(200)))  # high above
-    top_cam.set("yaw", str(round(math.pi, 5)))
-    top_cam.set("pitch", str(round(math.pi/2, 5)))
-    top_cam.set("fieldOfView", "1.09")
-    top_cam.set("time", "0")
-    top_cam.set("lens", "PINHOLE")
-
-    # Observer camera (eye-level perspective from front)
-    obs_cam = ET.SubElement(root, "observerCamera")
-    obs_cam.set("attribute", "observerCamera")
-    obs_cam.set("x", str(cm(W/2)))
-    obs_cam.set("y", str(cm(D + 120)))  # standing south of building
-    obs_cam.set("z", str(cm(66)))        # eye height 5'-6"
-    obs_cam.set("yaw", str(round(math.pi, 5)))  # looking north
-    obs_cam.set("pitch", str(round(0.15, 5)))
-    obs_cam.set("fieldOfView", "1.09")
-    obs_cam.set("time", "0")
-    obs_cam.set("lens", "PINHOLE")
+    # SH3D requires: furniture → walls → rooms → dimensions → labels
+    for el in furniture_elements:
+        root.append(el)
+    for el in wall_elements:
+        root.append(el)
+    for el in room_elements:
+        root.append(el)
+    for el in dimension_elements:
+        root.append(el)
+    for el in label_elements:
+        root.append(el)
 
     return root
 
