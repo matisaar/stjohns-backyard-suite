@@ -263,22 +263,30 @@ class TestWalls:
 #  MODEL TESTS
 # ═══════════════════════════════════════════════════════
 class TestModels:
-    def test_all_referenced_models_in_zip(self, root, zip_names):
+    def test_catalog_items_have_catalog_id(self, root):
+        """Items using catalog resource paths must have a catalogId."""
+        bad = []
+        for tag in ("pieceOfFurniture", "doorOrWindow"):
+            for p in root.findall(tag):
+                model = p.get("model", "")
+                cat_id = p.get("catalogId", "")
+                if model.startswith("/com/eteks/") and not cat_id:
+                    bad.append(f"{p.get('name')}: catalog path but no catalogId")
+        assert bad == [], f"Missing catalogId: {bad}"
+
+    def test_fallback_models_in_zip(self, root, zip_names):
+        """Items using Content/ paths must have their model in the ZIP."""
         missing = []
         for tag in ("pieceOfFurniture", "doorOrWindow"):
             for p in root.findall(tag):
                 model = p.get("model", "")
-                if model and model not in zip_names:
+                if model.startswith("Content/") and model not in zip_names:
                     missing.append(f"{p.get('name')}: {model}")
-        assert missing == [], f"Missing models: {missing}"
+        assert missing == [], f"Missing fallback models: {missing}"
 
-    def test_models_are_nonzero(self, sh3d_zip, root):
-        for tag in ("pieceOfFurniture", "doorOrWindow"):
-            for p in root.findall(tag):
-                model = p.get("model", "")
-                if model:
-                    data = sh3d_zip.read(model)
-                    assert len(data) > 10, f"{p.get('name')}: model {model} is empty/tiny"
+    def test_fallback_box_in_zip(self, zip_names):
+        """The fallback box.obj must be present for non-catalog items."""
+        assert "Content/box.obj" in zip_names
 
 
 # ═══════════════════════════════════════════════════════
