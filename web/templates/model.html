@@ -204,6 +204,10 @@
       <button class="view-btn" data-view="side">Side</button>
       <button class="view-btn" data-view="top">Top</button>
     </div>
+
+    <div class="dims-label" style="position:absolute;bottom:60px;left:20px;font-size:10px;color:var(--dim);letter-spacing:0.05em;">
+      21′-6″ × 20′-0″ &middot; 430 sq ft &middot; Mono-slope roof
+    </div>
   </div>
 
   <div class="sidebar">
@@ -230,18 +234,16 @@
 <script type="module">
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-// ═══════════════════════════════════════════════════════════════
-//  BUILDING DATA — real dimensions in feet, converted to meters
-// ═══════════════════════════════════════════════════════════════
-const FT = 0.3048;
-const IN = 0.0254;
-const BLD = { w: 21.5*FT, d: 20*FT, wallH: 2.44, roofHigh: 2.9, roofLow: 2.13, slabThick: 4*IN, foundDepth: 0.3 };
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
+// ── Component data for sidebar ──
 const COMPONENTS = {
   foundation: {
-    name: 'Foundation & Slab', color: 0x707070, emissive: 0x111111,
+    name: 'Foundation & Slab', color: '#757575',
+    ifcTypes: ['IfcSlab'],
     layers: [
-      { name:'LVP Flooring', thick:'5.3mm', color:'#3d2a16', qty:'22 BX', price:'$88.19/bx', total:'$1,940', notes:'Volcano Pewter SPC vinyl plank — waterproof click-lock over slab.' },
+      { name:'LVP Flooring', thick:'5.3 mm', color:'#3d2a16', qty:'22 BX', price:'$88.19/bx', total:'$1,940', notes:'Volcano Pewter SPC vinyl plank — waterproof click-lock over slab.' },
       { name:'Concrete Slab', thick:'4 in', color:'#757575', qty:'5.5 cu m', price:'$250/m³', total:'$1,375', notes:'25 MPa ready-mix with thickened perimeter edges.' },
       { name:'Wire Mesh', thick:'—', color:'#888', qty:'430 sqft', price:'$0.75/sqft', total:'$323', notes:'6×6 W2.9 welded wire mesh mid-slab for crack control.' },
       { name:'Vapour Barrier', thick:'10 mil', color:'#444', qty:'1 RL', price:'$112.50', total:'$113', notes:'Poly moisture barrier — seams lapped 12″ and taped.' },
@@ -250,7 +252,8 @@ const COMPONENTS = {
     ]
   },
   walls: {
-    name: 'Exterior Walls', color: 0x8aaa8a, emissive: 0x111511,
+    name: 'Exterior Walls', color: '#8a9a8a',
+    ifcTypes: ['IfcWall'],
     layers: [
       { name:'Vinyl Siding', thick:'—', color:'#8a9a8a', qty:'50 EA', price:'$11.19/ea', total:'$560', notes:'Mitten Oregon Pride Dutchlap.' },
       { name:'XPS Continuous', thick:'1.5 in', color:'#2d7dce', qty:'30 SH', price:'$113/sh', total:'$3,390', notes:'R-7.5 rigid foam continuous thermal envelope.' },
@@ -262,7 +265,8 @@ const COMPONENTS = {
     ]
   },
   roof: {
-    name: 'Roof Assembly', color: 0x3a3a4a, emissive: 0x0a0a15,
+    name: 'Roof Assembly', color: '#333',
+    ifcTypes: ['IfcRoof', 'IfcMember'],
     layers: [
       { name:'IKO Cambridge Shingles', thick:'—', color:'#333', qty:'15 BD', price:'$41/bd', total:'$615', notes:'Dual Black architectural laminate.' },
       { name:'Felt + Ice Shield', thick:'—', color:'#555', qty:'2 RL', price:'$65/rl', total:'$130', notes:'Organic felt + IKO StormShield at eaves.' },
@@ -272,29 +276,33 @@ const COMPONENTS = {
     ]
   },
   windows: {
-    name: 'Windows', color: 0x7abed4, emissive: 0x152535,
+    name: 'Windows', color: '#7abed4',
+    ifcTypes: ['IfcWindow'],
     layers: [
       { name:'Triple-Pane Casement', thick:'—', color:'#7abed4', qty:'6 EA', price:'$479/ea', total:'$2,874', notes:'30×48″ vinyl casement — argon triple-glazed, U-0.25.' },
       { name:'Flashing Tape', thick:'—', color:'#888', qty:'2 RL', price:'$47/rl', total:'$95', notes:'Self-adhering window flashing.' },
     ]
   },
   door: {
-    name: 'Entry Door', color: 0x1a1a2a, emissive: 0x050510,
+    name: 'Entry Door', color: '#1a1a2a',
+    ifcTypes: ['IfcDoor'],
     layers: [
       { name:'Dusco Moderna Full Lite', thick:'—', color:'#222', qty:'1 EA', price:'$850', total:'$850', notes:'34×80″ black steel frame, 3 frosted glass panels.' },
     ]
   },
   plumbing: {
-    name: 'Plumbing', color: 0x4488aa, emissive: 0x102030,
+    name: 'Plumbing', color: '#4488aa',
+    ifcTypes: ['IfcPipeSegment', 'IfcFlowStorageDevice'],
     layers: [
-      { name:'Water Heater (40 gal)', thick:'—', color:'#446a88', qty:'1 EA', price:'$595', total:'$595', notes:'Electric tank — kitchen + 2 baths.' },
+      { name:'Water Heater (40 gal)', thick:'—', color:'#446a88', qty:'1 EA', price:'$595', total:'$595', notes:'Electric tank — kitchen + bath.' },
       { name:'PEX Supply (½″)', thick:'—', color:'#e44', qty:'2 RL', price:'$45/rl', total:'$90', notes:'Red/blue PEX home-run to manifold.' },
       { name:'ABS/PVC DWV', thick:'—', color:'#333', qty:'1 LOT', price:'$350', total:'$350', notes:'Drain/waste/vent rough-in.' },
       { name:'Fixtures', thick:'—', color:'#bbb', qty:'LOT', price:'various', total:'$3,217', notes:'Toilet, vanity, shower, kitchen sink, faucets.' },
     ]
   },
   electrical: {
-    name: 'Electrical', color: 0xbbaa44, emissive: 0x252210,
+    name: 'Electrical', color: '#bbaa44',
+    ifcTypes: ['IfcDistributionControlElement'],
     layers: [
       { name:'100A Sub-Panel', thick:'—', color:'#988a44', qty:'1 EA', price:'$156', total:'$156', notes:'20-space, fed from main house.' },
       { name:'14/2 + 12/2 NMD90', thick:'—', color:'#ffa500', qty:'2 RL', price:'various', total:'$405', notes:'150m general + 75m kitchen/bath circuits.' },
@@ -302,7 +310,8 @@ const COMPONENTS = {
     ]
   },
   hvac: {
-    name: 'HVAC / Mechanical', color: 0x885555, emissive: 0x201010,
+    name: 'HVAC / Mechanical', color: '#885555',
+    ifcTypes: ['IfcUnitaryEquipment'],
     layers: [
       { name:'Mini-Split Heat Pump', thick:'—', color:'#7a5a5a', qty:'1 EA', price:'$1,553', total:'$1,553', notes:'18kBTU ductless — heating + cooling.' },
       { name:'HRV Ventilator', thick:'—', color:'#8a6a6a', qty:'1 EA', price:'$1,279', total:'$1,279', notes:'Heat-recovery fresh air exchange.' },
@@ -311,388 +320,182 @@ const COMPONENTS = {
   }
 };
 
-// ═══════════════════════════════════════════════════════════════
-//  THREE.JS SCENE SETUP
-// ═══════════════════════════════════════════════════════════════
+// Map IFC types to component keys
+const IFC_TYPE_MAP = {};
+Object.entries(COMPONENTS).forEach(([key, comp]) => {
+  comp.ifcTypes.forEach(t => { IFC_TYPE_MAP[t] = key; });
+});
+
+// Also match pipe names to plumbing vs electrical
+function classifyMesh(node) {
+  const ifcType = node.userData?.ifc_type || '';
+  const name = (node.name || '').toLowerCase();
+
+  // Conduit pipes → electrical
+  if (ifcType === 'IfcPipeSegment' && name.includes('conduit')) return 'electrical';
+  // HRV/refrigerant ducts → hvac
+  if (ifcType === 'IfcPipeSegment' && (name.includes('hrv') || name.includes('refrigerant'))) return 'hvac';
+
+  return IFC_TYPE_MAP[ifcType] || null;
+}
+
+// ═══════════════════════════════════════════════
+//  THREE.JS SCENE
+// ═══════════════════════════════════════════════
 const container = document.getElementById('three-container');
-const scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2(0x0a0a0a, 0.08);
-
-const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 100);
-camera.position.set(14, 8, 14);
-
-const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(container.clientWidth, container.clientHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.1;
+renderer.toneMappingExposure = 1.2;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 container.appendChild(renderer.domElement);
 
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0d0d12);
+scene.fog = new THREE.FogExp2(0x0d0d12, 0.025);
+
+// Environment map for PBR reflections
+const pmremGen = new THREE.PMREMGenerator(renderer);
+scene.environment = pmremGen.fromScene(new RoomEnvironment(renderer), 0.04).texture;
+
+const camera = new THREE.PerspectiveCamera(35, container.clientWidth / container.clientHeight, 0.1, 200);
+camera.position.set(14, 8, 14);
+
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.target.set(BLD.w/2, 1.2, BLD.d/2);
+controls.target.set(3.2, 1.0, 3.0);
 controls.enableDamping = true;
-controls.dampingFactor = 0.05;
-controls.minDistance = 4;
-controls.maxDistance = 30;
+controls.dampingFactor = 0.06;
+controls.minDistance = 3;
+controls.maxDistance = 40;
 controls.maxPolarAngle = Math.PI * 0.48;
 controls.update();
 
-// ── Lighting ──
-const ambient = new THREE.AmbientLight(0x404050, 0.6);
-scene.add(ambient);
+// Lighting
+scene.add(new THREE.AmbientLight(0x404050, 0.5));
+scene.add(new THREE.HemisphereLight(0x8899bb, 0x333322, 0.5));
 
-const hemi = new THREE.HemisphereLight(0x8899bb, 0x333322, 0.5);
-scene.add(hemi);
-
-const sun = new THREE.DirectionalLight(0xffeedd, 1.8);
-sun.position.set(10, 15, 8);
+const sun = new THREE.DirectionalLight(0xffeedd, 2.5);
+sun.position.set(12, 18, 10);
 sun.castShadow = true;
-sun.shadow.mapSize.set(2048, 2048);
-sun.shadow.camera.left = -12;
-sun.shadow.camera.right = 12;
-sun.shadow.camera.top = 12;
-sun.shadow.camera.bottom = -12;
-sun.shadow.camera.near = 0.5;
-sun.shadow.camera.far = 40;
-sun.shadow.bias = -0.001;
+sun.shadow.mapSize.set(4096, 4096);
+sun.shadow.camera.left = -15; sun.shadow.camera.right = 15;
+sun.shadow.camera.top = 15;   sun.shadow.camera.bottom = -15;
+sun.shadow.camera.near = 1;   sun.shadow.camera.far = 50;
+sun.shadow.bias = -0.0003;
+sun.shadow.normalBias = 0.02;
 scene.add(sun);
+scene.add(new THREE.DirectionalLight(0x6688cc, 0.3).translateX(-8).translateY(4).translateZ(-6));
 
-const fill = new THREE.DirectionalLight(0x6688cc, 0.4);
-fill.position.set(-8, 4, -6);
-scene.add(fill);
-
-// ── Ground plane ──
-const groundGeo = new THREE.PlaneGeometry(40, 40);
-const groundMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.95 });
-const ground = new THREE.Mesh(groundGeo, groundMat);
+// Ground
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(80, 80),
+  new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.95, envMapIntensity: 0.1 })
+);
 ground.rotation.x = -Math.PI / 2;
-ground.position.set(BLD.w/2, -0.01, BLD.d/2);
+ground.position.set(3, -0.01, 3);
 ground.receiveShadow = true;
 scene.add(ground);
 
-// ── Grid helper ──
-const grid = new THREE.GridHelper(40, 40, 0x222222, 0x181818);
-grid.position.set(BLD.w/2, 0, BLD.d/2);
+const grid = new THREE.GridHelper(80, 80, 0x1a1a22, 0x141418);
+grid.position.set(3, 0, 3);
 scene.add(grid);
 
-// ═══════════════════════════════════════════════════════════════
-//  MATERIALS
-// ═══════════════════════════════════════════════════════════════
-function makeMat(color, opts = {}) {
-  return new THREE.MeshStandardMaterial({
-    color,
-    roughness: opts.roughness ?? 0.7,
-    metalness: opts.metalness ?? 0.05,
-    transparent: opts.transparent ?? false,
-    opacity: opts.opacity ?? 1,
-    side: opts.side ?? THREE.FrontSide,
-  });
-}
-
-const MATS = {
-  concrete:  makeMat(0x888888, { roughness: 0.9 }),
-  gravel:    makeMat(0x666655, { roughness: 1.0 }),
-  xps:       makeMat(0x3388dd, { roughness: 0.6 }),
-  siding:    makeMat(0x9aaa9a, { roughness: 0.5 }),
-  sheathing: makeMat(0xc4a67a, { roughness: 0.8 }),
-  framing:   makeMat(0xd4a862, { roughness: 0.75 }),
-  drywall:   makeMat(0xeeeeee, { roughness: 0.95 }),
-  roof:      makeMat(0x2a2a3a, { roughness: 0.85 }),
-  roofDeck:  makeMat(0xaa8855, { roughness: 0.8 }),
-  glass:     makeMat(0x88ccee, { transparent: true, opacity: 0.35, roughness: 0.05, metalness: 0.1 }),
-  doorFrame: makeMat(0x111118, { roughness: 0.3, metalness: 0.6 }),
-  doorGlass: makeMat(0xaabbcc, { transparent: true, opacity: 0.25, roughness: 0.05 }),
-  pipe_hot:  makeMat(0xcc3333, { roughness: 0.4, metalness: 0.3 }),
-  pipe_cold: makeMat(0x3355cc, { roughness: 0.4, metalness: 0.3 }),
-  pipe_drain:makeMat(0x333333, { roughness: 0.5 }),
-  conduit:   makeMat(0xddaa33, { roughness: 0.35, metalness: 0.3 }),
-  hvac_unit: makeMat(0x777766, { roughness: 0.4, metalness: 0.5 }),
-  hvac_duct: makeMat(0x888877, { roughness: 0.5, metalness: 0.4 }),
-  panel:     makeMat(0x666666, { roughness: 0.3, metalness: 0.6 }),
-};
-
-// ═══════════════════════════════════════════════════════════════
-//  COMPONENT GROUPS — meshes tagged for raycasting
-// ═══════════════════════════════════════════════════════════════
-const groups = {};
+// ═══════════════════════════════════════════════
+//  LOAD GLB MODEL
+// ═══════════════════════════════════════════════
 const allMeshes = [];
-const sectionMeshes = [];  // right-half meshes to hide in section cut
+const compMeshes = {};  // key → [meshes]
+let selectedComp = null, hoveredComp = null;
+const savedMats = new Map();
 
-function tagMesh(mesh, compKey) {
-  mesh.userData.component = compKey;
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
-  allMeshes.push(mesh);
-  return mesh;
-}
+const loader = new GLTFLoader();
+loader.load('/static/model.glb', (gltf) => {
+  const model = gltf.scene;
 
-function addBox(group, mat, w, h, d, x, y, z, compKey) {
-  const geo = new THREE.BoxGeometry(w, h, d);
-  const mesh = new THREE.Mesh(geo, mat);
-  mesh.position.set(x, y, z);
-  tagMesh(mesh, compKey);
-  group.add(mesh);
-  return mesh;
-}
+  // Process each mesh — classify by IFC type, enable shadows, improve materials
+  model.traverse((node) => {
+    if (!node.isMesh) return;
 
-function addCylinder(group, mat, rTop, rBot, h, x, y, z, compKey, rotX, rotZ) {
-  const geo = new THREE.CylinderGeometry(rTop, rBot, h, 12);
-  const mesh = new THREE.Mesh(geo, mat);
-  mesh.position.set(x, y, z);
-  if (rotX) mesh.rotation.x = rotX;
-  if (rotZ) mesh.rotation.z = rotZ;
-  tagMesh(mesh, compKey);
-  group.add(mesh);
-  return mesh;
-}
+    // Get IFC type from extras
+    const ifcType = node.userData?.ifc_type;
+    node.castShadow = true;
+    node.receiveShadow = true;
 
-// ── Foundation ──
-groups.foundation = new THREE.Group();
-scene.add(groups.foundation);
-// Gravel
-addBox(groups.foundation, MATS.gravel, BLD.w+0.1, 0.1, BLD.d+0.1, BLD.w/2, -0.05, BLD.d/2, 'foundation');
-// XPS under slab
-addBox(groups.foundation, MATS.xps, BLD.w, 0.05, BLD.d, BLD.w/2, 0.025, BLD.d/2, 'foundation');
-// Concrete slab
-addBox(groups.foundation, MATS.concrete, BLD.w, BLD.slabThick, BLD.d, BLD.w/2, BLD.slabThick/2 + 0.05, BLD.d/2, 'foundation');
-// Perimeter XPS (4 sides)
-const slabTop = BLD.slabThick + 0.05;
-const perimH = 0.6;
-addBox(groups.foundation, MATS.xps, 0.05, perimH, BLD.d, -0.025, perimH/2, BLD.d/2, 'foundation');
-addBox(groups.foundation, MATS.xps, 0.05, perimH, BLD.d, BLD.w+0.025, perimH/2, BLD.d/2, 'foundation');
-addBox(groups.foundation, MATS.xps, BLD.w, perimH, 0.05, BLD.w/2, perimH/2, -0.025, 'foundation');
-addBox(groups.foundation, MATS.xps, BLD.w, perimH, 0.05, BLD.w/2, perimH/2, BLD.d+0.025, 'foundation');
+    // Improve material — add envmap influence
+    if (node.material) {
+      node.material.envMapIntensity = 0.4;
+      node.material.needsUpdate = true;
+    }
 
-// ── Walls ──
-groups.walls = new THREE.Group();
-scene.add(groups.walls);
-const wallT = 0.16;  // ~6 inches
-const wallBase = slabTop;
+    // Classify into component group
+    const comp = classifyMesh(node);
+    if (comp) {
+      node.userData.component = comp;
+      if (!compMeshes[comp]) compMeshes[comp] = [];
+      compMeshes[comp].push(node);
+      allMeshes.push(node);
+    }
+  });
 
-// Front wall (z=0)
-addBox(groups.walls, MATS.siding, BLD.w, BLD.roofHigh, wallT, BLD.w/2, wallBase + BLD.roofHigh/2, 0, 'walls');
-// Back wall (z=d)
-const backWall = addBox(groups.walls, MATS.siding, BLD.w, BLD.roofHigh, wallT, BLD.w/2, wallBase + BLD.roofHigh/2, BLD.d, 'walls');
-sectionMeshes.push(backWall);
-// Left wall (x=0) — high side
-addBox(groups.walls, MATS.siding, wallT, BLD.roofHigh, BLD.d, 0, wallBase + BLD.roofHigh/2, BLD.d/2, 'walls');
-// Right wall (x=w) — low side
-const rightWall = addBox(groups.walls, MATS.siding, wallT, BLD.roofLow, BLD.d, BLD.w, wallBase + BLD.roofLow/2, BLD.d/2, 'walls');
-sectionMeshes.push(rightWall);
+  scene.add(model);
+  console.log(`Loaded BIM model: ${allMeshes.length} interactive meshes across ${Object.keys(compMeshes).length} components`);
 
-// Wall section cut interior (visible when section active)
-const wallCutFront = addBox(groups.walls, MATS.drywall, BLD.w*0.49, BLD.roofHigh-0.1, 0.01, BLD.w*0.25, wallBase + BLD.roofHigh/2, BLD.d/2+0.005, 'walls');
-wallCutFront.visible = false;
-wallCutFront.userData.sectionOnly = true;
+  // Auto-select foundation
+  selectedComp = 'foundation';
+  highlight('foundation');
+  showAssembly('foundation');
 
-// Stud framing visible in section
-for (let i = 0; i < 6; i++) {
-  const stud = addBox(groups.walls, MATS.framing, 0.038, BLD.roofHigh-0.1, 0.14, BLD.w*0.05 + i * BLD.w*0.09, wallBase + BLD.roofHigh/2, BLD.d/2, 'walls');
-  stud.visible = false;
-  stud.userData.sectionOnly = true;
-}
+}, (progress) => {
+  // Loading progress
+  if (progress.total) {
+    const pct = Math.round(progress.loaded / progress.total * 100);
+    document.querySelector('.sb-header p').textContent = `Loading model... ${pct}%`;
+  }
+}, (error) => {
+  console.error('Failed to load GLB:', error);
+  document.querySelector('.sb-header p').textContent = 'Failed to load 3D model';
+});
 
-// ── Roof ──
-groups.roof = new THREE.Group();
-scene.add(groups.roof);
-const roofOverhang = 0.3;
-const roofW = BLD.w + roofOverhang*2;
-const roofD = BLD.d + roofOverhang*2;
-const roofAngle = Math.atan2(BLD.roofHigh - BLD.roofLow, BLD.w);
-const roofLen = BLD.w / Math.cos(roofAngle);
-// Shingle surface
-const roofGeo = new THREE.BoxGeometry(roofLen + roofOverhang*2, 0.04, roofD);
-const roofMesh = new THREE.Mesh(roofGeo, MATS.roof);
-const roofMidH = wallBase + (BLD.roofHigh + BLD.roofLow) / 2;
-roofMesh.position.set(BLD.w/2, roofMidH + 0.16, BLD.d/2);
-roofMesh.rotation.z = roofAngle;
-tagMesh(roofMesh, 'roof');
-roofMesh.castShadow = true;
-groups.roof.add(roofMesh);
-
-// Roof deck underside
-const deckMesh = new THREE.Mesh(
-  new THREE.BoxGeometry(roofLen + roofOverhang*2, 0.02, roofD),
-  MATS.roofDeck
-);
-deckMesh.position.set(BLD.w/2, roofMidH + 0.10, BLD.d/2);
-deckMesh.rotation.z = roofAngle;
-tagMesh(deckMesh, 'roof');
-groups.roof.add(deckMesh);
-
-// Fascia boards
-const fasciaFront = addBox(groups.roof, MATS.doorFrame, roofLen + roofOverhang*2, 0.15, 0.02, BLD.w/2, roofMidH + 0.08, -roofOverhang, 'roof');
-fasciaFront.rotation.z = roofAngle;
-const fasciaBack = addBox(groups.roof, MATS.doorFrame, roofLen + roofOverhang*2, 0.15, 0.02, BLD.w/2, roofMidH + 0.08, BLD.d + roofOverhang, 'roof');
-fasciaBack.rotation.z = roofAngle;
-sectionMeshes.push(fasciaBack);
-
-// ── Windows ──
-groups.windows = new THREE.Group();
-scene.add(groups.windows);
-const winW = 0.76, winH = 1.22;  // 30"x48"
-
-// Front wall — 3 windows
-for (let i = 0; i < 3; i++) {
-  const wx = 1.0 + i * 2.0;
-  const wy = wallBase + 1.0;
-  // Frame
-  addBox(groups.windows, MATS.doorFrame, winW+0.06, winH+0.06, 0.06, wx, wy + winH/2, -0.01, 'windows');
-  // Glass
-  addBox(groups.windows, MATS.glass, winW, winH, 0.02, wx, wy + winH/2, -0.01, 'windows');
-}
-// Right wall — 2 windows
-for (let i = 0; i < 2; i++) {
-  const wz = 1.5 + i * 2.8;
-  const wy = wallBase + 1.0;
-  const win = addBox(groups.windows, MATS.doorFrame, 0.06, winH+0.06, winW+0.06, BLD.w+0.01, wy + winH/2, wz, 'windows');
-  const gl = addBox(groups.windows, MATS.glass, 0.02, winH, winW, BLD.w+0.01, wy + winH/2, wz, 'windows');
-  sectionMeshes.push(win, gl);
-}
-// Left wall — 1 window
-addBox(groups.windows, MATS.doorFrame, 0.06, winH+0.06, winW+0.06, -0.01, wallBase+1.0+winH/2, BLD.d*0.5, 'windows');
-addBox(groups.windows, MATS.glass, 0.02, winH, winW, -0.01, wallBase+1.0+winH/2, BLD.d*0.5, 'windows');
-
-// ── Entry Door ──
-groups.door = new THREE.Group();
-scene.add(groups.door);
-const doorW = 0.86, doorH = 2.03;
-const doorX = BLD.w * 0.55;
-addBox(groups.door, MATS.doorFrame, doorW+0.08, doorH+0.04, 0.08, doorX, wallBase+doorH/2, -0.02, 'door');
-// 3 frosted glass panels
-for (let i = 0; i < 3; i++) {
-  const panelH = doorH * 0.28;
-  const py = wallBase + 0.15 + i * (panelH + 0.06) + panelH/2;
-  addBox(groups.door, MATS.doorGlass, doorW*0.7, panelH, 0.01, doorX, py, -0.03, 'door');
-}
-
-// ── Plumbing ──
-groups.plumbing = new THREE.Group();
-scene.add(groups.plumbing);
-const pipeY = 0.3;
-// Main drain (ABS) — runs under slab from back to front
-addCylinder(groups.plumbing, MATS.pipe_drain, 0.05, 0.05, BLD.d*0.8, BLD.w*0.4, -0.02, BLD.d*0.4, 'plumbing', Math.PI/2, 0);
-// Branch drains
-addCylinder(groups.plumbing, MATS.pipe_drain, 0.038, 0.038, 2.0, BLD.w*0.25, -0.02, BLD.d*0.15, 'plumbing', 0, Math.PI/2);
-addCylinder(groups.plumbing, MATS.pipe_drain, 0.038, 0.038, 1.5, BLD.w*0.65, -0.02, BLD.d*0.15, 'plumbing', 0, Math.PI/2);
-// Hot supply (PEX red) — along left wall inside
-addCylinder(groups.plumbing, MATS.pipe_hot, 0.013, 0.013, BLD.d*0.7, 0.25, wallBase + 0.5, BLD.d*0.35, 'plumbing', Math.PI/2, 0);
-// Cold supply (PEX blue)
-addCylinder(groups.plumbing, MATS.pipe_cold, 0.013, 0.013, BLD.d*0.7, 0.35, wallBase + 0.45, BLD.d*0.35, 'plumbing', Math.PI/2, 0);
-// Risers (vertical)
-addCylinder(groups.plumbing, MATS.pipe_hot, 0.013, 0.013, 1.0, 0.25, wallBase+1.0, BLD.d*0.2, 'plumbing');
-addCylinder(groups.plumbing, MATS.pipe_cold, 0.013, 0.013, 1.0, 0.35, wallBase+0.95, BLD.d*0.2, 'plumbing');
-addCylinder(groups.plumbing, MATS.pipe_hot, 0.013, 0.013, 1.0, 0.25, wallBase+1.0, BLD.d*0.7, 'plumbing');
-addCylinder(groups.plumbing, MATS.pipe_cold, 0.013, 0.013, 1.0, 0.35, wallBase+0.95, BLD.d*0.7, 'plumbing');
-// Vent stack
-addCylinder(groups.plumbing, MATS.pipe_drain, 0.038, 0.038, BLD.roofHigh+0.5, BLD.w*0.4, wallBase+BLD.roofHigh/2, BLD.d*0.2, 'plumbing');
-// Water heater (cylinder)
-addCylinder(groups.plumbing, makeMat(0xcccccc, {metalness:0.4, roughness:0.3}), 0.22, 0.22, 1.1, BLD.w*0.15, wallBase+0.55, BLD.d*0.85, 'plumbing');
-
-// ── Electrical ──
-groups.electrical = new THREE.Group();
-scene.add(groups.electrical);
-// Panel box
-addBox(groups.electrical, MATS.panel, 0.38, 0.55, 0.1, BLD.w-0.2, wallBase+1.3, BLD.d*0.9, 'electrical');
-// Main conduit runs along ceiling
-addCylinder(groups.electrical, MATS.conduit, 0.015, 0.015, BLD.w*0.8, BLD.w*0.5, wallBase+BLD.roofHigh-0.15, BLD.d*0.9, 'electrical', 0, Math.PI/2);
-// Branch conduits
-for (let i = 0; i < 4; i++) {
-  const cx = 1.0 + i * 1.6;
-  addCylinder(groups.electrical, MATS.conduit, 0.012, 0.012, BLD.d*0.6, cx, wallBase+BLD.roofHigh-0.15, BLD.d*0.5, 'electrical', Math.PI/2, 0);
-}
-// Drop-downs to receptacles
-for (let i = 0; i < 3; i++) {
-  addCylinder(groups.electrical, MATS.conduit, 0.012, 0.012, 1.5, 1.0+i*2.5, wallBase+1.5, BLD.d*0.05, 'electrical');
-}
-// Pot light recesses (small cylinders flush with ceiling)
-for (let i = 0; i < 6; i++) {
-  const lx = 1.0 + i * 1.0;
-  const mesh = addCylinder(groups.electrical, makeMat(0x222222, {roughness:0.2}), 0.05, 0.05, 0.03, lx, wallBase+BLD.roofHigh-0.08, BLD.d*0.5, 'electrical');
-  // Small glow
-  const glow = new THREE.PointLight(0xffffcc, 0.15, 2);
-  glow.position.copy(mesh.position);
-  glow.position.y -= 0.1;
-  groups.electrical.add(glow);
-}
-
-// ── HVAC ──
-groups.hvac = new THREE.Group();
-scene.add(groups.hvac);
-// Indoor mini-split head unit (wall-mounted)
-addBox(groups.hvac, MATS.hvac_unit, 0.85, 0.28, 0.2, BLD.w*0.5, wallBase+BLD.roofHigh-0.4, 0.12, 'hvac');
-// Line set (two pipes to exterior)
-addCylinder(groups.hvac, MATS.pipe_hot, 0.02, 0.02, BLD.roofHigh, BLD.w*0.5, wallBase+BLD.roofHigh/2, 0.02, 'hvac');
-// Outdoor condenser unit
-addBox(groups.hvac, MATS.hvac_unit, 0.7, 0.6, 0.3, BLD.w*0.5, 0.3, -0.4, 'hvac');
-// Condenser fan grill
-addCylinder(groups.hvac, makeMat(0x444444, {metalness:0.5}), 0.2, 0.2, 0.02, BLD.w*0.5, 0.35, -0.55, 'hvac', Math.PI/2);
-// HRV unit (ceiling mounted)
-addBox(groups.hvac, MATS.hvac_duct, 0.6, 0.25, 0.45, BLD.w*0.8, wallBase+BLD.roofHigh-0.3, BLD.d*0.5, 'hvac');
-// HRV ducting
-addCylinder(groups.hvac, MATS.hvac_duct, 0.06, 0.06, 2.0, BLD.w*0.8, wallBase+BLD.roofHigh-0.18, BLD.d*0.3, 'hvac', Math.PI/2);
-addCylinder(groups.hvac, MATS.hvac_duct, 0.06, 0.06, 2.0, BLD.w*0.8, wallBase+BLD.roofHigh-0.18, BLD.d*0.7, 'hvac', Math.PI/2);
-
-// ═══════════════════════════════════════════════════════════════
-//  INTERACTION — Raycasting
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  INTERACTION
+// ═══════════════════════════════════════════════
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const hoverLabel = document.getElementById('hoverLabel');
-let hoveredComp = null;
-let selectedComp = null;
-const originalMaterials = new Map();
 
-function getCompFromIntersect(intersects) {
-  for (const hit of intersects) {
-    const comp = hit.object.userData.component;
-    if (comp) return comp;
-  }
-  return null;
-}
-
-function highlightComponent(compKey) {
-  // Reset all
-  allMeshes.forEach(m => {
-    if (originalMaterials.has(m)) {
-      m.material = originalMaterials.get(m);
-      originalMaterials.delete(m);
-    }
-  });
-  if (!compKey) return;
-  // Highlight
-  allMeshes.forEach(m => {
-    if (m.userData.component === compKey) {
-      originalMaterials.set(m, m.material);
-      m.material = m.material.clone();
-      m.material.emissive = new THREE.Color(0x224466);
-      m.material.emissiveIntensity = 0.8;
+function highlight(comp) {
+  savedMats.forEach((mat, m) => { m.material = mat; });
+  savedMats.clear();
+  if (!comp) return;
+  (compMeshes[comp] || []).forEach(m => {
+    if (m.material && m.material.emissive) {
+      savedMats.set(m, m.material);
+      const c = m.material.clone();
+      c.emissive = new THREE.Color(0x224466);
+      c.emissiveIntensity = 0.6;
+      m.material = c;
     }
   });
 }
 
-renderer.domElement.addEventListener('mousemove', (e) => {
+renderer.domElement.addEventListener('mousemove', e => {
   const rect = renderer.domElement.getBoundingClientRect();
   mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
   mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-
   raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(allMeshes);
-  const comp = getCompFromIntersect(intersects);
-
+  const hits = raycaster.intersectObjects(allMeshes);
+  const comp = hits.length ? hits[0].object.userData.component : null;
   if (comp !== hoveredComp) {
     hoveredComp = comp;
-    if (!selectedComp) highlightComponent(comp);
-    highlightCompInList(comp || selectedComp);
+    if (!selectedComp) highlight(comp);
+    highlightList(comp || selectedComp);
   }
-
   if (comp && COMPONENTS[comp]) {
     hoverLabel.innerHTML = `<div>${COMPONENTS[comp].name}</div><div class="sub">Click to inspect</div>`;
-    hoverLabel.style.left = e.clientX + 'px';
-    hoverLabel.style.top = e.clientY + 'px';
+    hoverLabel.style.left = e.clientX + 'px'; hoverLabel.style.top = e.clientY + 'px';
     hoverLabel.classList.add('visible');
     renderer.domElement.style.cursor = 'pointer';
   } else {
@@ -701,72 +504,57 @@ renderer.domElement.addEventListener('mousemove', (e) => {
   }
 });
 
-renderer.domElement.addEventListener('click', (e) => {
+renderer.domElement.addEventListener('click', () => {
   raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(allMeshes);
-  const comp = getCompFromIntersect(intersects);
-  if (comp) {
-    selectedComp = comp;
-    highlightComponent(comp);
-    showAssembly(comp);
-  }
+  const hits = raycaster.intersectObjects(allMeshes);
+  const comp = hits.length ? hits[0].object.userData.component : null;
+  if (comp) { selectedComp = comp; highlight(comp); showAssembly(comp); }
 });
 
 renderer.domElement.addEventListener('mouseleave', () => {
-  hoveredComp = null;
-  hoverLabel.classList.remove('visible');
-  if (!selectedComp) highlightComponent(null);
+  hoveredComp = null; hoverLabel.classList.remove('visible');
+  if (!selectedComp) highlight(null);
 });
 
-// ── Section Cut ──
-const sectionCheck = document.getElementById('sectionCut');
-sectionCheck.addEventListener('change', () => {
-  const cut = sectionCheck.checked;
-  sectionMeshes.forEach(m => m.visible = !cut);
-  // Show/hide section-only meshes
+// Section cut — hide back/right walls, show MEP
+document.getElementById('sectionCut').addEventListener('change', function() {
+  const cut = this.checked;
   allMeshes.forEach(m => {
-    if (m.userData.sectionOnly) m.visible = cut;
-  });
-});
-
-// ── Camera Presets ──
-const viewBtns = document.querySelectorAll('.view-btn');
-viewBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    viewBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const view = btn.dataset.view;
-    const t = controls.target;
-    let pos;
-    switch(view) {
-      case 'iso':   pos = {x:14, y:8, z:14}; break;
-      case 'front': pos = {x: BLD.w/2, y:1.5, z:-8}; break;
-      case 'side':  pos = {x:-8, y:2, z:BLD.d/2}; break;
-      case 'top':   pos = {x: BLD.w/2, y:15, z:BLD.d/2+0.01}; break;
+    const name = (m.name || '').toLowerCase();
+    // Hide back and right walls in section cut
+    if (m.userData.component === 'walls') {
+      if (name.includes('back') || name.includes('right') || name.includes('east') || name.includes('north')) {
+        m.visible = !cut;
+      }
     }
-    animateCamera(pos);
   });
 });
 
-function animateCamera(target) {
-  const start = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
-  const dur = 600;
-  const t0 = performance.now();
-  function step(now) {
-    const p = Math.min((now - t0) / dur, 1);
-    const e = 1 - Math.pow(1 - p, 3); // ease-out cubic
-    camera.position.x = start.x + (target.x - start.x) * e;
-    camera.position.y = start.y + (target.y - start.y) * e;
-    camera.position.z = start.z + (target.z - start.z) * e;
+// Camera presets
+const viewBtns = document.querySelectorAll('.view-btn');
+viewBtns.forEach(btn => btn.addEventListener('click', () => {
+  viewBtns.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  let pos;
+  switch (btn.dataset.view) {
+    case 'iso':   pos = { x: 14, y: 8, z: 14 }; break;
+    case 'front': pos = { x: 3.2, y: 1.8, z: -8 }; break;
+    case 'side':  pos = { x: -8, y: 2, z: 3 }; break;
+    case 'top':   pos = { x: 3.2, y: 16, z: 3.01 }; break;
+  }
+  const from = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
+  const t0 = performance.now(), dur = 700;
+  (function step(now) {
+    const p = Math.min((now - t0) / dur, 1), e = 1 - Math.pow(1 - p, 3);
+    camera.position.set(from.x + (pos.x - from.x)*e, from.y + (pos.y - from.y)*e, from.z + (pos.z - from.z)*e);
     controls.update();
     if (p < 1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
+  })(performance.now());
+}));
 
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  SIDEBAR
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 const compList = document.getElementById('compList');
 const assemblyPanel = document.getElementById('assemblyPanel');
 const assemblyTitle = document.getElementById('assemblyTitle');
@@ -774,93 +562,65 @@ const crossSection = document.getElementById('crossSection');
 const layerDetailEl = document.getElementById('layerDetail');
 
 Object.entries(COMPONENTS).forEach(([key, comp]) => {
-  const totalCost = comp.layers.reduce((s, l) => s + parseInt(l.total.replace(/[$,]/g,'')) || 0, 0);
+  const total = comp.layers.reduce((s, l) => s + (parseInt(l.total.replace(/[$,]/g, '')) || 0), 0);
   const el = document.createElement('div');
-  el.className = 'comp-item';
-  el.dataset.comp = key;
-  el.innerHTML = `<div class="dot" style="background:#${comp.color.toString(16).padStart(6,'0')}"></div>
+  el.className = 'comp-item'; el.dataset.comp = key;
+  el.innerHTML = `<div class="dot" style="background:${comp.color}"></div>
     <span class="cname">${comp.name}</span>
-    <span class="cprice">$${totalCost.toLocaleString()}</span>`;
-  el.addEventListener('click', () => {
-    selectedComp = key;
-    highlightComponent(key);
-    showAssembly(key);
-  });
-  el.addEventListener('mouseenter', () => {
-    hoveredComp = key;
-    if (!selectedComp) highlightComponent(key);
-  });
-  el.addEventListener('mouseleave', () => {
-    hoveredComp = null;
-    if (!selectedComp) highlightComponent(null);
-  });
+    <span class="cprice">$${total.toLocaleString()}</span>`;
+  el.addEventListener('click', () => { selectedComp = key; highlight(key); showAssembly(key); });
+  el.addEventListener('mouseenter', () => { if (!selectedComp) highlight(key); });
+  el.addEventListener('mouseleave', () => { if (!selectedComp) highlight(null); });
   compList.appendChild(el);
 });
 
-function highlightCompInList(comp) {
-  compList.querySelectorAll('.comp-item').forEach(el => {
-    el.classList.toggle('active', el.dataset.comp === comp);
-  });
+function highlightList(comp) {
+  compList.querySelectorAll('.comp-item').forEach(el => el.classList.toggle('active', el.dataset.comp === comp));
 }
 
-function showAssembly(compKey) {
-  const comp = COMPONENTS[compKey];
-  if (!comp) return;
-  highlightCompInList(compKey);
+function showAssembly(key) {
+  const comp = COMPONENTS[key]; if (!comp) return;
+  highlightList(key);
   assemblyPanel.classList.add('open');
   assemblyTitle.textContent = comp.name + ' — Assembly Layers';
-
-  crossSection.innerHTML = comp.layers.map((layer, i) => `
-    <div class="cs-layer" data-idx="${i}" onclick="showLayerDetail('${compKey}', ${i})">
-      <div class="cs-swatch" style="background:${layer.color}"></div>
-      <div class="cs-info">
-        <div class="name">${layer.name}</div>
-        <div class="spec">${layer.thick !== '—' ? layer.thick + ' thick · ' : ''}${layer.qty}</div>
-      </div>
-      <div class="cs-price">${layer.total}</div>
-    </div>
-  `).join('');
-
+  crossSection.innerHTML = comp.layers.map((l, i) => `
+    <div class="cs-layer" data-idx="${i}" onclick="showLayerDetail('${key}',${i})">
+      <div class="cs-swatch" style="background:${l.color}"></div>
+      <div class="cs-info"><div class="name">${l.name}</div>
+        <div class="spec">${l.thick !== '—' ? l.thick + ' thick · ' : ''}${l.qty}</div></div>
+      <div class="cs-price">${l.total}</div>
+    </div>`).join('');
   layerDetailEl.classList.remove('open');
 }
 
-window.showLayerDetail = function(compKey, idx) {
-  const layer = COMPONENTS[compKey].layers[idx];
-  if (!layer) return;
+window.showLayerDetail = function(key, idx) {
+  const l = COMPONENTS[key]?.layers[idx]; if (!l) return;
   crossSection.querySelectorAll('.cs-layer').forEach((el, i) => el.classList.toggle('active', i === idx));
   layerDetailEl.innerHTML = `
     <div class="ld-grid">
-      <div class="ld-cell"><div class="label">Quantity</div><div class="val">${layer.qty}</div></div>
-      <div class="ld-cell"><div class="label">Unit Price</div><div class="val">${layer.price}</div></div>
-      <div class="ld-cell"><div class="label">Extended</div><div class="val" style="color:var(--green)">${layer.total}</div></div>
-      <div class="ld-cell"><div class="label">Thickness</div><div class="val">${layer.thick}</div></div>
+      <div class="ld-cell"><div class="label">Quantity</div><div class="val">${l.qty}</div></div>
+      <div class="ld-cell"><div class="label">Unit Price</div><div class="val">${l.price}</div></div>
+      <div class="ld-cell"><div class="label">Extended</div><div class="val" style="color:var(--green)">${l.total}</div></div>
+      <div class="ld-cell"><div class="label">Thickness</div><div class="val">${l.thick}</div></div>
     </div>
-    <div class="notes">${layer.notes}</div>
-  `;
+    <div class="notes">${l.notes}</div>`;
   layerDetailEl.classList.add('open');
-}
+};
 
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  RENDER LOOP
-// ═══════════════════════════════════════════════════════════════
-function animate() {
+// ═══════════════════════════════════════════════
+(function animate() {
   requestAnimationFrame(animate);
   controls.update();
   renderer.render(scene, camera);
-}
-animate();
+})();
 
 window.addEventListener('resize', () => {
-  const w = container.clientWidth, h = container.clientHeight;
-  camera.aspect = w / h;
+  camera.aspect = container.clientWidth / container.clientHeight;
   camera.updateProjectionMatrix();
-  renderer.setSize(w, h);
+  renderer.setSize(container.clientWidth, container.clientHeight);
 });
-
-// Default: show foundation
-selectedComp = 'foundation';
-highlightComponent('foundation');
-showAssembly('foundation');
 </script>
 </body>
 </html>
