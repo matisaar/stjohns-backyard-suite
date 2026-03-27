@@ -220,11 +220,16 @@
   </div>
 </main>
 
-<!-- Three.js from CDN -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+<script type="importmap">
+{ "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+}}
+</script>
 
-<script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 // ═══════════════════════════════════════════════════════════════
 //  BUILDING DATA — real dimensions in feet, converted to meters
 // ═══════════════════════════════════════════════════════════════
@@ -326,7 +331,7 @@ renderer.toneMappingExposure = 1.1;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 container.appendChild(renderer.domElement);
 
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
+const controls = new OrbitControls(camera, renderer.domElement);
 controls.target.set(BLD.w/2, 1.2, BLD.d/2);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
@@ -819,7 +824,7 @@ function showAssembly(compKey) {
   layerDetailEl.classList.remove('open');
 }
 
-function showLayerDetail(compKey, idx) {
+window.showLayerDetail = function(compKey, idx) {
   const layer = COMPONENTS[compKey].layers[idx];
   if (!layer) return;
   crossSection.querySelectorAll('.cs-layer').forEach((el, i) => el.classList.toggle('active', i === idx));
