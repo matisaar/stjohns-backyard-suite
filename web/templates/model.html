@@ -402,10 +402,10 @@ function project(x, y, z) {
   let py = ry * cosP - rz * sinP;
   let pz = ry * sinP + rz * cosP;
 
-  // Perspective
+  // Perspective — use CSS pixel dimensions, not device pixels
   const scale = camDist / (camDist + pz);
-  const cx = canvas.width / 2;
-  const cy = canvas.height / 2;
+  const cx = canvas.clientWidth / 2;
+  const cy = canvas.clientHeight / 2;
 
   return {
     x: cx + rx * scale * 14,
