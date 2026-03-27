@@ -23,6 +23,10 @@ data/
 .DS_Store
 Thumbs.db
 
+# SH3D extracted resources (from Furniture.jar)
+_extracted/
+com/
+
 # Vercel
 .vercel/
 

@@ -516,29 +516,29 @@ def build_home_xml():
     add_opening("Dusco Moderna 34×80 Steel Door",
                 DOOR_X, 0, DOOR_W, EXT_T, DOOR_H,
                 angle=math.pi, color=COL_DOOR, is_door=True,
-                model="Content/door.obj", catalog_id="eTeks#frontDoor")
+                model="Content/frontDoor.obj", catalog_id="eTeks#frontDoor")
 
     # ── Exterior windows: Kent Atlantic 36×40 Casement (7 total) ──
     for wx in NORTH_WIN:
         add_opening("36×40 Casement",
                     wx, 0, WIN_W, EXT_T, WIN_H,
                     angle=math.pi, elevation=WIN_SILL, color=COL_WINDOW,
-                    model="Content/window.obj", catalog_id="eTeks#window85x123")
+                    model="Content/window85x123.obj", catalog_id="eTeks#window85x123")
     for wy in WEST_WIN:
         add_opening("36×40 Casement",
                     0, wy, WIN_W, EXT_T, WIN_H,
                     angle=-math.pi / 2, elevation=WIN_SILL, color=COL_WINDOW,
-                    model="Content/window.obj", catalog_id="eTeks#window85x123")
+                    model="Content/window85x123.obj", catalog_id="eTeks#window85x123")
     for wy in EAST_WIN:
         add_opening("36×40 Casement",
                     W, wy, WIN_W, EXT_T, WIN_H,
                     angle=math.pi / 2, elevation=WIN_SILL, color=COL_WINDOW,
-                    model="Content/window.obj", catalog_id="eTeks#window85x123")
+                    model="Content/window85x123.obj", catalog_id="eTeks#window85x123")
     for wx in SOUTH_WIN:
         add_opening("36×40 Casement",
                     wx, D, WIN_W, EXT_T, WIN_H,
                     angle=0, elevation=WIN_SILL, color=COL_WINDOW,
-                    model="Content/window.obj", catalog_id="eTeks#window85x123")
+                    model="Content/window85x123.obj", catalog_id="eTeks#window85x123")
 
     # ── Interior pocket doors (30×80) ──
     PD = POCKET_DOOR
@@ -547,31 +547,31 @@ def build_home_xml():
     add_opening("Pocket Door 30×80",
                 P1_X, 70, PD["w"], INT_T, PD["h"],
                 angle=math.pi / 2, color=COL_POCKET, is_door=True,
-                model="Content/door.obj", catalog_id="eTeks#doorFrame")
+                model="Content/doorFrame.obj", catalog_id="eTeks#doorFrame")
 
     # Bedroom B → Kitchen (in P2_X partition, upper half)
     add_opening("Pocket Door 30×80",
                 P2_X, 70, PD["w"], INT_T, PD["h"],
                 angle=math.pi / 2, color=COL_POCKET, is_door=True,
-                model="Content/door.obj", catalog_id="eTeks#doorFrame")
+                model="Content/doorFrame.obj", catalog_id="eTeks#doorFrame")
 
     # Bedroom A → Ensuite A (in DIV_Y partition, left portion)
     add_opening("Pocket Door 30×80",
                 44, DIV_Y, PD["w"], INT_T, PD["h"],
                 angle=0, color=COL_POCKET, is_door=True,
-                model="Content/door.obj", catalog_id="eTeks#doorFrame")
+                model="Content/doorFrame.obj", catalog_id="eTeks#doorFrame")
 
     # Bedroom B → Ensuite B (in DIV_Y partition, right portion)
     add_opening("Pocket Door 30×80",
                 211, DIV_Y, PD["w"], INT_T, PD["h"],
                 angle=0, color=COL_POCKET, is_door=True,
-                model="Content/door.obj", catalog_id="eTeks#doorFrame")
+                model="Content/doorFrame.obj", catalog_id="eTeks#doorFrame")
 
     # Kitchen → Utility (in DIV_Y partition, center)
     add_opening("Pocket Door 30×80",
                 W / 2, DIV_Y, PD["w"], INT_T, PD["h"],
                 angle=0, color=COL_POCKET, is_door=True,
-                model="Content/door.obj", catalog_id="eTeks#doorFrame")
+                model="Content/doorFrame.obj", catalog_id="eTeks#doorFrame")
 
     # ═══════════════════════════════════════════
     #  BEDROOM A FIXTURES (top-left)
@@ -593,13 +593,21 @@ def build_home_xml():
     add_piece("Nightstand",
               bedA_x + BED["w"] / 2 + NIGHTSTAND["w"] / 2 + 2, bedA_y - 15,
               NIGHTSTAND["w"], NIGHTSTAND["d"], NIGHTSTAND["h"],
-              color=COL_NSTAND, model="Content/table.obj",
+              color=COL_NSTAND, model="Content/bedsideTable.obj",
               catalog_id="eTeks#bedsideTable")
+
+    add_piece("Lamp",
+              bedA_x + BED["w"] / 2 + NIGHTSTAND["w"] / 2 + 2, bedA_y - 15,
+              8, 8, 12,
+              elevation=NIGHTSTAND["h"], color=rgb_int(230, 210, 170),
+              model="Content/lamp.obj", catalog_id="eTeks#lamp")
 
     add_piece("Baseboard",
               INNER_W + BASEBOARD["d"] / 2, (INNER_N + TOP_S) / 2,
               BASEBOARD["w"], BASEBOARD["d"], BASEBOARD["h"],
-              angle=math.pi / 2, color=COL_BASEBOARD, price=BASEBOARD["price"])
+              angle=math.pi / 2, color=COL_BASEBOARD, price=BASEBOARD["price"],
+              model="Content/electricRadiator.obj",
+              catalog_id="eTeks#electricRadiator")
 
     # ═══════════════════════════════════════════
     #  BEDROOM B FIXTURES (top-right)
@@ -621,13 +629,21 @@ def build_home_xml():
     add_piece("Nightstand",
               bedB_x - BED["w"] / 2 - NIGHTSTAND["w"] / 2 - 2, bedB_y - 15,
               NIGHTSTAND["w"], NIGHTSTAND["d"], NIGHTSTAND["h"],
-              color=COL_NSTAND, model="Content/table.obj",
+              color=COL_NSTAND, model="Content/bedsideTable.obj",
               catalog_id="eTeks#bedsideTable")
+
+    add_piece("Lamp",
+              bedB_x - BED["w"] / 2 - NIGHTSTAND["w"] / 2 - 2, bedB_y - 15,
+              8, 8, 12,
+              elevation=NIGHTSTAND["h"], color=rgb_int(230, 210, 170),
+              model="Content/lamp.obj", catalog_id="eTeks#lamp")
 
     add_piece("Baseboard",
               INNER_E - BASEBOARD["d"] / 2, (INNER_N + TOP_S) / 2,
               BASEBOARD["w"], BASEBOARD["d"], BASEBOARD["h"],
-              angle=math.pi / 2, color=COL_BASEBOARD, price=BASEBOARD["price"])
+              angle=math.pi / 2, color=COL_BASEBOARD, price=BASEBOARD["price"],
+              model="Content/electricRadiator.obj",
+              catalog_id="eTeks#electricRadiator")
 
     # ═══════════════════════════════════════════
     #  SHARED KITCHEN FIXTURES (top-center)
@@ -640,7 +656,7 @@ def build_home_xml():
               kit_cx, cab_y,
               cab_w, COUNTER["d"], COUNTER["h"],
               color=COL_CABINET, price=COUNTER["price"],
-              model="Content/counter.obj",
+              model="Content/kitchenCabinet.obj",
               catalog_id="eTeks#kitchenCabinet")
 
     add_piece("White Laminate Counter",
@@ -654,13 +670,14 @@ def build_home_xml():
               elevation=COUNTER["h"] - SINK["h"],
               color=COL_SINK, price=SINK["price"],
               desc=SINK["name"],
+              model="Content/sink.obj",
               catalog_id="eTeks#sink")
 
     add_piece("Range",
               kit_cx - 20, cab_y,
               RANGE["w"], RANGE["d"], RANGE["h"],
               color=COL_RANGE, price=RANGE["price"],
-              desc=RANGE["name"], model="Content/appliance.obj",
+              desc=RANGE["name"], model="Content/cooker.obj",
               catalog_id="eTeks#cooker")
 
     add_piece("Hood",
@@ -668,13 +685,14 @@ def build_home_xml():
               HOOD["w"], HOOD["d"], HOOD["h"],
               elevation=54, color=COL_HOOD, price=HOOD["price"],
               desc=HOOD["name"],
+              model="Content/hood.obj",
               catalog_id="eTeks#hood")
 
     add_piece("Fridge",
               P2_L - FRIDGE["d"] / 2, TOP_S - 40,
               FRIDGE["w"], FRIDGE["d"], FRIDGE["h"],
               angle=-math.pi / 2, color=COL_FRIDGE, price=FRIDGE["price"],
-              desc=FRIDGE["name"], model="Content/appliance.obj",
+              desc=FRIDGE["name"], model="Content/fridge.obj",
               catalog_id="eTeks#fridge")
 
     # Dining area (north portion near entrance)
@@ -689,13 +707,20 @@ def build_home_xml():
     add_piece("Chair",
               kit_cx - 14, table_y,
               DINING_CHAIR["w"], DINING_CHAIR["d"], DINING_CHAIR["h"],
-              color=COL_CHAIR,
+              color=COL_CHAIR, model="Content/chair2.obj",
               catalog_id="eTeks#chair2")
     add_piece("Chair",
               kit_cx + 14, table_y,
               DINING_CHAIR["w"], DINING_CHAIR["d"], DINING_CHAIR["h"],
-              color=COL_CHAIR,
+              color=COL_CHAIR, model="Content/chair2.obj",
               catalog_id="eTeks#chair2")
+
+    # Pendant lamp over dining table
+    add_piece("Pendant Lamp",
+              kit_cx, table_y,
+              12, 12, 16,
+              elevation=CEIL_H - 24, color=rgb_int(200, 200, 200),
+              model="Content/pendantLamp.obj", catalog_id="eTeks#pendantLamp")
 
     # Mini-split head (high on north wall of kitchen)
     add_piece("Mini-Split Head",
@@ -720,14 +745,14 @@ def build_home_xml():
               INNER_W + TOILET["w"] / 2 + 5, BOT_N + TOILET["d"] / 2 + 5,
               TOILET["w"], TOILET["d"], TOILET["h"],
               color=COL_TOILET, price=TOILET["price"],
-              desc=TOILET["name"], model="Content/toilet.obj",
+              desc=TOILET["name"], model="Content/toiletUnit.obj",
               catalog_id="eTeks#toiletUnit")
 
     add_piece("Vanity",
               INNER_W + 40 + VANITY["w"] / 2, BOT_N + VANITY["d"] / 2 + 5,
               VANITY["w"], VANITY["d"], VANITY["h"],
               color=COL_VANITY, price=VANITY["price"],
-              desc=VANITY["name"], model="Content/counter.obj",
+              desc=VANITY["name"], model="Content/washbasinWithCabinet.obj",
               catalog_id="eTeks#washbasinWithCabinet")
 
     # ═══════════════════════════════════════════
@@ -746,14 +771,14 @@ def build_home_xml():
               INNER_E - TOILET["w"] / 2 - 5, BOT_N + TOILET["d"] / 2 + 5,
               TOILET["w"], TOILET["d"], TOILET["h"],
               color=COL_TOILET, price=TOILET["price"],
-              desc=TOILET["name"], model="Content/toilet.obj",
+              desc=TOILET["name"], model="Content/toiletUnit.obj",
               catalog_id="eTeks#toiletUnit")
 
     add_piece("Vanity",
               INNER_E - 40 - VANITY["w"] / 2, BOT_N + VANITY["d"] / 2 + 5,
               VANITY["w"], VANITY["d"], VANITY["h"],
               color=COL_VANITY, price=VANITY["price"],
-              desc=VANITY["name"], model="Content/counter.obj",
+              desc=VANITY["name"], model="Content/washbasinWithCabinet.obj",
               catalog_id="eTeks#washbasinWithCabinet")
 
     # ═══════════════════════════════════════════
@@ -765,7 +790,7 @@ def build_home_xml():
               util_cx, INNER_S - WASHER["d"] / 2 - 2,
               WASHER["w"], WASHER["d"], WASHER["h"],
               color=COL_WASHER, price=WASHER["price"],
-              desc=WASHER["name"], model="Content/appliance.obj",
+              desc=WASHER["name"], model="Content/clothesWasher.obj",
               catalog_id="eTeks#clothesWasher")
 
     add_piece("Water Heater",
@@ -849,137 +874,55 @@ def build_home_xml():
 
 
 # ═══════════════════════════════════════════════════════
-#  .OBJ (unit box for 3D placeholders)
+#  REAL 3D MODELS — extracted from Sweet Home 3D's
+#  DefaultFurnitureCatalog (Furniture.jar)
+#  Licensed: GNU GPL / CC-BY — Space Mushrooms / eTeks
 # ═══════════════════════════════════════════════════════
-def generate_box_obj():
-    """Basic unit box — SH3D scales to piece w/d/h."""
-    return ("# Unit box\n"
-            "v -0.5 0.0 -0.5\nv 0.5 0.0 -0.5\nv 0.5 1.0 -0.5\nv -0.5 1.0 -0.5\n"
-            "v -0.5 0.0 0.5\nv 0.5 0.0 0.5\nv 0.5 1.0 0.5\nv -0.5 1.0 0.5\n"
-            "f 1 2 3 4\nf 5 8 7 6\nf 1 5 6 2\nf 2 6 7 3\nf 3 7 8 4\nf 4 8 5 1\n")
+
+# Map of Content/ filename → source path in extracted JAR resources
+CATALOG_MODELS = {
+    "bed.obj":                  "bed.obj",
+    "bedsideTable.obj":         "bedsideTable.obj",
+    "toiletUnit.obj":           "toiletUnit.obj",
+    "shower.obj":               "shower.obj",
+    "washbasinWithCabinet.obj": "washbasinWithCabinet.obj",
+    "kitchenCabinet.obj":       "kitchenCabinet.obj",
+    "cooker.obj":               "cooker.obj",
+    "fridge.obj":               "fridge.obj",
+    "hood.obj":                 "hood.obj",
+    "sink.obj":                 "sink.obj",
+    "table.obj":                "table.obj",
+    "chair2.obj":               "chair2.obj",
+    "clothesWasher.obj":        "clothesWasher.obj",
+    "frontDoor.obj":            "frontDoor.obj",
+    "window85x123.obj":         "window85x123.obj",
+    "doorFrame.obj":            "doorFrame.obj",
+    "electricRadiator.obj":     "electricRadiator.obj",
+    "lamp.obj":                 "lamp.obj",
+    "pendantLamp.obj":          "pendantLamp.obj",
+}
+
+# Directory where extracted resources live (relative to this script)
+_RESOURCES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                              "_extracted", "com", "eteks", "sweethome3d",
+                              "io", "resources")
 
 
-def generate_toilet_obj():
-    """Toilet — tank box + rounded bowl seat."""
-    lines = ["# Toilet\n"]
-    # Tank (back box): x[-0.5,0.5] y[0.0,0.7] z[-0.5,-0.1]
-    lines.append("v -0.5 0.0 -0.5\nv 0.5 0.0 -0.5\nv 0.5 0.7 -0.5\nv -0.5 0.7 -0.5\n")
-    lines.append("v -0.5 0.0 -0.1\nv 0.5 0.0 -0.1\nv 0.5 0.7 -0.1\nv -0.5 0.7 -0.1\n")
-    lines.append("f 1 2 3 4\nf 5 8 7 6\nf 1 5 6 2\nf 2 6 7 3\nf 3 7 8 4\nf 4 8 5 1\n")
-    # Bowl (front, lower): x[-0.4,0.4] y[0.0,0.4] z[-0.1,0.5]
-    lines.append("v -0.4 0.0 -0.1\nv 0.4 0.0 -0.1\nv 0.4 0.4 -0.1\nv -0.4 0.4 -0.1\n")
-    lines.append("v -0.4 0.0 0.5\nv 0.4 0.0 0.5\nv 0.4 0.4 0.5\nv -0.4 0.4 0.5\n")
-    lines.append("f 9 10 11 12\nf 13 16 15 14\nf 9 13 14 10\nf 10 14 15 11\nf 11 15 16 12\nf 12 16 13 9\n")
-    return "".join(lines)
+def _read_catalog_model(filename):
+    """Read an OBJ model file from extracted SH3D resources."""
+    path = os.path.join(_RESOURCES_DIR, filename)
+    with open(path, "rb") as f:
+        return f.read()
 
 
-def generate_shower_obj():
-    """Shower enclosure — tall thin walls, open front."""
-    lines = ["# Shower enclosure\n"]
-    # Back wall
-    lines.append("v -0.5 0.0 -0.5\nv 0.5 0.0 -0.5\nv 0.5 1.0 -0.5\nv -0.5 1.0 -0.5\n")
-    lines.append("v -0.5 0.0 -0.45\nv 0.5 0.0 -0.45\nv 0.5 1.0 -0.45\nv -0.5 1.0 -0.45\n")
-    lines.append("f 1 2 3 4\nf 5 8 7 6\nf 1 5 6 2\nf 2 6 7 3\nf 3 7 8 4\nf 4 8 5 1\n")
-    # Left wall
-    lines.append("v -0.5 0.0 -0.5\nv -0.5 0.0 0.5\nv -0.5 1.0 0.5\nv -0.5 1.0 -0.5\n")
-    lines.append("v -0.45 0.0 -0.5\nv -0.45 0.0 0.5\nv -0.45 1.0 0.5\nv -0.45 1.0 -0.5\n")
-    lines.append("f 9 10 11 12\nf 13 16 15 14\nf 9 13 14 10\nf 10 14 15 11\nf 11 15 16 12\nf 12 16 13 9\n")
-    # Base tray
-    lines.append("v -0.5 0.0 -0.5\nv 0.5 0.0 -0.5\nv 0.5 0.05 -0.5\nv -0.5 0.05 -0.5\n")
-    lines.append("v -0.5 0.0 0.5\nv 0.5 0.0 0.5\nv 0.5 0.05 0.5\nv -0.5 0.05 0.5\n")
-    lines.append("f 17 18 19 20\nf 21 24 23 22\nf 17 21 22 18\nf 18 22 23 19\nf 19 23 24 20\nf 20 24 21 17\n")
-    return "".join(lines)
+def _generate_box_obj():
+    """Minimal fallback box for items without a catalog model."""
+    return (b"# Unit box\n"
+            b"v -0.5 0.0 -0.5\nv 0.5 0.0 -0.5\nv 0.5 1.0 -0.5\nv -0.5 1.0 -0.5\n"
+            b"v -0.5 0.0 0.5\nv 0.5 0.0 0.5\nv 0.5 1.0 0.5\nv -0.5 1.0 0.5\n"
+            b"f 1 2 3 4\nf 5 8 7 6\nf 1 5 6 2\nf 2 6 7 3\nf 3 7 8 4\nf 4 8 5 1\n")
 
 
-def generate_counter_obj():
-    """Kitchen counter — flat slab on cabinet box."""
-    lines = ["# Counter + Cabinet\n"]
-    # Cabinet base box
-    lines.append("v -0.5 0.0 -0.5\nv 0.5 0.0 -0.5\nv 0.5 0.85 -0.5\nv -0.5 0.85 -0.5\n")
-    lines.append("v -0.5 0.0 0.5\nv 0.5 0.0 0.5\nv 0.5 0.85 0.5\nv -0.5 0.85 0.5\n")
-    lines.append("f 1 2 3 4\nf 5 8 7 6\nf 1 5 6 2\nf 2 6 7 3\nf 3 7 8 4\nf 4 8 5 1\n")
-    # Countertop slab (slightly wider)
-    lines.append("v -0.52 0.85 -0.52\nv 0.52 0.85 -0.52\nv 0.52 1.0 -0.52\nv -0.52 1.0 -0.52\n")
-    lines.append("v -0.52 0.85 0.52\nv 0.52 0.85 0.52\nv 0.52 1.0 0.52\nv -0.52 1.0 0.52\n")
-    lines.append("f 9 10 11 12\nf 13 16 15 14\nf 9 13 14 10\nf 10 14 15 11\nf 11 15 16 12\nf 12 16 13 9\n")
-    return "".join(lines)
-
-
-def generate_table_obj():
-    """Dining table — top slab on 4 legs."""
-    lines = ["# Table\n"]
-    # Tabletop
-    lines.append("v -0.5 0.85 -0.5\nv 0.5 0.85 -0.5\nv 0.5 1.0 -0.5\nv -0.5 1.0 -0.5\n")
-    lines.append("v -0.5 0.85 0.5\nv 0.5 0.85 0.5\nv 0.5 1.0 0.5\nv -0.5 1.0 0.5\n")
-    lines.append("f 1 2 3 4\nf 5 8 7 6\nf 1 5 6 2\nf 2 6 7 3\nf 3 7 8 4\nf 4 8 5 1\n")
-    # 4 legs (thin posts)
-    leg_positions = [(-0.4, -0.4), (0.4, -0.4), (0.4, 0.4), (-0.4, 0.4)]
-    vn = 9
-    for lx, lz in leg_positions:
-        s = 0.04  # leg half-width
-        lines.append(f"v {lx-s} 0.0 {lz-s}\nv {lx+s} 0.0 {lz-s}\n"
-                     f"v {lx+s} 0.85 {lz-s}\nv {lx-s} 0.85 {lz-s}\n")
-        lines.append(f"v {lx-s} 0.0 {lz+s}\nv {lx+s} 0.0 {lz+s}\n"
-                     f"v {lx+s} 0.85 {lz+s}\nv {lx-s} 0.85 {lz+s}\n")
-        a, b, c, d = vn, vn+1, vn+2, vn+3
-        e, f_, g, h = vn+4, vn+5, vn+6, vn+7
-        lines.append(f"f {a} {b} {c} {d}\nf {e} {h} {g} {f_}\n"
-                     f"f {a} {e} {f_} {b}\nf {b} {f_} {g} {c}\n"
-                     f"f {c} {g} {h} {d}\nf {d} {h} {e} {a}\n")
-        vn += 8
-    return "".join(lines)
-
-
-def generate_door_obj():
-    """Door — thin panel with frame."""
-    lines = ["# Door\n"]
-    # Door panel
-    lines.append("v -0.5 0.0 -0.05\nv 0.5 0.0 -0.05\nv 0.5 1.0 -0.05\nv -0.5 1.0 -0.05\n")
-    lines.append("v -0.5 0.0 0.05\nv 0.5 0.0 0.05\nv 0.5 1.0 0.05\nv -0.5 1.0 0.05\n")
-    lines.append("f 1 2 3 4\nf 5 8 7 6\nf 1 5 6 2\nf 2 6 7 3\nf 3 7 8 4\nf 4 8 5 1\n")
-    return "".join(lines)
-
-
-def generate_window_obj():
-    """Window — thin pane with frame border."""
-    lines = ["# Window\n"]
-    # Glass pane
-    lines.append("v -0.5 0.0 -0.02\nv 0.5 0.0 -0.02\nv 0.5 1.0 -0.02\nv -0.5 1.0 -0.02\n")
-    lines.append("v -0.5 0.0 0.02\nv 0.5 0.0 0.02\nv 0.5 1.0 0.02\nv -0.5 1.0 0.02\n")
-    lines.append("f 1 2 3 4\nf 5 8 7 6\nf 1 5 6 2\nf 2 6 7 3\nf 3 7 8 4\nf 4 8 5 1\n")
-    # Frame bars (cross)
-    lines.append("v -0.02 0.0 -0.04\nv 0.02 0.0 -0.04\nv 0.02 1.0 -0.04\nv -0.02 1.0 -0.04\n")
-    lines.append("v -0.02 0.0 0.04\nv 0.02 0.0 0.04\nv 0.02 1.0 0.04\nv -0.02 1.0 0.04\n")
-    lines.append("f 9 10 11 12\nf 13 16 15 14\nf 9 13 14 10\nf 10 14 15 11\nf 11 15 16 12\nf 12 16 13 9\n")
-    return "".join(lines)
-
-
-def generate_appliance_obj():
-    """Appliance (range/fridge) — box with front face detail."""
-    lines = ["# Appliance\n"]
-    # Main body
-    lines.append("v -0.5 0.0 -0.5\nv 0.5 0.0 -0.5\nv 0.5 1.0 -0.5\nv -0.5 1.0 -0.5\n")
-    lines.append("v -0.5 0.0 0.5\nv 0.5 0.0 0.5\nv 0.5 1.0 0.5\nv -0.5 1.0 0.5\n")
-    lines.append("f 1 2 3 4\nf 5 8 7 6\nf 1 5 6 2\nf 2 6 7 3\nf 3 7 8 4\nf 4 8 5 1\n")
-    # Handle (front protrusion)
-    lines.append("v -0.05 0.45 0.5\nv 0.05 0.45 0.5\nv 0.05 0.65 0.5\nv -0.05 0.65 0.5\n")
-    lines.append("v -0.05 0.45 0.55\nv 0.05 0.45 0.55\nv 0.05 0.65 0.55\nv -0.05 0.65 0.55\n")
-    lines.append("f 9 10 11 12\nf 13 16 15 14\nf 9 13 14 10\nf 10 14 15 11\nf 11 15 16 12\nf 12 16 13 9\n")
-    return "".join(lines)
-
-
-def generate_bed_obj():
-    """Bed — mattress rectangle + raised pillow section at head."""
-    lines = ["# Bed\n"]
-    # Mattress body: full box, y[0..0.7]
-    lines.append("v -0.5 0.0 -0.5\nv 0.5 0.0 -0.5\nv 0.5 0.7 -0.5\nv -0.5 0.7 -0.5\n")
-    lines.append("v -0.5 0.0 0.5\nv 0.5 0.0 0.5\nv 0.5 0.7 0.5\nv -0.5 0.7 0.5\n")
-    lines.append("f 1 2 3 4\nf 5 8 7 6\nf 1 5 6 2\nf 2 6 7 3\nf 3 7 8 4\nf 4 8 5 1\n")
-    # Pillow bump at head (z negative = head end): slightly raised
-    lines.append("v -0.4 0.7 -0.5\nv 0.4 0.7 -0.5\nv 0.4 0.85 -0.5\nv -0.4 0.85 -0.5\n")
-    lines.append("v -0.4 0.7 -0.3\nv 0.4 0.7 -0.3\nv 0.4 0.85 -0.3\nv -0.4 0.85 -0.3\n")
-    lines.append("f 9 10 11 12\nf 13 16 15 14\nf 9 13 14 10\nf 10 14 15 11\nf 11 15 16 12\nf 12 16 13 9\n")
-    return "".join(lines)
 
 
 # ═══════════════════════════════════════════════════════
@@ -1006,15 +949,12 @@ def main():
 
     with zipfile.ZipFile(output_path, "w", zipfile.ZIP_DEFLATED) as zf:
         zf.writestr("Home.xml", xml_bytes)
-        zf.writestr("Content/box.obj", generate_box_obj())
-        zf.writestr("Content/toilet.obj", generate_toilet_obj())
-        zf.writestr("Content/shower.obj", generate_shower_obj())
-        zf.writestr("Content/counter.obj", generate_counter_obj())
-        zf.writestr("Content/table.obj", generate_table_obj())
-        zf.writestr("Content/door.obj", generate_door_obj())
-        zf.writestr("Content/window.obj", generate_window_obj())
-        zf.writestr("Content/appliance.obj", generate_appliance_obj())
-        zf.writestr("Content/bed.obj", generate_bed_obj())
+        # Bundle real 3D models from SH3D catalog
+        for content_name, source_name in CATALOG_MODELS.items():
+            zf.writestr(f"Content/{content_name}",
+                        _read_catalog_model(source_name))
+        # Fallback box for items without dedicated models
+        zf.writestr("Content/box.obj", _generate_box_obj())
 
     walls = root.findall("wall")
     rooms = root.findall("room")
