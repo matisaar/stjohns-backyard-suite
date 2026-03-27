@@ -152,7 +152,7 @@ DIVISION_3 = {
         },
         {
             "name": "2×4×8' SPF Stud Kiln Dried (interior partitions)",
-            "qty": 60, "unit": "EA", "unit_price": 4.28,
+            "qty": 60, "unit": "EA", "unit_price": 3.98,
             "url": f"{KENT_BASE}/2-x-4-x-8-spf-stud-kiln-dried-1016318",
             "notes": "Interior walls: 2 bathroom walls + 2 bedroom walls + kitchen partition ≈60 LF / 1.33 = 45 + extras",
             "sku": "1016318",
@@ -168,7 +168,7 @@ DIVISION_3 = {
         },
         {
             "name": "2×4×10' SPF #2 & Better KD",
-            "qty": 12, "unit": "EA", "unit_price": 5.97,
+            "qty": 12, "unit": "EA", "unit_price": 6.38,
             "url": f"{KENT_BASE}/2-x-4-x-10-2-better-spf-lumber-kiln-dried-1016338",
             "notes": "Top plates (doubled), additional blocking",
             "sku": "1016338",
@@ -264,7 +264,7 @@ DIVISION_4 = {
         },
         {
             "name": "1.5\" XPS Rigid Exterior Continuous Insulation (R-7.5)",
-            "qty": 30, "unit": "SH", "unit_price": 40.00,
+            "qty": 30, "unit": "SH", "unit_price": 112.99,
             "url": f"{KENT_BASE}/sopra-xps-60-square-2-x-8-x-1-5-1694221",
             "notes": "4'x8' sheets over Tyvek. Brings wall to R-24 effective (R-20 batt + R-7.5 continuous). 30 × 32 = 960 sqft",
             "image_url": "/static/images/1694221.jpg",
@@ -286,7 +286,7 @@ DIVISION_4 = {
         },
         {
             "name": "Double 5\" Perforated Soffit (12' pieces)",
-            "qty": 16, "unit": "EA", "unit_price": 12.42,
+            "qty": 16, "unit": "EA", "unit_price": 14.42,
             "url": f"{KENT_BASE}/double-5-perforated-soffit-standard-1021390",
             "notes": "Soffit for 2' overhang on all sides: (82 LF perimeter × 2' ÷ ~10 sqft per piece = ~16 pcs)",
             "sku": "1021390",
@@ -302,7 +302,7 @@ DIVISION_4 = {
         },
         {
             "name": "Triple-Pane Vinyl Casement Windows (~30\"×48\")",
-            "qty": 6, "unit": "EA", "unit_price": 431.10,
+            "qty": 6, "unit": "EA", "unit_price": 479.00,
             "url": f"{KENT_BASE}/36-x-40-vision-left-hand-casement-window-1107802",
             "notes": "6 windows: 2 bedrooms (egress-sized, min 3.8 sqft openable), 2 bathrooms (small), 2 kitchen. Get local quotes from Kohltech or JELD-WEN NL dealers for triple-pane.",
             "image_url": "/static/images/1107802.jpg",
@@ -340,7 +340,7 @@ DIVISION_5 = {
     "items": [
         {
             "name": "IKO Cambridge Architectural Shingles (Dual Black)",
-            "qty": 16, "unit": "BD", "unit_price": 42.99,
+            "qty": 16, "unit": "BD", "unit_price": 40.99,
             "url": f"{KENT_BASE}/40-7-8-x-13-3-4-cambridge-shingle-1010785",
             "notes": "~530 sqft roof area ÷ 33.3 sqft/bundle = 16 bundles (~5 squares). Architectural style, 30-yr warranty.",
             "sku": "1010785",
@@ -380,7 +380,7 @@ DIVISION_5 = {
         },
         {
             "name": "Roof Vent / Exhaust Vents",
-            "qty": 2, "unit": "EA", "unit_price": 17.59,
+            "qty": 2, "unit": "EA", "unit_price": 21.50,
             "url": f"{KENT_BASE}/duraflo-slantback-roof-vent-1021383",
             "notes": "Static roof vents or ridge vent for attic ventilation. Required for shingle warranty.",
             "image_url": "/static/images/1021383.jpg",
@@ -411,7 +411,7 @@ DIVISION_6 = {
     "items": [
         {
             "name": "Owens Corning R-20 Fiberglass Batt 15\" (78.3 sqft/bag)",
-            "qty": 10, "unit": "BG", "unit_price": 93.99,
+            "qty": 10, "unit": "BG", "unit_price": 89.57,
             "url": f"{KENT_BASE}/owens-corning-insulation-ws-r20-47-x-15-x-6-78-3-sqft-1024741",
             "notes": "Exterior wall cavities: ~650 sqft net wall area ÷ 78.3 = 8.3 bags + 15% waste = 10 bags",
             "sku": "1024741",
@@ -535,7 +535,7 @@ DIVISION_7 = {
         },
         {
             "name": "Volcano 5.3mm Pewter Engineered Stone Core Vinyl Plank",
-            "qty": 22, "unit": "BX", "unit_price": 74.96,
+            "qty": 22, "unit": "BX", "unit_price": 88.19,
             "url": f"{KENT_BASE}/5-3mm-volcano-pewter-engineered-stone-core-vinyl-23-33-sf-1080257-pwt",
             "sku": "1080257-PWT",
             "image_url": "/static/images/1080257-PWT.jpg",
@@ -608,14 +608,14 @@ DIVISION_8 = {
         },
         {
             "name": "Modern White Elongated Toilet — Dual Flush",
-            "qty": 2, "unit": "EA", "unit_price": 229.99,
+            "qty": 2, "unit": "EA", "unit_price": 269.99,
             "url": f"{KENT_BASE}/tidal-3-5-4-8lpf-elongated-front-dual-flush-1-piece-toilet-1579329",
             "notes": "Elongated bowl, dual flush, WaterSense certified. Clean modern white skirted base.",
             "image_url": "/static/images/1579329.jpg",
         },
         {
             "name": "24\" Modern Matte Black Vanity with White Ceramic Top",
-            "qty": 2, "unit": "EA", "unit_price": 499.00,
+            "qty": 2, "unit": "EA", "unit_price": 549.00,
             "url": f"{KENT_BASE}/24-vanity-with-drawer-1697660",
             "notes": "Matte black cabinet + white integrated sink top — B&W modern theme. 24\" fits compact bathrooms.",
             "image_url": "/static/images/1697660.jpg",
@@ -684,7 +684,7 @@ DIVISION_8 = {
         },
         {
             "name": "Washer Box (hot/cold supply + drain)",
-            "qty": 1, "unit": "EA", "unit_price": 19.12,
+            "qty": 1, "unit": "EA", "unit_price": 22.49,
             "url": f"{KENT_BASE}/washing-machine-box-1020149",
             "notes": "Recessed washer outlet box with supply valves and drain connection.",
             "image_url": "/static/images/1020149.jpg",
@@ -726,15 +726,15 @@ DIVISION_9 = {
             "image_url": "/static/images/1026699.jpg",
         },
         {
-            "name": "10/3 NMD90 Wire — 15m",
-            "qty": 1, "unit": "EA", "unit_price": 80.00,
+            "name": "10/3 NMD90 Wire — 75m (range + dryer circuits)",
+            "qty": 1, "unit": "EA", "unit_price": 469.99,
             "url": f"{KENT_BASE}/10-3-nmd90-75m-electrical-wire-orange-1026026",
-            "notes": "Dedicated circuits: electric range (40A) and electric dryer (30A).",
+            "notes": "Dedicated circuits: electric range (40A) and electric dryer (30A). Sold as 75m spool.",
             "image_url": "/static/images/1026026.jpg",
         },
         {
             "name": "Receptacles — 15A Tamper-Resistant",
-            "qty": 18, "unit": "EA", "unit_price": 2.09,
+            "qty": 18, "unit": "EA", "unit_price": 2.39,
             "url": f"{KENT_BASE}/15-a-duplex-receptacle-1004457",
             "notes": "General receptacles throughout — bedrooms, kitchen counter, hallway.",
             "image_url": "/static/images/1004457.jpg",
@@ -755,7 +755,7 @@ DIVISION_9 = {
         },
         {
             "name": "LED Slim Recessed Pot Lights 4\" (IC-rated, black trim)",
-            "qty": 1, "unit": "PK", "unit_price": 87.99,
+            "qty": 1, "unit": "PK", "unit_price": 109.99,
             "url": f"{KENT_BASE}/4-led-recessed-pro-12-pack-1519938",
             "notes": "Slim profile, matte black trim ring. 12 total: 3/bedroom, 2/bathroom, 2 kitchen, 2 hallway.",
             "image_url": "/static/images/1519938.jpg",
@@ -869,7 +869,7 @@ DIVISION_11 = {
         },
         {
             "name": "24\" Apartment-Size Refrigerator — Black/Stainless",
-            "qty": 1, "unit": "EA", "unit_price": 1395.00,
+            "qty": 1, "unit": "EA", "unit_price": 1445.00,
             "url": f"{KENT_BASE}/24-bottom-freezer-refrigerator-12-9cf-1461451",
             "notes": "24\" counter-depth, 10–12 cu ft. Black or black stainless to match kitchen theme.",
             "image_url": "/static/images/1461451.jpg",
