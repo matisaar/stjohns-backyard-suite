@@ -167,10 +167,12 @@ DINING_TABLE = {"w": 36, "d": 30, "h": 30}
 DINING_CHAIR = {"w": 16, "d": 16, "h": 32}
 
 # ── Material colors ──
-# Floors
-COL_LVP       = rgb_int(61, 42, 22)       # Volcano Pewter dark walnut
-COL_TILE      = rgb_int(225, 225, 230)     # White ceramic tile
-COL_LNDY_TILE = rgb_int(200, 200, 210)    # Light gray tile (laundry)
+# Floors — brighter, distinct per room type
+COL_LVP       = rgb_int(178, 154, 120)     # Warm oak LVP (visible in plan)
+COL_BED_FLOOR = rgb_int(195, 175, 145)     # Lighter warm wood (bedrooms)
+COL_TILE      = rgb_int(210, 225, 235)     # Soft blue-white tile (baths)
+COL_LNDY_TILE = rgb_int(200, 210, 205)    # Soft green-gray tile (laundry)
+COL_KITCHEN   = rgb_int(215, 195, 160)     # Warm kitchen LVP
 COL_CEILING   = rgb_int(255, 255, 255)     # Pure White (Sico Evolution)
 
 # Walls
@@ -318,6 +320,7 @@ def build_home_xml():
         r = ET.Element("room")
         r.set("id", f"room-{room_counter[0]}")
         r.set("name", name)
+        r.set("nameVisible", "true")
         r.set("nameAngle", "0")
         r.set("nameXOffset", "0")
         r.set("nameYOffset", "-40")
@@ -336,11 +339,12 @@ def build_home_xml():
         room_elements.append(r)
 
     def add_piece(name, x, y, w, d, h, angle=0, elevation=0,
-                  color=0xCCCCCC, price=None, desc=None):
+                  color=0xCCCCCC, price=None, desc=None, model="Content/box.obj"):
         piece_counter[0] += 1
         f = ET.Element("pieceOfFurniture")
         f.set("id", f"piece-{piece_counter[0]}")
         f.set("name", name)
+        f.set("model", model)
         f.set("x", str(cm(x)))
         f.set("y", str(cm(y)))
         f.set("elevation", str(cm(elevation)))
@@ -363,11 +367,12 @@ def build_home_xml():
         return f
 
     def add_opening(name, x, y, w, d, h, angle=0, elevation=0,
-                    color=0xCCCCCC, is_door=False):
+                    color=0xCCCCCC, is_door=False, model="Content/box.obj"):
         piece_counter[0] += 1
         f = ET.Element("doorOrWindow")
         f.set("id", f"piece-{piece_counter[0]}")
         f.set("name", name)
+        f.set("model", model)
         f.set("x", str(cm(x)))
         f.set("y", str(cm(y)))
         f.set("elevation", str(cm(elevation)))
@@ -378,6 +383,10 @@ def build_home_xml():
         f.set("color", color_hex(color))
         f.set("movable", "false")
         f.set("visible", "true")
+        f.set("nameVisible", "true")
+        f.set("nameAngle", "0")
+        f.set("nameXOffset", "0")
+        f.set("nameYOffset", "0")
         f.set("wallThickness", "1.0")
         f.set("wallDistance", "0.0")
         f.set("cutOutShape", "M0,0 L1,0 L1,1 L0,1 Z")
@@ -459,7 +468,7 @@ def build_home_xml():
         (BED1_X - INT_T / 2,  INNER_N),
         (BED1_X - INT_T / 2,  BACK_S),
         (INNER_W,              BACK_S),
-    ], COL_LVP)
+    ], COL_BED_FLOOR)
 
     # 2. Bathroom 2 (back-center, Jack & Jill)
     add_room("Bathroom 2", [
@@ -475,7 +484,7 @@ def build_home_xml():
         (INNER_E,              INNER_N),
         (INNER_E,              BACK_S),
         (MID_X + INT_T / 2,   BACK_S),
-    ], COL_LVP)
+    ], COL_BED_FLOOR)
 
     # 4. Kitchen (front-west, eat-in — the communal space)
     add_room("Kitchen", [
@@ -483,7 +492,7 @@ def build_home_xml():
         (MID_X - INT_T / 2,   FRONT_N),
         (MID_X - INT_T / 2,   INNER_S),
         (INNER_W,              INNER_S),
-    ], COL_LVP)
+    ], COL_KITCHEN)
 
     # 5. Bathroom 1 (front-right upper)
     add_room("Bathroom 1", [
@@ -508,25 +517,29 @@ def build_home_xml():
     # ── Exterior: Front door (south wall) ──
     add_opening("Dusco Moderna 34×80 Steel Door",
                 DOOR_X, D, DOOR_W, EXT_T, DOOR_H,
-                angle=0, color=COL_DOOR, is_door=True)
+                angle=0, color=COL_DOOR, is_door=True, model="Content/door.obj")
 
     # ── Exterior windows: Kent Atlantic 36×40 Casement ──
     for wx in SOUTH_WIN:
         add_opening("36×40 Casement (Kent 1107802)",
                     wx, D, WIN_W, EXT_T, WIN_H,
-                    angle=0, elevation=WIN_SILL, color=COL_WINDOW)
+                    angle=0, elevation=WIN_SILL, color=COL_WINDOW,
+                    model="Content/window.obj")
     for wx in NORTH_WIN:
         add_opening("36×40 Casement (Kent 1107802)",
                     wx, 0, WIN_W, EXT_T, WIN_H,
-                    angle=math.pi, elevation=WIN_SILL, color=COL_WINDOW)
+                    angle=math.pi, elevation=WIN_SILL, color=COL_WINDOW,
+                    model="Content/window.obj")
     for wy in WEST_WIN:
         add_opening("36×40 Casement (Kent 1107802)",
                     0, wy, WIN_W, EXT_T, WIN_H,
-                    angle=-math.pi / 2, elevation=WIN_SILL, color=COL_WINDOW)
+                    angle=-math.pi / 2, elevation=WIN_SILL, color=COL_WINDOW,
+                    model="Content/window.obj")
     for wy in EAST_WIN:
         add_opening("36×40 Casement (Kent 1107802)",
                     W, wy, WIN_W, EXT_T, WIN_H,
-                    angle=math.pi / 2, elevation=WIN_SILL, color=COL_WINDOW)
+                    angle=math.pi / 2, elevation=WIN_SILL, color=COL_WINDOW,
+                    model="Content/window.obj")
 
     # ── Interior pocket doors (Kent 1389850, 30×80) ──
     PD = POCKET_DOOR
@@ -534,27 +547,32 @@ def build_home_xml():
     # Bedroom 1 → Kitchen (in E-W divider)
     add_opening("Pocket Door 30×80",
                 50, DIV_Y, PD["w"], INT_T, PD["h"],
-                angle=0, color=COL_POCKET, is_door=True)
+                angle=0, color=COL_POCKET, is_door=True,
+                model="Content/door.obj")
 
     # Bedroom 2 → Kitchen (in E-W divider)
     add_opening("Pocket Door 30×80",
                 210, DIV_Y, PD["w"], INT_T, PD["h"],
-                angle=0, color=COL_POCKET, is_door=True)
+                angle=0, color=COL_POCKET, is_door=True,
+                model="Content/door.obj")
 
     # Bathroom 2 door (in BED1_X partition, from Bedroom 1 side)
     add_opening("Pocket Door 30×80",
                 BED1_X, 65, PD["w"], INT_T, PD["h"],
-                angle=math.pi / 2, color=COL_POCKET, is_door=True)
+                angle=math.pi / 2, color=COL_POCKET, is_door=True,
+                model="Content/door.obj")
 
     # Bathroom 1 → Kitchen (in MID_X partition)
     add_opening("Pocket Door 30×80",
                 MID_X, 145, PD["w"], INT_T, PD["h"],
-                angle=math.pi / 2, color=COL_POCKET, is_door=True)
+                angle=math.pi / 2, color=COL_POCKET, is_door=True,
+                model="Content/door.obj")
 
     # Laundry → Kitchen (in MID_X partition)
     add_opening("Pocket Door 30×80",
                 MID_X, 210, PD["w"], INT_T, PD["h"],
-                angle=math.pi / 2, color=COL_POCKET, is_door=True)
+                angle=math.pi / 2, color=COL_POCKET, is_door=True,
+                model="Content/door.obj")
 
     # ═══════════════════════════════════════════
     #  BATHROOM 1 FIXTURES (front-right upper)
@@ -566,21 +584,21 @@ def build_home_xml():
               INNER_E - SHOWER["w"] / 2, FRONT_N + SHOWER["d"] / 2,
               SHOWER["w"], SHOWER["d"], SHOWER["h"],
               color=COL_SHOWER, price=SHOWER["price"],
-              desc=SHOWER["name"])
+              desc=SHOWER["name"], model="Content/shower.obj")
 
     # Toilet
     add_piece(f"Toilet ({TOILET['sku']})",
               RIGHT_W + 20, BATH1_S - TOILET["d"] / 2 - 2,
               TOILET["w"], TOILET["d"], TOILET["h"],
               color=COL_TOILET, price=TOILET["price"],
-              desc=TOILET["name"])
+              desc=TOILET["name"], model="Content/toilet.obj")
 
     # Vanity
     add_piece(f"Vanity ({VANITY['sku']})",
               RIGHT_W + 55, BATH1_S - VANITY["d"] / 2 - 2,
               VANITY["w"], VANITY["d"], VANITY["h"],
               color=COL_VANITY, price=VANITY["price"],
-              desc=VANITY["name"])
+              desc=VANITY["name"], model="Content/counter.obj")
 
     # ═══════════════════════════════════════════
     #  BATHROOM 2 FIXTURES (back-center)
@@ -594,21 +612,21 @@ def build_home_xml():
               b2_left + 12 + TOILET["w"] / 2, INNER_N + TOILET["d"] / 2,
               TOILET["w"], TOILET["d"], TOILET["h"],
               color=COL_TOILET, price=TOILET["price"],
-              desc=TOILET["name"])
+              desc=TOILET["name"], model="Content/toilet.obj")
 
     # Vanity next to toilet
     add_piece(f"Vanity ({VANITY['sku']})",
               b2_left + 12 + VANITY["w"] / 2, INNER_N + 34 + VANITY["d"] / 2,
               VANITY["w"], VANITY["d"], VANITY["h"],
               color=COL_VANITY, price=VANITY["price"],
-              desc=VANITY["name"])
+              desc=VANITY["name"], model="Content/counter.obj")
 
     # Shower in south end of bath2
     add_piece(f"Shower ({SHOWER['sku']})",
               (b2_left + b2_right) / 2, BACK_S - SHOWER["d"] / 2,
               SHOWER["w"], SHOWER["d"], SHOWER["h"],
               color=COL_SHOWER, price=SHOWER["price"],
-              desc=SHOWER["name"])
+              desc=SHOWER["name"], model="Content/shower.obj")
 
     # ═══════════════════════════════════════════
     #  KITCHEN FIXTURES (front-west)
@@ -624,7 +642,8 @@ def build_home_xml():
               cab_start_x + COUNTER["w"] / 2, cab_y,
               COUNTER["w"], COUNTER["d"], COUNTER["h"],
               color=COL_CABINET, price=COUNTER["price"],
-              desc="IKEA METOD frame + NICKEBO anthracite fronts")
+              desc="IKEA METOD frame + NICKEBO anthracite fronts",
+              model="Content/counter.obj")
 
     # Countertop on cabinets
     add_piece("White Laminate Counter 8'",
@@ -645,7 +664,7 @@ def build_home_xml():
               cab_start_x + 24 + RANGE["w"] / 2, cab_y,
               RANGE["w"], RANGE["d"], RANGE["h"],
               color=COL_RANGE, price=RANGE["price"],
-              desc=RANGE["name"])
+              desc=RANGE["name"], model="Content/appliance.obj")
 
     # Hood above range
     add_piece(f"Hood ({HOOD['sku']})",
@@ -659,7 +678,7 @@ def build_home_xml():
               INNER_W + FRIDGE["d"] / 2, FRONT_N + 35 + FRIDGE["w"] / 2,
               FRIDGE["w"], FRIDGE["d"], FRIDGE["h"],
               angle=math.pi / 2, color=COL_FRIDGE, price=FRIDGE["price"],
-              desc=FRIDGE["name"])
+              desc=FRIDGE["name"], model="Content/appliance.obj")
 
     # ── Dining area (south portion of kitchen) ──
     table_x = (INNER_W + MID_X - INT_T / 2) / 2   # center of kitchen
@@ -668,7 +687,8 @@ def build_home_xml():
     add_piece("Dining Table 36x30",
               table_x, table_y,
               DINING_TABLE["w"], DINING_TABLE["d"], DINING_TABLE["h"],
-              color=COL_TABLE, desc="Dining table (seats 2-4)")
+              color=COL_TABLE, desc="Dining table (seats 2-4)",
+              model="Content/table.obj")
 
     add_piece("Chair",
               table_x - 14, table_y,
@@ -720,7 +740,7 @@ def build_home_xml():
               INNER_E - WASHER["d"] / 2, lr_cy - 5,
               WASHER["w"], WASHER["d"], WASHER["h"],
               angle=math.pi / 2, color=COL_WASHER, price=WASHER["price"],
-              desc=WASHER["name"])
+              desc=WASHER["name"], model="Content/appliance.obj")
 
     # Water heater
     add_piece(f"Water Heater ({WATER_HEATER['sku']})",
@@ -933,10 +953,120 @@ def build_home_xml():
 #  .OBJ (unit box for 3D placeholders)
 # ═══════════════════════════════════════════════════════
 def generate_box_obj():
-    return ("# Unit box — SH3D scales to piece w/d/h\n"
+    """Basic unit box — SH3D scales to piece w/d/h."""
+    return ("# Unit box\n"
             "v -0.5 0.0 -0.5\nv 0.5 0.0 -0.5\nv 0.5 1.0 -0.5\nv -0.5 1.0 -0.5\n"
             "v -0.5 0.0 0.5\nv 0.5 0.0 0.5\nv 0.5 1.0 0.5\nv -0.5 1.0 0.5\n"
             "f 1 2 3 4\nf 5 8 7 6\nf 1 5 6 2\nf 2 6 7 3\nf 3 7 8 4\nf 4 8 5 1\n")
+
+
+def generate_toilet_obj():
+    """Toilet — tank box + rounded bowl seat."""
+    lines = ["# Toilet\n"]
+    # Tank (back box): x[-0.5,0.5] y[0.0,0.7] z[-0.5,-0.1]
+    lines.append("v -0.5 0.0 -0.5\nv 0.5 0.0 -0.5\nv 0.5 0.7 -0.5\nv -0.5 0.7 -0.5\n")
+    lines.append("v -0.5 0.0 -0.1\nv 0.5 0.0 -0.1\nv 0.5 0.7 -0.1\nv -0.5 0.7 -0.1\n")
+    lines.append("f 1 2 3 4\nf 5 8 7 6\nf 1 5 6 2\nf 2 6 7 3\nf 3 7 8 4\nf 4 8 5 1\n")
+    # Bowl (front, lower): x[-0.4,0.4] y[0.0,0.4] z[-0.1,0.5]
+    lines.append("v -0.4 0.0 -0.1\nv 0.4 0.0 -0.1\nv 0.4 0.4 -0.1\nv -0.4 0.4 -0.1\n")
+    lines.append("v -0.4 0.0 0.5\nv 0.4 0.0 0.5\nv 0.4 0.4 0.5\nv -0.4 0.4 0.5\n")
+    lines.append("f 9 10 11 12\nf 13 16 15 14\nf 9 13 14 10\nf 10 14 15 11\nf 11 15 16 12\nf 12 16 13 9\n")
+    return "".join(lines)
+
+
+def generate_shower_obj():
+    """Shower enclosure — tall thin walls, open front."""
+    lines = ["# Shower enclosure\n"]
+    # Back wall
+    lines.append("v -0.5 0.0 -0.5\nv 0.5 0.0 -0.5\nv 0.5 1.0 -0.5\nv -0.5 1.0 -0.5\n")
+    lines.append("v -0.5 0.0 -0.45\nv 0.5 0.0 -0.45\nv 0.5 1.0 -0.45\nv -0.5 1.0 -0.45\n")
+    lines.append("f 1 2 3 4\nf 5 8 7 6\nf 1 5 6 2\nf 2 6 7 3\nf 3 7 8 4\nf 4 8 5 1\n")
+    # Left wall
+    lines.append("v -0.5 0.0 -0.5\nv -0.5 0.0 0.5\nv -0.5 1.0 0.5\nv -0.5 1.0 -0.5\n")
+    lines.append("v -0.45 0.0 -0.5\nv -0.45 0.0 0.5\nv -0.45 1.0 0.5\nv -0.45 1.0 -0.5\n")
+    lines.append("f 9 10 11 12\nf 13 16 15 14\nf 9 13 14 10\nf 10 14 15 11\nf 11 15 16 12\nf 12 16 13 9\n")
+    # Base tray
+    lines.append("v -0.5 0.0 -0.5\nv 0.5 0.0 -0.5\nv 0.5 0.05 -0.5\nv -0.5 0.05 -0.5\n")
+    lines.append("v -0.5 0.0 0.5\nv 0.5 0.0 0.5\nv 0.5 0.05 0.5\nv -0.5 0.05 0.5\n")
+    lines.append("f 17 18 19 20\nf 21 24 23 22\nf 17 21 22 18\nf 18 22 23 19\nf 19 23 24 20\nf 20 24 21 17\n")
+    return "".join(lines)
+
+
+def generate_counter_obj():
+    """Kitchen counter — flat slab on cabinet box."""
+    lines = ["# Counter + Cabinet\n"]
+    # Cabinet base box
+    lines.append("v -0.5 0.0 -0.5\nv 0.5 0.0 -0.5\nv 0.5 0.85 -0.5\nv -0.5 0.85 -0.5\n")
+    lines.append("v -0.5 0.0 0.5\nv 0.5 0.0 0.5\nv 0.5 0.85 0.5\nv -0.5 0.85 0.5\n")
+    lines.append("f 1 2 3 4\nf 5 8 7 6\nf 1 5 6 2\nf 2 6 7 3\nf 3 7 8 4\nf 4 8 5 1\n")
+    # Countertop slab (slightly wider)
+    lines.append("v -0.52 0.85 -0.52\nv 0.52 0.85 -0.52\nv 0.52 1.0 -0.52\nv -0.52 1.0 -0.52\n")
+    lines.append("v -0.52 0.85 0.52\nv 0.52 0.85 0.52\nv 0.52 1.0 0.52\nv -0.52 1.0 0.52\n")
+    lines.append("f 9 10 11 12\nf 13 16 15 14\nf 9 13 14 10\nf 10 14 15 11\nf 11 15 16 12\nf 12 16 13 9\n")
+    return "".join(lines)
+
+
+def generate_table_obj():
+    """Dining table — top slab on 4 legs."""
+    lines = ["# Table\n"]
+    # Tabletop
+    lines.append("v -0.5 0.85 -0.5\nv 0.5 0.85 -0.5\nv 0.5 1.0 -0.5\nv -0.5 1.0 -0.5\n")
+    lines.append("v -0.5 0.85 0.5\nv 0.5 0.85 0.5\nv 0.5 1.0 0.5\nv -0.5 1.0 0.5\n")
+    lines.append("f 1 2 3 4\nf 5 8 7 6\nf 1 5 6 2\nf 2 6 7 3\nf 3 7 8 4\nf 4 8 5 1\n")
+    # 4 legs (thin posts)
+    leg_positions = [(-0.4, -0.4), (0.4, -0.4), (0.4, 0.4), (-0.4, 0.4)]
+    vn = 9
+    for lx, lz in leg_positions:
+        s = 0.04  # leg half-width
+        lines.append(f"v {lx-s} 0.0 {lz-s}\nv {lx+s} 0.0 {lz-s}\n"
+                     f"v {lx+s} 0.85 {lz-s}\nv {lx-s} 0.85 {lz-s}\n")
+        lines.append(f"v {lx-s} 0.0 {lz+s}\nv {lx+s} 0.0 {lz+s}\n"
+                     f"v {lx+s} 0.85 {lz+s}\nv {lx-s} 0.85 {lz+s}\n")
+        a, b, c, d = vn, vn+1, vn+2, vn+3
+        e, f_, g, h = vn+4, vn+5, vn+6, vn+7
+        lines.append(f"f {a} {b} {c} {d}\nf {e} {h} {g} {f_}\n"
+                     f"f {a} {e} {f_} {b}\nf {b} {f_} {g} {c}\n"
+                     f"f {c} {g} {h} {d}\nf {d} {h} {e} {a}\n")
+        vn += 8
+    return "".join(lines)
+
+
+def generate_door_obj():
+    """Door — thin panel with frame."""
+    lines = ["# Door\n"]
+    # Door panel
+    lines.append("v -0.5 0.0 -0.05\nv 0.5 0.0 -0.05\nv 0.5 1.0 -0.05\nv -0.5 1.0 -0.05\n")
+    lines.append("v -0.5 0.0 0.05\nv 0.5 0.0 0.05\nv 0.5 1.0 0.05\nv -0.5 1.0 0.05\n")
+    lines.append("f 1 2 3 4\nf 5 8 7 6\nf 1 5 6 2\nf 2 6 7 3\nf 3 7 8 4\nf 4 8 5 1\n")
+    return "".join(lines)
+
+
+def generate_window_obj():
+    """Window — thin pane with frame border."""
+    lines = ["# Window\n"]
+    # Glass pane
+    lines.append("v -0.5 0.0 -0.02\nv 0.5 0.0 -0.02\nv 0.5 1.0 -0.02\nv -0.5 1.0 -0.02\n")
+    lines.append("v -0.5 0.0 0.02\nv 0.5 0.0 0.02\nv 0.5 1.0 0.02\nv -0.5 1.0 0.02\n")
+    lines.append("f 1 2 3 4\nf 5 8 7 6\nf 1 5 6 2\nf 2 6 7 3\nf 3 7 8 4\nf 4 8 5 1\n")
+    # Frame bars (cross)
+    lines.append("v -0.02 0.0 -0.04\nv 0.02 0.0 -0.04\nv 0.02 1.0 -0.04\nv -0.02 1.0 -0.04\n")
+    lines.append("v -0.02 0.0 0.04\nv 0.02 0.0 0.04\nv 0.02 1.0 0.04\nv -0.02 1.0 0.04\n")
+    lines.append("f 9 10 11 12\nf 13 16 15 14\nf 9 13 14 10\nf 10 14 15 11\nf 11 15 16 12\nf 12 16 13 9\n")
+    return "".join(lines)
+
+
+def generate_appliance_obj():
+    """Appliance (range/fridge) — box with front face detail."""
+    lines = ["# Appliance\n"]
+    # Main body
+    lines.append("v -0.5 0.0 -0.5\nv 0.5 0.0 -0.5\nv 0.5 1.0 -0.5\nv -0.5 1.0 -0.5\n")
+    lines.append("v -0.5 0.0 0.5\nv 0.5 0.0 0.5\nv 0.5 1.0 0.5\nv -0.5 1.0 0.5\n")
+    lines.append("f 1 2 3 4\nf 5 8 7 6\nf 1 5 6 2\nf 2 6 7 3\nf 3 7 8 4\nf 4 8 5 1\n")
+    # Handle (front protrusion)
+    lines.append("v -0.05 0.45 0.5\nv 0.05 0.45 0.5\nv 0.05 0.65 0.5\nv -0.05 0.65 0.5\n")
+    lines.append("v -0.05 0.45 0.55\nv 0.05 0.45 0.55\nv 0.05 0.65 0.55\nv -0.05 0.65 0.55\n")
+    lines.append("f 9 10 11 12\nf 13 16 15 14\nf 9 13 14 10\nf 10 14 15 11\nf 11 15 16 12\nf 12 16 13 9\n")
+    return "".join(lines)
 
 
 # ═══════════════════════════════════════════════════════
@@ -964,6 +1094,13 @@ def main():
     with zipfile.ZipFile(output_path, "w", zipfile.ZIP_DEFLATED) as zf:
         zf.writestr("Home.xml", xml_bytes)
         zf.writestr("Content/box.obj", generate_box_obj())
+        zf.writestr("Content/toilet.obj", generate_toilet_obj())
+        zf.writestr("Content/shower.obj", generate_shower_obj())
+        zf.writestr("Content/counter.obj", generate_counter_obj())
+        zf.writestr("Content/table.obj", generate_table_obj())
+        zf.writestr("Content/door.obj", generate_door_obj())
+        zf.writestr("Content/window.obj", generate_window_obj())
+        zf.writestr("Content/appliance.obj", generate_appliance_obj())
 
     walls = root.findall("wall")
     rooms = root.findall("room")

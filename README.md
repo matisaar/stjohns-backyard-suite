@@ -59,11 +59,11 @@ stjohns-backyard-suite/
 
 ## Suppliers
 
-| Supplier | Categories | Link |
-|----------|-----------|------|
-| Kent Building Supplies | Lumber, plywood, insulation, drywall, roofing, siding, concrete | [kent.ca](https://www.kent.ca) |
-| Home Depot Canada | Windows, doors, appliances | [homedepot.ca](https://www.homedepot.ca) |
-| IKEA Canada | Kitchen cabinets & countertops | [ikea.com/ca](https://www.ikea.com/ca/en/) |
+| Supplier               | Categories                                                      | Link                                       |
+| ---------------------- | --------------------------------------------------------------- | ------------------------------------------ |
+| Kent Building Supplies | Lumber, plywood, insulation, drywall, roofing, siding, concrete | [kent.ca](https://www.kent.ca)             |
+| Home Depot Canada      | Windows, doors, appliances                                      | [homedepot.ca](https://www.homedepot.ca)   |
+| IKEA Canada            | Kitchen cabinets & countertops                                  | [ikea.com/ca](https://www.ikea.com/ca/en/) |
 
 ## BOM Divisions
 
