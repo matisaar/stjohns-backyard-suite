@@ -343,11 +343,10 @@ def build_home_xml():
         if catalog_id:
             f.set("catalogId", catalog_id)
         f.set("name", name)
-        # Use catalog resource path so SH3D resolves from built-in catalog;
-        # fall back to bundled box for items without a catalog model.
+        # Model path must be bundled in the ZIP; catalogId hints SH3D catalog.
         if catalog_id:
             cat_model = catalog_id.split('#')[1]
-            f.set("model", f"/com/eteks/sweethome3d/io/resources/{cat_model}.obj")
+            f.set("model", f"Content/{cat_model}.obj")
         else:
             f.set("model", "Content/box.obj")
         f.set("x", str(cm(x)))
@@ -381,10 +380,9 @@ def build_home_xml():
         if catalog_id:
             f.set("catalogId", catalog_id)
         f.set("name", name)
-        # Use catalog resource path for built-in model resolution
         if catalog_id:
             cat_model = catalog_id.split('#')[1]
-            f.set("model", f"/com/eteks/sweethome3d/io/resources/{cat_model}.obj")
+            f.set("model", f"Content/{cat_model}.obj")
         else:
             f.set("model", "Content/box.obj")
         f.set("x", str(cm(x)))
@@ -901,8 +899,44 @@ def build_home_xml():
 
 
 # ═══════════════════════════════════════════════════════
-#  FALLBACK MODEL — for items without a SH3D catalog entry
+#  3D MODELS — extracted from Sweet Home 3D's catalog
+#  (Furniture.jar, GNU GPL / CC-BY — eTeks)
 # ═══════════════════════════════════════════════════════
+
+# Map catalog model name → source OBJ filename in extracted resources
+CATALOG_MODELS = {
+    "bed":                  "bed.obj",
+    "bedsideTable":         "bedsideTable.obj",
+    "toiletUnit":           "toiletUnit.obj",
+    "shower":               "shower.obj",
+    "washbasinWithCabinet": "washbasinWithCabinet.obj",
+    "kitchenCabinet":       "kitchenCabinet.obj",
+    "cooker":               "cooker.obj",
+    "fridgeFreezer":        "fridgeFreezer.obj",
+    "hood":                 "hood.obj",
+    "sink":                 "sink.obj",
+    "table":                "table.obj",
+    "chair2":               "chair2.obj",
+    "clothesWasher":        "clothesWasher.obj",
+    "frontDoor":            "frontDoor.obj",
+    "window85x123":         "window85x123.obj",
+    "doorFrame":            "doorFrame.obj",
+    "electricRadiator":     "electricRadiator.obj",
+    "lamp":                 "lamp.obj",
+    "pendantLamp":          "pendantLamp.obj",
+}
+
+_RESOURCES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                              "_extracted", "com", "eteks", "sweethome3d",
+                              "io", "resources")
+
+
+def _read_catalog_model(filename):
+    """Read an OBJ model file from extracted SH3D resources."""
+    path = os.path.join(_RESOURCES_DIR, filename)
+    with open(path, "rb") as f:
+        return f.read()
+
 
 def _generate_box_obj():
     """Minimal fallback box for items without a catalog model."""
@@ -938,8 +972,11 @@ def main():
 
     with zipfile.ZipFile(output_path, "w", zipfile.ZIP_DEFLATED) as zf:
         zf.writestr("Home.xml", xml_bytes)
-        # Only bundle a fallback box for items without catalog models.
-        # All other furniture uses catalogId → SH3D resolves from built-in catalog.
+        # Bundle real OBJ models from SH3D catalog (extracted from Furniture.jar)
+        for cat_name, source_name in CATALOG_MODELS.items():
+            zf.writestr(f"Content/{cat_name}.obj",
+                        _read_catalog_model(source_name))
+        # Fallback box for items without catalog models
         zf.writestr("Content/box.obj", _generate_box_obj())
 
     walls = root.findall("wall")
