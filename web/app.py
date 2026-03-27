@@ -100,6 +100,13 @@ def index():
     )
 
 
+@app.route("/model")
+def model_view():
+    """Interactive 3D building model with cross-section views."""
+    summary = calculate_bom_summary()
+    return render_template("model.html", summary=summary)
+
+
 @app.route("/render")
 def render_view():
     """Interactive material stack cross-section renderer."""

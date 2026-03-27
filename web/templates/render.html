@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Material Stack — Foundation &amp; Flooring</title>
+<title>Cross Sections — Foundation &amp; Flooring</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0a0a0a;
@@ -502,10 +503,18 @@
 </head>
 <body>
 
-<div class="top-bar">
-  <h1><span>Material Stack</span> &mdash; Cross Section</h1>
-  <a href="/">&larr; Back to BOM</a>
-</div>
+<nav class="site-nav">
+  <div class="brand"><b>SJ</b> Backyard Suite</div>
+  <div class="links">
+    <a href="/">BOM</a>
+    <a href="/model">3D Model</a>
+    <a href="/render" class="active">Cross Sections</a>
+    <a href="/finishes">Finishes</a>
+  </div>
+  <div class="meta">Foundation &amp; Flooring Assembly</div>
+</nav>
+
+<div style="padding-top:52px;">
 
 <div class="subtitle">
   Foundation &amp; Flooring Assembly
@@ -742,5 +751,6 @@ document.querySelectorAll('.perimeter').forEach(p => {
 showDetail('concrete');
 </script>
 
+</div>
 </body>
 </html>

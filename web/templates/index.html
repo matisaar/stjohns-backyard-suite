@@ -57,22 +57,34 @@
             color: var(--dim); font-size: 0.82em; margin-top: 8px;
             letter-spacing: 0.12em; text-transform: uppercase;
         }
-        .nav-row {
-            display: flex; gap: 6px; justify-content: center; margin-top: 20px;
+        /* ── Fixed Top Nav ── */
+        .site-nav {
+            position:fixed; top:0; left:0; right:0; z-index:100;
+            display:flex; align-items:center; justify-content:space-between;
+            padding:0 28px; height:52px;
+            background:rgba(10,10,10,0.85);
+            backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+            border-bottom:1px solid var(--border);
         }
-        .nav-pill {
-            background: var(--glass); border: 1px solid var(--glass-border);
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border-radius: 20px; padding: 6px 18px;
-            font-size: 0.72em; color: var(--muted);
-            text-decoration: none; transition: all 0.2s;
-            letter-spacing: 0.04em; text-transform: uppercase;
+        .site-nav .brand {
+            font-size:13px; font-weight:600; letter-spacing:0.08em;
+            text-transform:uppercase; color:var(--muted);
         }
-        .nav-pill:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
-        .nav-pill.active {
-            background: rgba(77,166,255,0.1); border-color: rgba(77,166,255,0.25);
-            color: var(--accent); font-weight: 600;
+        .site-nav .brand b { color:var(--text); font-weight:700; }
+        .site-nav .links { display:flex; gap:2px; }
+        .site-nav .links a {
+            padding:7px 16px; border-radius:8px;
+            font-size:12px; font-weight:500; letter-spacing:0.03em;
+            color:var(--dim); text-decoration:none; transition:all 0.15s;
         }
+        .site-nav .links a:hover { color:var(--text); background:rgba(255,255,255,0.04); text-decoration:none; }
+        .site-nav .links a.active {
+            color:var(--accent); background:rgba(77,166,255,0.08);
+        }
+        .site-nav .meta {
+            font-size:11px; color:var(--dim); letter-spacing:0.04em;
+        }
+        .site-nav .meta b { color:var(--green); font-weight:600; }
 
         /* ── Tags ── */
         .tags { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
@@ -229,22 +241,28 @@
             .item { grid-template-columns: 1fr auto auto; font-size: 0.78em; padding: 8px 14px; }
             .item-qty { display: none; }
             .item-notes { padding-left: 12px; }
-            .nav-pill { padding: 5px 12px; font-size: 0.68em; }
+            .site-nav .links a { padding:5px 10px; font-size:10px; }
+            .site-nav .meta { display:none; }
         }
     </style>
 </head>
 <body>
-<div class="wrap">
+<nav class="site-nav">
+  <div class="brand"><b>SJ</b> Backyard Suite</div>
+  <div class="links">
+    <a href="/" class="active">BOM</a>
+    <a href="/model">3D Model</a>
+    <a href="/render">Cross Sections</a>
+    <a href="/finishes">Finishes</a>
+  </div>
+  <div class="meta">Grand Total <b>${{ "{:,.0f}".format(summary.grand_total) }}</b></div>
+</nav>
+<div class="wrap" style="padding-top:52px;">
 
     <!-- Hero -->
     <div class="hero">
         <h1>St. John's <span>Backyard Suite</span></h1>
         <div class="sub">430 sqft &middot; 2 Bed &middot; 1 Bath &middot; Kitchen &middot; Laundry</div>
-        <div class="nav-row">
-            <a href="/" class="nav-pill active">Bill of Materials</a>
-            <a href="/render" class="nav-pill">Material Stack</a>
-            <a href="/finishes" class="nav-pill">Finish Board</a>
-        </div>
         <div class="tags">
             <span class="tag"><b>St. John's, NL</b></span>
             <span class="tag"><b>20'&times;21.5'</b></span>
