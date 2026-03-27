@@ -42,6 +42,10 @@ def rgb_int(r, g, b):
     """RGB (0-255) to SH3D integer color."""
     return (r << 16) | (g << 8) | b
 
+def color_hex(color_int):
+    """Convert integer color to 8-char uppercase hex string for SH3D XML."""
+    return format(color_int & 0xFFFFFFFF, '08X')
+
 
 # ═══════════════════════════════════════════════════════
 #  BUILDING CONFIGURATION — EDIT THESE TO ITERATE
@@ -211,9 +215,9 @@ def build_home_xml():
 
     # ── Environment (required by SH3D parser) ──
     env = ET.SubElement(root, "environment")
-    env.set("groundColor", str(rgb_int(136, 166, 107)))   # grass green
-    env.set("skyColor", str(rgb_int(204, 228, 252)))       # light blue
-    env.set("lightColor", str(rgb_int(236, 236, 236)))     # soft white
+    env.set("groundColor", color_hex(rgb_int(136, 166, 107)))   # grass green
+    env.set("skyColor", color_hex(rgb_int(204, 228, 252)))       # light blue
+    env.set("lightColor", color_hex(rgb_int(236, 236, 236)))     # soft white
     env.set("wallsAlpha", "0")
     env.set("drawingMode", "FILL")
     env.set("photoWidth", "800")
@@ -238,7 +242,7 @@ def build_home_xml():
 
     # ── Cameras (must come before furniture/walls/rooms) ──
     # Observer camera (eye-level perspective from front)
-    obs_cam = ET.SubElement(root, "camera")
+    obs_cam = ET.SubElement(root, "observerCamera")
     obs_cam.set("attribute", "observerCamera")
     obs_cam.set("lens", "PINHOLE")
     obs_cam.set("x", str(cm(W/2)))
@@ -292,9 +296,9 @@ def build_home_xml():
         w.set("thickness", str(cm(t)))
 
         if left_color is not None:
-            w.set("leftSideColor", str(left_color))
+            w.set("leftSideColor", color_hex(left_color))
         if right_color is not None:
-            w.set("rightSideColor", str(right_color))
+            w.set("rightSideColor", color_hex(right_color))
 
         wall_elements.append(w)
         walls_by_id[wid] = w
@@ -306,7 +310,6 @@ def build_home_xml():
         room = ET.Element("room")
         room.set("id", f"room-{room_counter[0]}")
         room.set("name", name)
-        room.set("nameVisible", "true")
         room.set("nameAngle", "0")
         room.set("nameXOffset", "0")
         room.set("nameYOffset", "-40")
@@ -315,9 +318,9 @@ def build_home_xml():
         room.set("areaXOffset", "0")
         room.set("areaYOffset", "0")
         room.set("floorVisible", "true")
-        room.set("floorColor", str(floor_color))
+        room.set("floorColor", color_hex(floor_color))
         room.set("ceilingVisible", "true")
-        room.set("ceilingColor", str(ceil_color))
+        room.set("ceilingColor", color_hex(ceil_color))
         for x, y in points:
             pt = ET.SubElement(room, "point")
             pt.set("x", str(cm(x)))
@@ -339,7 +342,7 @@ def build_home_xml():
         f.set("width", str(cm(w)))
         f.set("depth", str(cm(d)))
         f.set("height", str(cm(h)))
-        f.set("color", str(color))
+        f.set("color", color_hex(color))
         f.set("movable", "true")
         f.set("visible", "true")
         f.set("nameVisible", "true")
@@ -368,7 +371,7 @@ def build_home_xml():
         f.set("width", str(cm(w)))
         f.set("depth", str(cm(d)))
         f.set("height", str(cm(h)))
-        f.set("color", str(color))
+        f.set("color", color_hex(color))
         f.set("movable", "false")
         f.set("visible", "true")
         f.set("wallThickness", "1.0")
