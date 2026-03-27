@@ -3,22 +3,19 @@
 generate_sh3d.py — Generate Sweet Home 3D (.sh3d) file programmatically.
 
 St. John's 430 sqft Backyard Suite — 97 Mayor Ave
+2 Bedrooms · 2 Bathrooms · Kitchen · Laundry Room
 All dimensions from Kent.ca and Home Depot product listings.
 
 Usage:
     python3 generate_sh3d.py
     → outputs stjohns_suite.sh3d
-    → open in Sweet Home 3D (sweethome3d.com)
+    → open in Sweet Home 3D (File > Open)
 
 Workflow:
-    1. Edit dimensions/positions below
+    1. Edit dimensions/layout below
     2. Re-run this script
     3. Re-open .sh3d in Sweet Home 3D
     4. Repeat until perfect
-
-To add real 3D product models:
-    - Download .obj from 3dwarehouse.sketchup.com or bimobject.com
-    - In SH3D: Furniture > Import Furniture, replace any box placeholder
 """
 
 import zipfile
@@ -30,8 +27,6 @@ import os
 # ═══════════════════════════════════════════════════════
 #  UNIT CONVERSION
 # ═══════════════════════════════════════════════════════
-# Sweet Home 3D stores everything in centimeters.
-# We define in inches (construction standard) and convert.
 CM = 2.54  # 1 inch = 2.54 cm
 
 def cm(inches):
@@ -43,233 +38,247 @@ def rgb_int(r, g, b):
     return (r << 16) | (g << 8) | b
 
 def color_hex(color_int):
-    """Convert integer color to 8-char uppercase hex string for SH3D XML."""
+    """Convert integer color to 8-char uppercase hex for SH3D XML."""
     return format(color_int & 0xFFFFFFFF, '08X')
 
 
 # ═══════════════════════════════════════════════════════
-#  BUILDING CONFIGURATION — EDIT THESE TO ITERATE
+#  BUILDING CONFIGURATION
 # ═══════════════════════════════════════════════════════
 
-# Overall building (outer dimensions, inches)
-W = 258              # 21'-6" width (east-west)
-D = 240              # 20'-0" depth (north-south)
-EXT_T = 5.5          # 2x6 exterior wall thickness
-INT_T = 4.5          # 2x4 + drywall interior partition
-CEIL_H = 96          # 8' ceiling height
+# Overall building envelope (inches, outer face to outer face)
+W = 258              # 21'-6" width  (east-west)
+D = 240              # 20'-0" depth  (north-south)
+EXT_T = 5.5          # 2×6 exterior wall thickness
+INT_T = 4.5          # 2×4 + drywall interior partition
+CEIL_H = 96          # 8'-0" ceiling height
 
-# Plan view coordinate convention:
-#   Origin (0,0) = NORTHWEST corner (back-left)
-#   X increases EAST (right)
-#   Y increases SOUTH (down = toward front door)
-#
-#     (0,0)─────────────────(W,0)
-#       │  BACK (bedrooms)     │
-#       │                      │
-#  DIV_Y├──────────────────────┤
-#       │  FRONT (kitchen/     │
-#       │   living + bath)     │
-#     (0,D)──[door]──────────(W,D)
-
-# ── Partition positions (inches from origin) ──
-DIV_Y = 108                    # E-W divider: back bedrooms / front living
-BED1_X = 102                   # N-S: Bedroom 1 | Bathroom 2
-BATH2_X = 156                  # N-S: Bathroom 2 | Bedroom 2
-BATH1_X = 190                  # N-S: Living | Bathroom 1 (front zone)
-
-# Interior edges (after wall thicknesses)
-INNER_N = EXT_T                # 5.5" — inner face of north wall
-INNER_S = D - EXT_T            # 234.5" — inner face of south wall
+# Interior clear dimensions (inner face of exterior walls)
+INNER_N = EXT_T                # 5.5"
+INNER_S = D - EXT_T            # 234.5"
 INNER_W = EXT_T                # 5.5"
 INNER_E = W - EXT_T            # 252.5"
 
-# ── Window positions (center X or Y along respective wall) ──
-# Kent Atlantic 36"×40" Casement (SKU 1107802) — 6 total
-WIN_W = 36     # window width
-WIN_H = 40     # window height
-WIN_SILL = 36  # sill height from floor
+# ── FLOOR PLAN LAYOUT ──
+#
+#  Plan view — origin (0,0) = NORTHWEST corner
+#  X increases EAST, Y increases SOUTH
+#
+#     x=0  BED1_X  MID_X    x=W
+#      ┌──────┬──────┬──────┐  y=0  (North)
+#      │      │      │      │
+#      │ BED1 │ BATH2│ BED2 │  Back zone
+#      │      │      │      │
+#      ├──────┴──────┴──┬───┤  y=DIV_Y  (E-W divider)
+#      │                │B1 │
+#      │    KITCHEN     ├───┤  y=LNDY_Y  (Bath1/Laundry split)
+#      │                │LR │
+#      │                │   │
+#      └──[DOOR]────────┴───┘  y=D  (South, entry)
+#
+#  6 rooms: Bedroom 1, Bedroom 2, Bathroom 2 (back)
+#           Kitchen, Bathroom 1, Laundry (front)
 
-# South wall (front, y ≈ D) — 2 windows
-SOUTH_WIN = [130, 210]
+# ── Partition positions (centerline, inches from origin) ──
+DIV_Y   = 120       # E-W divider: back bedrooms / front service zone
+BED1_X  = 102       # N-S: Bedroom 1 | Bathroom 2  (back zone)
+MID_X   = 158       # N-S: Bathroom 2 | Bedroom 2  (back zone)
+                     #  AND Kitchen | Bath1+Laundry  (front zone) — CONTINUOUS
+LNDY_Y  = 180       # E-W: Bathroom 1 | Laundry  (front-right zone)
 
-# North wall (back, y ≈ 0) — 2 windows (one per bedroom)
+# Derived interior edges of each room
+# Back zone (y: INNER_N to DIV_Y - INT_T/2)
+BACK_S = DIV_Y - INT_T / 2          # 117.75"   south edge of back zone
+# Front zone (y: DIV_Y + INT_T/2 to INNER_S)
+FRONT_N = DIV_Y + INT_T / 2         # 122.25"   north edge of front zone
+# Front-right sub-zones
+RIGHT_W = MID_X + INT_T / 2         # 160.25"   west edge of bath1/laundry
+BATH1_S = LNDY_Y - INT_T / 2        # 177.75"   south edge of bath 1
+LNDY_N  = LNDY_Y + INT_T / 2        # 182.25"   north edge of laundry
+
+# ── Room areas (for labels) ──
+def room_sqft(w_in, d_in):
+    return (w_in * d_in) / 144
+
+BED1_W_IN = BED1_X - INT_T/2 - INNER_W         # 94.25"
+BACK_D_IN = BACK_S - INNER_N                    # 112.25"
+BATH2_W_IN = (MID_X - INT_T/2) - (BED1_X + INT_T/2)  # 51.5"
+BED2_W_IN = INNER_E - (MID_X + INT_T/2)         # 92.25"
+
+KITCHEN_W_IN = (MID_X - INT_T/2) - INNER_W      # 150.25"
+FRONT_D_IN = INNER_S - FRONT_N                  # 112.25"
+B1LR_W_IN = INNER_E - RIGHT_W                   # 92.25"
+BATH1_D_IN = BATH1_S - FRONT_N                  # 55.5"
+LNDY_D_IN = INNER_S - LNDY_N                    # 52.25"
+
+# ── Window positions ──
+# Kent Atlantic 36"×40" Casement (SKU 1107802) — 7 total
+WIN_W    = 36     # window width
+WIN_H    = 40     # window height
+WIN_SILL = 36     # sill height from floor
+
+# North wall: 1 per bedroom
 NORTH_WIN = [50, 210]
+# South wall: 2 in kitchen area
+SOUTH_WIN = [60, 120]
+# West wall: 1 in bedroom 1
+WEST_WIN = [60]
+# East wall: 1 in bedroom 2, 1 in bath 1
+EAST_WIN = [60, 150]
 
-# West wall (x ≈ 0) — 1 window (Bedroom 1)
-WEST_WIN = [54]
+# ── Front door ──
+# Dusco Moderna 34"×80" Full Lite Black Steel (HD SKU 1001728121)
+DOOR_X   = 75        # center X on south wall
+DOOR_W   = 34
+DOOR_H   = 80
 
-# East wall (x ≈ W) — 1 window (Bedroom 2)
-EAST_WIN = [54]
+# ── Fixture specs (inches) — scraped from Kent.ca / Home Depot ──
+TOILET       = {"w": 15, "d": 28, "h": 28, "price": 269.99,
+                "sku": "Kent 1579329", "name": "Clarovista Tidal 1-pc"}
+VANITY       = {"w": 24, "d": 18, "h": 34, "price": 549.00,
+                "sku": "Kent 1697660", "name": "24\" Vanity Matte Black"}
+SHOWER       = {"w": 32, "d": 48, "h": 78, "price": 397.99,
+                "sku": "Kent 1023986", "name": "Maax Finesse 48×32"}
+WATER_HEATER = {"w": 18, "d": 18, "h": 48, "price": 595.00,
+                "sku": "Kent 1766016", "name": "GSW 182L Electric"}
+RANGE        = {"w": 24, "d": 25, "h": 36, "price": 1795.00,
+                "sku": "Kent 1461599", "name": "Whirlpool 24\" Electric"}
+FRIDGE       = {"w": 24, "d": 29, "h": 60, "price": 1445.00,
+                "sku": "Kent 1461451", "name": "Whirlpool 24\" BtmFrzr"}
+HOOD         = {"w": 24, "d": 20, "h": 10, "price": 1694.00,
+                "sku": "Kent 1462473", "name": "Bosch 24\" Under-Cabinet"}
+SINK         = {"w": 25, "d": 18, "h": 9,  "price": 299.99,
+                "sku": "Kent 1391411", "name": "25\" SS Undermount"}
+COUNTER      = {"w": 96, "d": 25, "h": 36, "price": 2800.00}
+CONDENSER    = {"w": 33, "d": 12, "h": 24, "price": 1553.00,
+                "sku": "Kent 1034429", "name": "Perfect Aire 18kBTU"}
+MINI_HEAD    = {"w": 32, "d": 8,  "h": 12}
+HRV          = {"w": 24, "d": 17, "h": 12, "price": 1279.00,
+                "sku": "Kent 1400849", "name": "Venmar HRV110"}
+PANEL        = {"w": 15, "d": 3.75, "h": 20, "price": 156.49,
+                "sku": "Kent 1013553", "name": "Schneider QO 100A"}
+WASHER       = {"w": 24, "d": 25, "h": 34, "price": 1395.00,
+                "sku": "Kent 1462204", "name": "GE 24\" Combo W/D"}
+BASEBOARD    = {"w": 66, "d": 3, "h": 8, "price": 102.00,
+                "sku": "Kent 1652016", "name": "1500W 66\" Baseboard"}
+POCKET_DOOR  = {"w": 30, "d": 2, "h": 80, "price": 159.00,
+                "sku": "Kent 1389850"}
+DINING_TABLE = {"w": 36, "d": 30, "h": 30}
+DINING_CHAIR = {"w": 16, "d": 16, "h": 32}
 
-# ── Front door position (center X on south wall) ──
-# Dusco Moderna 34"×80" (Home Depot SKU 1001728121)
-DOOR_X = 50
-DOOR_W_IN = 34
-DOOR_H_IN = 80
+# ── Material colors ──
+# Floors
+COL_LVP       = rgb_int(61, 42, 22)       # Volcano Pewter dark walnut
+COL_TILE      = rgb_int(225, 225, 230)     # White ceramic tile
+COL_LNDY_TILE = rgb_int(200, 200, 210)    # Light gray tile (laundry)
+COL_CEILING   = rgb_int(255, 255, 255)     # Pure White (Sico Evolution)
 
-# ── Fixture dimensions (inches) — all from Kent.ca/HD product pages ──
+# Walls
+COL_EXT       = rgb_int(115, 135, 110)     # Mitten Oregon Pride vinyl siding
+COL_DRYWALL   = rgb_int(240, 240, 240)     # White drywall interior
+COL_ACCENT    = rgb_int(70, 90, 90)        # Dark accent wall (kitchen north)
 
-# Toilet: Clarovista Tidal 1-piece (Kent SKU 1579329)
-TOILET = {"w": 15, "d": 28, "h": 28, "price": 269.99}
-
-# Vanity: 24" w/ Drawer matte black (Kent SKU 1697660)
-VANITY = {"w": 24, "d": 18, "h": 34, "price": 549.00}
-
-# Shower: Maax Finesse 4832 base (Kent SKU 1023986)
-SHOWER = {"w": 32, "d": 48, "h": 78, "price": 397.99}
-
-# Water Heater: GSW 182L (Kent SKU 1766016) — 18" dia, approx as square
-WATER_HEATER = {"w": 18, "d": 18, "h": 48, "price": 595.00}
-
-# Range: Whirlpool 24" Electric (Kent SKU 1461599)
-RANGE = {"w": 24, "d": 25, "h": 36, "price": 1795.00}
-
-# Fridge: Whirlpool 24" Bottom-Freezer (Kent SKU 1461451)
-FRIDGE = {"w": 24, "d": 29, "h": 60, "price": 1445.00}
-
-# Range Hood: Bosch 24" Under-Cabinet (Kent SKU 1462473)
-HOOD = {"w": 24, "d": 20, "h": 10, "price": 1694.00}
-
-# Kitchen Sink: 25" Undermount SS (Kent SKU 1391411)
-SINK = {"w": 25, "d": 18, "h": 9, "price": 299.99}
-
-# Kitchen Cabinets+Counter: IKEA METOD/NICKEBO 8LF + laminate top
-COUNTER = {"w": 96, "d": 25, "h": 36, "price": 2800.00}
-
-# Mini-split condenser: Perfect Aire 18kBTU (Kent SKU 1034429)
-CONDENSER = {"w": 33, "d": 12, "h": 24, "price": 1553.00}
-
-# Mini-split indoor head
-MINISPLIT_HEAD = {"w": 32, "d": 8, "h": 12}
-
-# HRV: Venmar HRV110 (Kent SKU 1400849)
-HRV = {"w": 24, "d": 17, "h": 12, "price": 1279.00}
-
-# Sub-panel: Schneider QO 100A (Kent SKU 1013553)
-PANEL = {"w": 15, "d": 3.75, "h": 20, "price": 156.49}
-
-# Washer/Dryer: GE 24" Combo (Kent SKU 1462204)
-WASHER = {"w": 24, "d": 25, "h": 34, "price": 1395.00}
-
-# Baseboard heater: 1500W 66" (Kent SKU 1652016)
-BASEBOARD = {"w": 66, "d": 3, "h": 8, "price": 102.00}
-
-# Pocket door: 30"×80" (Kent SKU 1389850)
-POCKET_DOOR = {"w": 30, "d": 2, "h": 80, "price": 159.00}
-
-
-# ── Floor colors ──
-COL_LVP = rgb_int(61, 42, 22)       # Volcano Pewter dark walnut (Kent 1080257-PWT)
-COL_TILE = rgb_int(240, 240, 245)    # White ceramic tile (Kent 1035109)
-COL_CONCRETE = rgb_int(170, 170, 170)
-COL_CEILING = rgb_int(255, 255, 255) # Pure White (Sico Evolution)
-
-# ── Furniture colors ──
-COL_TOILET = rgb_int(250, 250, 250)
-COL_VANITY = rgb_int(30, 30, 30)      # Matte black
-COL_SHOWER = rgb_int(242, 242, 245)
-COL_WH = rgb_int(220, 220, 220)
-COL_RANGE = rgb_int(80, 80, 80)       # Black stainless
-COL_FRIDGE = rgb_int(80, 80, 80)
-COL_HOOD = rgb_int(40, 40, 40)
-COL_SINK = rgb_int(180, 185, 190)     # Stainless
-COL_COUNTER = rgb_int(250, 250, 250)  # White laminate
-COL_CABINET = rgb_int(38, 38, 42)     # IKEA NICKEBO anthracite
-COL_COND = rgb_int(215, 215, 215)
-COL_HEAD = rgb_int(245, 245, 245)
-COL_HRV = rgb_int(180, 180, 180)
-COL_PANEL_C = rgb_int(140, 140, 140)
-COL_WASHER_C = rgb_int(245, 245, 245)
-COL_BASEBOARD_C = rgb_int(245, 245, 245)
-COL_DOOR = rgb_int(20, 20, 30)        # Dusco Moderna matte black
-COL_WINDOW = rgb_int(200, 220, 235)
-COL_POCKET = rgb_int(245, 245, 245)   # White interior door
+# Fixtures
+COL_TOILET    = rgb_int(250, 250, 250)
+COL_VANITY    = rgb_int(30, 30, 30)        # Matte black
+COL_SHOWER    = rgb_int(235, 235, 240)
+COL_WH        = rgb_int(210, 210, 210)
+COL_RANGE     = rgb_int(55, 55, 55)        # Black stainless
+COL_FRIDGE    = rgb_int(55, 55, 55)
+COL_HOOD      = rgb_int(35, 35, 35)
+COL_SINK      = rgb_int(175, 180, 185)     # Stainless
+COL_COUNTER   = rgb_int(245, 245, 245)     # White laminate top
+COL_CABINET   = rgb_int(38, 38, 42)        # IKEA NICKEBO anthracite
+COL_TABLE     = rgb_int(140, 100, 60)      # Wood dining table
+COL_CHAIR     = rgb_int(60, 60, 60)        # Dark chair
+COL_COND      = rgb_int(205, 205, 205)
+COL_HEAD      = rgb_int(240, 240, 240)
+COL_HRV       = rgb_int(170, 170, 170)
+COL_PANEL     = rgb_int(130, 130, 130)
+COL_WASHER    = rgb_int(242, 242, 242)
+COL_BASEBOARD = rgb_int(240, 240, 240)
+COL_DOOR      = rgb_int(20, 20, 30)        # Dusco Moderna matte black
+COL_WINDOW    = rgb_int(190, 210, 230)
+COL_POCKET    = rgb_int(240, 240, 240)     # White interior door
 
 
 # ═══════════════════════════════════════════════════════
 #  XML GENERATION
 # ═══════════════════════════════════════════════════════
-# SH3D Home.xml element order (from source HomeXMLExporter.java):
-#   <home> attributes: version, name, camera, wallHeight, basePlanLocked, ...
-#   children (in order): furnitureVisibleProperty, environment, compass,
-#     camera(observerCamera), camera(topCamera),
-#     pieceOfFurniture/doorOrWindow, wall, room,
-#     dimensionLine, label
 
 def build_home_xml():
     """Build the complete Home.xml for Sweet Home 3D."""
 
     root = ET.Element("home")
-    root.set("version", "5300")
-    root.set("name", "St. John's 430sqft Backyard Suite")
+    root.set("version", "7200")
+    root.set("name", "St. John's 430 sqft Backyard Suite — 97 Mayor Ave")
     root.set("camera", "topCamera")
     root.set("wallHeight", str(cm(CEIL_H)))
     root.set("basePlanLocked", "false")
     root.set("furnitureSortedProperty", "NAME")
     root.set("furnitureDescendingSorted", "false")
 
-    # Visible columns in furniture table
+    # Furniture table visible columns
     for prop in ["NAME", "WIDTH", "DEPTH", "HEIGHT", "VISIBLE", "PRICE"]:
         p = ET.SubElement(root, "furnitureVisibleProperty")
         p.set("name", prop)
 
-    # ── Environment (required by SH3D parser) ──
+    # ── Environment ──
     env = ET.SubElement(root, "environment")
-    env.set("groundColor", color_hex(rgb_int(136, 166, 107)))   # grass green
-    env.set("skyColor", color_hex(rgb_int(204, 228, 252)))       # light blue
-    env.set("lightColor", color_hex(rgb_int(236, 236, 236)))     # soft white
+    env.set("groundColor", color_hex(rgb_int(120, 150, 95)))
+    env.set("skyColor", color_hex(rgb_int(195, 220, 248)))
+    env.set("lightColor", color_hex(rgb_int(240, 240, 240)))
     env.set("wallsAlpha", "0")
     env.set("drawingMode", "FILL")
-    env.set("photoWidth", "800")
-    env.set("photoHeight", "600")
+    env.set("photoWidth", "1024")
+    env.set("photoHeight", "768")
     env.set("photoAspectRatio", "VIEW_3D_RATIO")
-    env.set("photoQuality", "1")
+    env.set("photoQuality", "2")
     env.set("videoWidth", "640")
     env.set("videoAspectRatio", "RATIO_4_3")
     env.set("videoQuality", "1")
     env.set("videoFrameRate", "25")
 
-    # ── Compass (required by SH3D parser) ──
+    # ── Compass (St. John's NL: 47.56°N, 52.71°W) ──
     compass = ET.SubElement(root, "compass")
-    compass.set("x", str(cm(W/2)))
-    compass.set("y", str(cm(D/2)))
+    compass.set("x", str(cm(W / 2)))
+    compass.set("y", str(cm(D / 2)))
     compass.set("diameter", "100")
     compass.set("northDirection", "0")
-    compass.set("longitude", str(-0.8876))   # ~St. John's NL
-    compass.set("latitude", str(0.8284))     # ~47.5° N in radians
+    compass.set("longitude", str(round(math.radians(-52.71), 5)))
+    compass.set("latitude", str(round(math.radians(47.56), 5)))
     compass.set("timeZone", "America/St_Johns")
     compass.set("visible", "true")
 
-    # ── Cameras (must come before furniture/walls/rooms) ──
-    # Observer camera (eye-level perspective from front)
-    obs_cam = ET.SubElement(root, "observerCamera")
-    obs_cam.set("attribute", "observerCamera")
-    obs_cam.set("lens", "PINHOLE")
-    obs_cam.set("x", str(cm(W/2)))
-    obs_cam.set("y", str(cm(D + 120)))     # standing south of building
-    obs_cam.set("z", str(cm(66)))           # eye height 5'-6"
-    obs_cam.set("yaw", str(round(math.pi, 5)))   # looking north
-    obs_cam.set("pitch", str(round(0.15, 5)))
-    obs_cam.set("fieldOfView", str(round(math.radians(63), 4)))
-    obs_cam.set("time", "0")
+    # ── Cameras ──
+    # Observer: standing south of building, looking north
+    obs = ET.SubElement(root, "observerCamera")
+    obs.set("attribute", "observerCamera")
+    obs.set("lens", "PINHOLE")
+    obs.set("x", str(cm(W / 2)))
+    obs.set("y", str(cm(D + 100)))
+    obs.set("z", str(cm(66)))
+    obs.set("yaw", str(round(math.pi, 5)))
+    obs.set("pitch", str(round(0.12, 5)))
+    obs.set("fieldOfView", str(round(math.radians(63), 5)))
+    obs.set("time", "0")
 
-    # Top-down camera
-    top_cam = ET.SubElement(root, "camera")
-    top_cam.set("attribute", "topCamera")
-    top_cam.set("lens", "PINHOLE")
-    top_cam.set("x", str(cm(W/2)))
-    top_cam.set("y", str(cm(D/2)))
-    top_cam.set("z", str(cm(500)))          # high above
-    top_cam.set("yaw", str(round(math.pi, 5)))
-    top_cam.set("pitch", str(round(math.pi/2, 5)))
-    top_cam.set("fieldOfView", str(round(math.radians(63), 4)))
-    top_cam.set("time", "0")
+    # Top-down plan view
+    top = ET.SubElement(root, "camera")
+    top.set("attribute", "topCamera")
+    top.set("lens", "PINHOLE")
+    top.set("x", str(cm(W / 2)))
+    top.set("y", str(cm(D / 2)))
+    top.set("z", str(cm(480)))
+    top.set("yaw", str(round(math.pi, 5)))
+    top.set("pitch", str(round(math.pi / 2, 5)))
+    top.set("fieldOfView", str(round(math.radians(63), 5)))
+    top.set("time", "0")
 
-    # ── State tracking for deferred elements ──
-    # We collect furniture, walls, rooms, etc. then append in correct order
+    # ── Element collectors ──
+    furniture_elements = []
     wall_elements = []
     room_elements = []
-    furniture_elements = []
     dimension_elements = []
     label_elements = []
 
@@ -280,12 +289,14 @@ def build_home_xml():
     label_counter = [0]
     walls_by_id = {}
 
-    # ── WALL HELPER ──
+    # ═══════════════════════════════════════════
+    #  HELPER FUNCTIONS
+    # ═══════════════════════════════════════════
+
     def add_wall(x1, y1, x2, y2, t=EXT_T, h=CEIL_H,
                  left_color=None, right_color=None):
         wall_counter[0] += 1
         wid = f"wall-{wall_counter[0]}"
-
         w = ET.Element("wall")
         w.set("id", wid)
         w.set("xStart", str(cm(x1)))
@@ -294,43 +305,38 @@ def build_home_xml():
         w.set("yEnd", str(cm(y2)))
         w.set("height", str(cm(h)))
         w.set("thickness", str(cm(t)))
-
         if left_color is not None:
             w.set("leftSideColor", color_hex(left_color))
         if right_color is not None:
             w.set("rightSideColor", color_hex(right_color))
-
         wall_elements.append(w)
         walls_by_id[wid] = w
         return wid
 
-    # ── ROOM HELPER ──
     def add_room(name, points, floor_color=COL_LVP, ceil_color=COL_CEILING):
         room_counter[0] += 1
-        room = ET.Element("room")
-        room.set("id", f"room-{room_counter[0]}")
-        room.set("name", name)
-        room.set("nameAngle", "0")
-        room.set("nameXOffset", "0")
-        room.set("nameYOffset", "-40")
-        room.set("areaVisible", "true")
-        room.set("areaAngle", "0")
-        room.set("areaXOffset", "0")
-        room.set("areaYOffset", "0")
-        room.set("floorVisible", "true")
-        room.set("floorColor", color_hex(floor_color))
-        room.set("ceilingVisible", "true")
-        room.set("ceilingColor", color_hex(ceil_color))
+        r = ET.Element("room")
+        r.set("id", f"room-{room_counter[0]}")
+        r.set("name", name)
+        r.set("nameAngle", "0")
+        r.set("nameXOffset", "0")
+        r.set("nameYOffset", "-40")
+        r.set("areaVisible", "true")
+        r.set("areaAngle", "0")
+        r.set("areaXOffset", "0")
+        r.set("areaYOffset", "0")
+        r.set("floorVisible", "true")
+        r.set("floorColor", color_hex(floor_color))
+        r.set("ceilingVisible", "true")
+        r.set("ceilingColor", color_hex(ceil_color))
         for x, y in points:
-            pt = ET.SubElement(room, "point")
+            pt = ET.SubElement(r, "point")
             pt.set("x", str(cm(x)))
             pt.set("y", str(cm(y)))
-        room_elements.append(room)
+        room_elements.append(r)
 
-    # ── FURNITURE HELPER ──
     def add_piece(name, x, y, w, d, h, angle=0, elevation=0,
-                  color=0xCCCCCC, price=None, model_ref=None):
-        """Place a furniture piece. x,y = center position in inches."""
+                  color=0xCCCCCC, price=None, desc=None):
         piece_counter[0] += 1
         f = ET.Element("pieceOfFurniture")
         f.set("id", f"piece-{piece_counter[0]}")
@@ -351,15 +357,13 @@ def build_home_xml():
         f.set("nameYOffset", "0")
         if price is not None:
             f.set("price", str(round(price, 2)))
-        if model_ref:
-            f.set("model", model_ref)
+        if desc is not None:
+            f.set("description", desc)
         furniture_elements.append(f)
         return f
 
-    # ── DOOR/WINDOW HELPER ──
     def add_opening(name, x, y, w, d, h, angle=0, elevation=0,
                     color=0xCCCCCC, is_door=False):
-        """Place a door or window that cuts through a wall."""
         piece_counter[0] += 1
         f = ET.Element("doorOrWindow")
         f.set("id", f"piece-{piece_counter[0]}")
@@ -383,357 +387,534 @@ def build_home_xml():
         furniture_elements.append(f)
         return f
 
-    # ── DIMENSION LINE HELPER ──
-    def add_dimension(x1, y1, x2, y2, offset=20):
+    def add_dim(x1, y1, x2, y2, offset=20):
         dim_counter[0] += 1
-        dim = ET.Element("dimensionLine")
-        dim.set("id", f"dim-{dim_counter[0]}")
-        dim.set("xStart", str(cm(x1)))
-        dim.set("yStart", str(cm(y1)))
-        dim.set("xEnd", str(cm(x2)))
-        dim.set("yEnd", str(cm(y2)))
-        dim.set("offset", str(cm(offset)))
-        dimension_elements.append(dim)
+        d = ET.Element("dimensionLine")
+        d.set("id", f"dim-{dim_counter[0]}")
+        d.set("xStart", str(cm(x1)))
+        d.set("yStart", str(cm(y1)))
+        d.set("xEnd", str(cm(x2)))
+        d.set("yEnd", str(cm(y2)))
+        d.set("offset", str(cm(offset)))
+        dimension_elements.append(d)
 
-    # ── LABEL HELPER ──
-    def add_label(text, x, y, angle=0, size=14):
+    def add_label(text, x, y, angle=0, size=12, color=None):
         label_counter[0] += 1
         lbl = ET.Element("label")
         lbl.set("id", f"label-{label_counter[0]}")
         lbl.set("x", str(cm(x)))
         lbl.set("y", str(cm(y)))
         lbl.set("angle", str(round(angle, 5)))
-        # SH3D stores label text in a <text> child element
-        txt_el = ET.SubElement(lbl, "text")
-        txt_el.text = text
-        # Font style as <textStyle> child
-        style = ET.SubElement(lbl, "textStyle")
-        style.set("fontSize", str(size))
+        if color is not None:
+            lbl.set("color", color_hex(color))
+        txt = ET.SubElement(lbl, "text")
+        txt.text = text
+        st = ET.SubElement(lbl, "textStyle")
+        st.set("fontSize", str(size))
         label_elements.append(lbl)
 
-    # ══════════════════════════════════════════════
-    #  EXTERIOR WALLS
-    # ══════════════════════════════════════════════
-    # Wall centerlines at edge of building footprint.
-    # SH3D applies thickness symmetrically around centerline.
+    # ═══════════════════════════════════════════
+    #  EXTERIOR WALLS (4 walls, connected loop)
+    # ═══════════════════════════════════════════
+    ws = add_wall(0, D, W, D, EXT_T, CEIL_H, COL_EXT, COL_DRYWALL)    # South
+    we = add_wall(W, D, W, 0, EXT_T, CEIL_H, COL_EXT, COL_DRYWALL)    # East
+    wn = add_wall(W, 0, 0, 0, EXT_T, CEIL_H, COL_DRYWALL, COL_EXT)    # North
+    ww = add_wall(0, 0, 0, D, EXT_T, CEIL_H, COL_EXT, COL_DRYWALL)    # West
 
-    ext_color = rgb_int(135, 155, 135)   # Mitten Oregon Pride siding
-    int_color = rgb_int(240, 240, 240)   # White drywall interior
+    # Corner joints
+    walls_by_id[ws].set("wallAtStart", ww)
+    walls_by_id[ws].set("wallAtEnd", we)
+    walls_by_id[we].set("wallAtStart", ws)
+    walls_by_id[we].set("wallAtEnd", wn)
+    walls_by_id[wn].set("wallAtStart", we)
+    walls_by_id[wn].set("wallAtEnd", ww)
+    walls_by_id[ww].set("wallAtStart", wn)
+    walls_by_id[ww].set("wallAtEnd", ws)
 
-    # South wall (front, runs E-W at y=D)
-    w_s = add_wall(0, D, W, D, EXT_T, CEIL_H, ext_color, int_color)
-    # East wall (right, runs N-S at x=W)
-    w_e = add_wall(W, D, W, 0, EXT_T, CEIL_H, ext_color, int_color)
-    # North wall (back, runs E-W at y=0)
-    w_n = add_wall(W, 0, 0, 0, EXT_T, CEIL_H, int_color, ext_color)
-    # West wall (left, runs E-W at x=0)
-    w_w = add_wall(0, 0, 0, D, EXT_T, CEIL_H, ext_color, int_color)
-
-    # Connect corners
-    walls_by_id[w_s].set("wallAtStart", w_w)
-    walls_by_id[w_s].set("wallAtEnd", w_e)
-    walls_by_id[w_e].set("wallAtStart", w_s)
-    walls_by_id[w_e].set("wallAtEnd", w_n)
-    walls_by_id[w_n].set("wallAtStart", w_e)
-    walls_by_id[w_n].set("wallAtEnd", w_w)
-    walls_by_id[w_w].set("wallAtStart", w_n)
-    walls_by_id[w_w].set("wallAtEnd", w_s)
-
-    # ══════════════════════════════════════════════
+    # ═══════════════════════════════════════════
     #  INTERIOR PARTITION WALLS
-    # ══════════════════════════════════════════════
-    iw_color = rgb_int(240, 240, 240)
+    # ═══════════════════════════════════════════
+    iw = COL_DRYWALL  # both sides
 
-    # E-W divider: separates back bedrooms from front living (full width)
-    add_wall(EXT_T, DIV_Y, W - EXT_T, DIV_Y, INT_T, CEIL_H, iw_color, iw_color)
+    # 1) E-W divider — full width, separates back bedrooms from front zone
+    add_wall(INNER_W, DIV_Y, INNER_E, DIV_Y, INT_T, CEIL_H, iw, COL_ACCENT)
 
-    # N-S: Bedroom 1 | Bathroom 2 (in back zone)
-    add_wall(BED1_X, EXT_T, BED1_X, DIV_Y, INT_T, CEIL_H, iw_color, iw_color)
+    # 2) N-S: Bedroom 1 | Bathroom 2  (back zone only)
+    add_wall(BED1_X, INNER_N, BED1_X, DIV_Y, INT_T, CEIL_H, iw, iw)
 
-    # N-S: Bathroom 2 | Bedroom 2 (in back zone)
-    add_wall(BATH2_X, EXT_T, BATH2_X, DIV_Y, INT_T, CEIL_H, iw_color, iw_color)
+    # 3) N-S: Bathroom 2 | Bedroom 2  AND  Kitchen | Bath1+Laundry
+    #    CONTINUOUS wall from north interior to south interior
+    add_wall(MID_X, INNER_N, MID_X, INNER_S, INT_T, CEIL_H, iw, iw)
 
-    # N-S: Kitchen/Living | Bathroom 1 (in front zone, full height from DIV to south wall)
-    add_wall(BATH1_X, DIV_Y, BATH1_X, D - EXT_T, INT_T, CEIL_H, iw_color, iw_color)
+    # 4) E-W: Bathroom 1 | Laundry  (front-right sub-zone only)
+    add_wall(RIGHT_W, LNDY_Y, INNER_E, LNDY_Y, INT_T, CEIL_H, iw, iw)
 
-    # ══════════════════════════════════════════════
-    #  ROOMS (floor polygons)
-    # ══════════════════════════════════════════════
-    # Each room = polygon of inner wall face coordinates
+    # ═══════════════════════════════════════════
+    #  ROOMS — 6 rooms
+    # ═══════════════════════════════════════════
 
-    # Bedroom 1 (back-left)
+    # 1. Bedroom 1 (back-west)
     add_room("Bedroom 1", [
-        (INNER_W, INNER_N),
-        (BED1_X - INT_T/2, INNER_N),
-        (BED1_X - INT_T/2, DIV_Y - INT_T/2),
-        (INNER_W, DIV_Y - INT_T/2),
+        (INNER_W,              INNER_N),
+        (BED1_X - INT_T / 2,  INNER_N),
+        (BED1_X - INT_T / 2,  BACK_S),
+        (INNER_W,              BACK_S),
     ], COL_LVP)
 
-    # Bathroom 2 (back-center)
+    # 2. Bathroom 2 (back-center, Jack & Jill)
     add_room("Bathroom 2", [
-        (BED1_X + INT_T/2, INNER_N),
-        (BATH2_X - INT_T/2, INNER_N),
-        (BATH2_X - INT_T/2, DIV_Y - INT_T/2),
-        (BED1_X + INT_T/2, DIV_Y - INT_T/2),
+        (BED1_X + INT_T / 2,  INNER_N),
+        (MID_X - INT_T / 2,   INNER_N),
+        (MID_X - INT_T / 2,   BACK_S),
+        (BED1_X + INT_T / 2,  BACK_S),
     ], COL_TILE)
 
-    # Bedroom 2 (back-right)
+    # 3. Bedroom 2 (back-east)
     add_room("Bedroom 2", [
-        (BATH2_X + INT_T/2, INNER_N),
-        (INNER_E, INNER_N),
-        (INNER_E, DIV_Y - INT_T/2),
-        (BATH2_X + INT_T/2, DIV_Y - INT_T/2),
+        (MID_X + INT_T / 2,   INNER_N),
+        (INNER_E,              INNER_N),
+        (INNER_E,              BACK_S),
+        (MID_X + INT_T / 2,   BACK_S),
     ], COL_LVP)
 
-    # Kitchen / Living Room (front-left, large open plan)
-    add_room("Kitchen / Living", [
-        (INNER_W, DIV_Y + INT_T/2),
-        (BATH1_X - INT_T/2, DIV_Y + INT_T/2),
-        (BATH1_X - INT_T/2, INNER_S),
-        (INNER_W, INNER_S),
+    # 4. Kitchen (front-west, eat-in — the communal space)
+    add_room("Kitchen", [
+        (INNER_W,              FRONT_N),
+        (MID_X - INT_T / 2,   FRONT_N),
+        (MID_X - INT_T / 2,   INNER_S),
+        (INNER_W,              INNER_S),
     ], COL_LVP)
 
-    # Bathroom 1 (front-right)
+    # 5. Bathroom 1 (front-right upper)
     add_room("Bathroom 1", [
-        (BATH1_X + INT_T/2, DIV_Y + INT_T/2),
-        (INNER_E, DIV_Y + INT_T/2),
-        (INNER_E, INNER_S),
-        (BATH1_X + INT_T/2, INNER_S),
+        (RIGHT_W,   FRONT_N),
+        (INNER_E,   FRONT_N),
+        (INNER_E,   BATH1_S),
+        (RIGHT_W,   BATH1_S),
     ], COL_TILE)
 
-    # ══════════════════════════════════════════════
+    # 6. Laundry Room (front-right lower)
+    add_room("Laundry", [
+        (RIGHT_W,   LNDY_N),
+        (INNER_E,   LNDY_N),
+        (INNER_E,   INNER_S),
+        (RIGHT_W,   INNER_S),
+    ], COL_LNDY_TILE)
+
+    # ═══════════════════════════════════════════
     #  DOORS & WINDOWS
-    # ══════════════════════════════════════════════
+    # ═══════════════════════════════════════════
 
-    # ── Front Door: Dusco Moderna 34"×80" Full Lite Black Steel ──
-    # Home Depot SKU 1001728121 — on south wall
-    add_opening("Dusco Moderna 34×80 Door",
-                x=DOOR_X, y=D, w=DOOR_W_IN, d=EXT_T, h=DOOR_H_IN,
-                angle=0, elevation=0, color=COL_DOOR, is_door=True)
+    # ── Exterior: Front door (south wall) ──
+    add_opening("Dusco Moderna 34×80 Steel Door",
+                DOOR_X, D, DOOR_W, EXT_T, DOOR_H,
+                angle=0, color=COL_DOOR, is_door=True)
 
-    # ── Windows: Kent Atlantic 36"×40" Casement (SKU 1107802) ──
-    # South wall (front) — 2 windows
+    # ── Exterior windows: Kent Atlantic 36×40 Casement ──
     for wx in SOUTH_WIN:
-        add_opening(f"Casement 36×40 (SKU 1107802)",
-                    x=wx, y=D, w=WIN_W, d=EXT_T, h=WIN_H,
+        add_opening("36×40 Casement (Kent 1107802)",
+                    wx, D, WIN_W, EXT_T, WIN_H,
                     angle=0, elevation=WIN_SILL, color=COL_WINDOW)
-
-    # North wall (back) — 2 windows (1 per bedroom)
     for wx in NORTH_WIN:
-        add_opening(f"Casement 36×40 (SKU 1107802)",
-                    x=wx, y=0, w=WIN_W, d=EXT_T, h=WIN_H,
+        add_opening("36×40 Casement (Kent 1107802)",
+                    wx, 0, WIN_W, EXT_T, WIN_H,
                     angle=math.pi, elevation=WIN_SILL, color=COL_WINDOW)
-
-    # West wall — 1 window (Bedroom 1)
     for wy in WEST_WIN:
-        add_opening(f"Casement 36×40 (SKU 1107802)",
-                    x=0, y=wy, w=WIN_W, d=EXT_T, h=WIN_H,
-                    angle=-math.pi/2, elevation=WIN_SILL, color=COL_WINDOW)
-
-    # East wall — 1 window (Bedroom 2)
+        add_opening("36×40 Casement (Kent 1107802)",
+                    0, wy, WIN_W, EXT_T, WIN_H,
+                    angle=-math.pi / 2, elevation=WIN_SILL, color=COL_WINDOW)
     for wy in EAST_WIN:
-        add_opening(f"Casement 36×40 (SKU 1107802)",
-                    x=W, y=wy, w=WIN_W, d=EXT_T, h=WIN_H,
-                    angle=math.pi/2, elevation=WIN_SILL, color=COL_WINDOW)
+        add_opening("36×40 Casement (Kent 1107802)",
+                    W, wy, WIN_W, EXT_T, WIN_H,
+                    angle=math.pi / 2, elevation=WIN_SILL, color=COL_WINDOW)
 
-    # ── Interior Pocket Doors (Kent SKU 1389850) ──
-    # Bedroom 1 door (in E-W divider wall at y=DIV_Y)
-    add_opening("Pocket Door 30×80", x=50, y=DIV_Y,
-                w=POCKET_DOOR["w"], d=INT_T, h=POCKET_DOOR["h"],
-                angle=0, elevation=0, color=COL_POCKET, is_door=True)
+    # ── Interior pocket doors (Kent 1389850, 30×80) ──
+    PD = POCKET_DOOR
 
-    # Bedroom 2 door
-    add_opening("Pocket Door 30×80", x=200, y=DIV_Y,
-                w=POCKET_DOOR["w"], d=INT_T, h=POCKET_DOOR["h"],
-                angle=0, elevation=0, color=COL_POCKET, is_door=True)
+    # Bedroom 1 → Kitchen (in E-W divider)
+    add_opening("Pocket Door 30×80",
+                50, DIV_Y, PD["w"], INT_T, PD["h"],
+                angle=0, color=COL_POCKET, is_door=True)
 
-    # Bathroom 2 door (in BED1_X partition)
-    add_opening("Pocket Door 30×80", x=BED1_X, y=40,
-                w=POCKET_DOOR["w"], d=INT_T, h=POCKET_DOOR["h"],
-                angle=math.pi/2, elevation=0, color=COL_POCKET, is_door=True)
+    # Bedroom 2 → Kitchen (in E-W divider)
+    add_opening("Pocket Door 30×80",
+                210, DIV_Y, PD["w"], INT_T, PD["h"],
+                angle=0, color=COL_POCKET, is_door=True)
 
-    # Bathroom 1 door (in BATH1_X partition)
-    add_opening("Pocket Door 30×80", x=BATH1_X, y=170,
-                w=POCKET_DOOR["w"], d=INT_T, h=POCKET_DOOR["h"],
-                angle=math.pi/2, elevation=0, color=COL_POCKET, is_door=True)
+    # Bathroom 2 door (in BED1_X partition, from Bedroom 1 side)
+    add_opening("Pocket Door 30×80",
+                BED1_X, 65, PD["w"], INT_T, PD["h"],
+                angle=math.pi / 2, color=COL_POCKET, is_door=True)
 
-    # ══════════════════════════════════════════════
-    #  BATHROOM 1 FIXTURES (front-right zone)
-    # ══════════════════════════════════════════════
-    # Room interior: x = 192.25 to 252.5, y = 110.25 to 234.5
-    b1_cx = (BATH1_X + INT_T/2 + INNER_E) / 2   # center X of bath1
-    b1_left = BATH1_X + INT_T/2 + 2              # 2" clearance from wall
+    # Bathroom 1 → Kitchen (in MID_X partition)
+    add_opening("Pocket Door 30×80",
+                MID_X, 145, PD["w"], INT_T, PD["h"],
+                angle=math.pi / 2, color=COL_POCKET, is_door=True)
 
-    # Toilet against east wall
-    add_piece("Toilet (Kent 1579329)",
-              x=INNER_E - TOILET["d"]/2, y=DIV_Y + INT_T/2 + 20 + TOILET["w"]/2,
-              w=TOILET["w"], d=TOILET["d"], h=TOILET["h"],
-              angle=math.pi/2, color=COL_TOILET, price=TOILET["price"])
+    # Laundry → Kitchen (in MID_X partition)
+    add_opening("Pocket Door 30×80",
+                MID_X, 210, PD["w"], INT_T, PD["h"],
+                angle=math.pi / 2, color=COL_POCKET, is_door=True)
 
-    # Vanity against east wall, south of toilet
-    add_piece("24\" Vanity (Kent 1697660)",
-              x=INNER_E - VANITY["d"]/2, y=DIV_Y + INT_T/2 + 55 + VANITY["w"]/2,
-              w=VANITY["w"], d=VANITY["d"], h=VANITY["h"],
-              angle=math.pi/2, color=COL_VANITY, price=VANITY["price"])
+    # ═══════════════════════════════════════════
+    #  BATHROOM 1 FIXTURES (front-right upper)
+    #  Interior: x 160.25→252.5, y 122.25→177.75
+    # ═══════════════════════════════════════════
 
-    # Shower in south end of bath1
-    add_piece("Shower 48×32 (Kent 1023986)",
-              x=INNER_E - SHOWER["w"]/2, y=INNER_S - SHOWER["d"]/2,
-              w=SHOWER["w"], d=SHOWER["d"], h=SHOWER["h"],
-              color=COL_SHOWER, price=SHOWER["price"])
+    # Shower against east wall
+    add_piece(f"Shower ({SHOWER['sku']})",
+              INNER_E - SHOWER["w"] / 2, FRONT_N + SHOWER["d"] / 2,
+              SHOWER["w"], SHOWER["d"], SHOWER["h"],
+              color=COL_SHOWER, price=SHOWER["price"],
+              desc=SHOWER["name"])
 
-    # ══════════════════════════════════════════════
-    #  BATHROOM 2 FIXTURES (back-center zone)
-    # ══════════════════════════════════════════════
-    b2_left = BED1_X + INT_T/2
-    b2_right = BATH2_X - INT_T/2
+    # Toilet
+    add_piece(f"Toilet ({TOILET['sku']})",
+              RIGHT_W + 20, BATH1_S - TOILET["d"] / 2 - 2,
+              TOILET["w"], TOILET["d"], TOILET["h"],
+              color=COL_TOILET, price=TOILET["price"],
+              desc=TOILET["name"])
+
+    # Vanity
+    add_piece(f"Vanity ({VANITY['sku']})",
+              RIGHT_W + 55, BATH1_S - VANITY["d"] / 2 - 2,
+              VANITY["w"], VANITY["d"], VANITY["h"],
+              color=COL_VANITY, price=VANITY["price"],
+              desc=VANITY["name"])
+
+    # ═══════════════════════════════════════════
+    #  BATHROOM 2 FIXTURES (back-center)
+    #  Interior: x 104.25→155.75, y 5.5→117.75
+    # ═══════════════════════════════════════════
+    b2_left = BED1_X + INT_T / 2
+    b2_right = MID_X - INT_T / 2
 
     # Toilet against north wall
-    add_piece("Toilet (Kent 1579329)",
-              x=b2_left + 10 + TOILET["w"]/2, y=INNER_N + TOILET["d"]/2,
-              w=TOILET["w"], d=TOILET["d"], h=TOILET["h"],
-              color=COL_TOILET, price=TOILET["price"])
+    add_piece(f"Toilet ({TOILET['sku']})",
+              b2_left + 12 + TOILET["w"] / 2, INNER_N + TOILET["d"] / 2,
+              TOILET["w"], TOILET["d"], TOILET["h"],
+              color=COL_TOILET, price=TOILET["price"],
+              desc=TOILET["name"])
 
-    # Vanity against north wall
-    add_piece("24\" Vanity (Kent 1697660)",
-              x=b2_left + 10 + VANITY["w"]/2, y=INNER_N + 30 + VANITY["d"]/2,
-              w=VANITY["w"], d=VANITY["d"], h=VANITY["h"],
-              color=COL_VANITY, price=VANITY["price"])
+    # Vanity next to toilet
+    add_piece(f"Vanity ({VANITY['sku']})",
+              b2_left + 12 + VANITY["w"] / 2, INNER_N + 34 + VANITY["d"] / 2,
+              VANITY["w"], VANITY["d"], VANITY["h"],
+              color=COL_VANITY, price=VANITY["price"],
+              desc=VANITY["name"])
 
     # Shower in south end of bath2
-    add_piece("Shower 48×32 (Kent 1023986)",
-              x=(b2_left + b2_right) / 2, y=DIV_Y - INT_T/2 - SHOWER["d"]/2,
-              w=SHOWER["w"], d=SHOWER["d"], h=SHOWER["h"],
-              color=COL_SHOWER, price=SHOWER["price"])
+    add_piece(f"Shower ({SHOWER['sku']})",
+              (b2_left + b2_right) / 2, BACK_S - SHOWER["d"] / 2,
+              SHOWER["w"], SHOWER["d"], SHOWER["h"],
+              color=COL_SHOWER, price=SHOWER["price"],
+              desc=SHOWER["name"])
 
-    # ══════════════════════════════════════════════
-    #  KITCHEN / LIVING ROOM FIXTURES (front-left)
-    # ══════════════════════════════════════════════
-    # Room interior: x = 5.5 to 187.75, y = 110.25 to 234.5
-    # Kitchen run along the E-W divider wall (north side of front zone)
-    # Cabinets, counter, sink, range, fridge in a row
+    # ═══════════════════════════════════════════
+    #  KITCHEN FIXTURES (front-west)
+    #  Interior: x 5.5→155.75, y 122.25→234.5
+    # ═══════════════════════════════════════════
 
-    kitchen_y = DIV_Y + INT_T/2 + COUNTER["d"]/2  # center Y of counter run
+    # Kitchen counter + cabinets along north wall (divider), L-shape
+    cab_y = FRONT_N + COUNTER["d"] / 2     # center of cabinets against divider
+    cab_start_x = INNER_W + 8              # 8" from west wall
 
-    # Kitchen cabinets + countertop (8 LF = 96" along divider wall)
-    add_piece("IKEA METOD+NICKEBO Cabinets 8LF",
-              x=70 + COUNTER["w"]/2, y=kitchen_y,
-              w=COUNTER["w"], d=COUNTER["d"], h=COUNTER["h"],
-              color=COL_CABINET, price=COUNTER["price"])
+    # Lower cabinets (8 LF = 96" run)
+    add_piece("IKEA METOD+NICKEBO 8LF Lower",
+              cab_start_x + COUNTER["w"] / 2, cab_y,
+              COUNTER["w"], COUNTER["d"], COUNTER["h"],
+              color=COL_CABINET, price=COUNTER["price"],
+              desc="IKEA METOD frame + NICKEBO anthracite fronts")
 
-    # Counter on top of cabinets (white laminate — Kent 1015537)
+    # Countertop on cabinets
     add_piece("White Laminate Counter 8'",
-              x=70 + COUNTER["w"]/2, y=kitchen_y,
-              w=COUNTER["w"], d=COUNTER["d"], h=1.5,
+              cab_start_x + COUNTER["w"] / 2, cab_y,
+              COUNTER["w"] + 2, COUNTER["d"] + 1, 1.5,
               elevation=COUNTER["h"], color=COL_COUNTER)
 
-    # Sink in counter (Kent 1391411)
-    add_piece("25\" SS Sink (Kent 1391411)",
-              x=100, y=kitchen_y,
-              w=SINK["w"], d=SINK["d"], h=SINK["h"],
-              elevation=COUNTER["h"] - SINK["h"], color=COL_SINK, price=SINK["price"])
+    # Sink in counter
+    add_piece(f"Sink ({SINK['sku']})",
+              cab_start_x + 50, cab_y,
+              SINK["w"], SINK["d"], SINK["h"],
+              elevation=COUNTER["h"] - SINK["h"],
+              color=COL_SINK, price=SINK["price"],
+              desc=SINK["name"])
 
-    # Range left of cabinets (Kent 1461599)
-    add_piece("24\" Range (Kent 1461599)",
-              x=60 + RANGE["w"]/2, y=kitchen_y,
-              w=RANGE["w"], d=RANGE["d"], h=RANGE["h"],
-              color=COL_RANGE, price=RANGE["price"])
+    # Range
+    add_piece(f"Range ({RANGE['sku']})",
+              cab_start_x + 24 + RANGE["w"] / 2, cab_y,
+              RANGE["w"], RANGE["d"], RANGE["h"],
+              color=COL_RANGE, price=RANGE["price"],
+              desc=RANGE["name"])
 
-    # Range hood above range (Kent 1462473)
-    add_piece("24\" Range Hood (Kent 1462473)",
-              x=60 + HOOD["w"]/2, y=kitchen_y,
-              w=HOOD["w"], d=HOOD["d"], h=HOOD["h"],
-              elevation=54, color=COL_HOOD, price=HOOD["price"])
+    # Hood above range
+    add_piece(f"Hood ({HOOD['sku']})",
+              cab_start_x + 24 + HOOD["w"] / 2, cab_y,
+              HOOD["w"], HOOD["d"], HOOD["h"],
+              elevation=54, color=COL_HOOD, price=HOOD["price"],
+              desc=HOOD["name"])
 
-    # Fridge at start of kitchen run (Kent 1461451)
-    add_piece("24\" Fridge (Kent 1461451)",
-              x=30 + FRIDGE["w"]/2, y=kitchen_y,
-              w=FRIDGE["w"], d=FRIDGE["d"], h=FRIDGE["h"],
-              color=COL_FRIDGE, price=FRIDGE["price"])
+    # Fridge against west wall
+    add_piece(f"Fridge ({FRIDGE['sku']})",
+              INNER_W + FRIDGE["d"] / 2, FRONT_N + 35 + FRIDGE["w"] / 2,
+              FRIDGE["w"], FRIDGE["d"], FRIDGE["h"],
+              angle=math.pi / 2, color=COL_FRIDGE, price=FRIDGE["price"],
+              desc=FRIDGE["name"])
 
-    # ── Living room area ──
-    # Mini-split head on divider wall, high up
-    add_piece("Mini-Split Indoor Head",
-              x=BATH1_X / 2, y=DIV_Y + INT_T/2 + MINISPLIT_HEAD["d"]/2,
-              w=MINISPLIT_HEAD["w"], d=MINISPLIT_HEAD["d"], h=MINISPLIT_HEAD["h"],
-              elevation=CEIL_H - MINISPLIT_HEAD["h"] - 6, color=COL_HEAD)
+    # ── Dining area (south portion of kitchen) ──
+    table_x = (INNER_W + MID_X - INT_T / 2) / 2   # center of kitchen
+    table_y = INNER_S - 40                          # near south wall
 
-    # ══════════════════════════════════════════════
-    #  BEDROOM 1 FIXTURES (back-left)
-    # ══════════════════════════════════════════════
-    # Baseboard heater on west wall (Kent 1652016)
-    add_piece("Baseboard 1500W (Kent 1652016)",
-              x=INNER_W + BASEBOARD["d"]/2, y=(INNER_N + DIV_Y - INT_T/2) / 2,
-              w=BASEBOARD["w"], d=BASEBOARD["d"], h=BASEBOARD["h"],
-              angle=math.pi/2, color=COL_BASEBOARD_C, price=BASEBOARD["price"])
+    add_piece("Dining Table 36x30",
+              table_x, table_y,
+              DINING_TABLE["w"], DINING_TABLE["d"], DINING_TABLE["h"],
+              color=COL_TABLE, desc="Dining table (seats 2-4)")
 
-    # ══════════════════════════════════════════════
-    #  BEDROOM 2 FIXTURES (back-right)
-    # ══════════════════════════════════════════════
-    # Baseboard heater on east wall
-    add_piece("Baseboard 1500W (Kent 1652016)",
-              x=INNER_E - BASEBOARD["d"]/2, y=(INNER_N + DIV_Y - INT_T/2) / 2,
-              w=BASEBOARD["w"], d=BASEBOARD["d"], h=BASEBOARD["h"],
-              angle=math.pi/2, color=COL_BASEBOARD_C, price=BASEBOARD["price"])
+    add_piece("Chair",
+              table_x - 14, table_y,
+              DINING_CHAIR["w"], DINING_CHAIR["d"], DINING_CHAIR["h"],
+              color=COL_CHAIR)
+    add_piece("Chair",
+              table_x + 14, table_y,
+              DINING_CHAIR["w"], DINING_CHAIR["d"], DINING_CHAIR["h"],
+              color=COL_CHAIR)
 
-    # ══════════════════════════════════════════════
-    #  MECHANICAL / UTILITY (placed in bath1 area or along walls)
-    # ══════════════════════════════════════════════
+    # Mini-split indoor head (high on divider wall)
+    add_piece("Mini-Split Head (18kBTU)",
+              table_x, FRONT_N + MINI_HEAD["d"] / 2,
+              MINI_HEAD["w"], MINI_HEAD["d"], MINI_HEAD["h"],
+              elevation=CEIL_H - MINI_HEAD["h"] - 4,
+              color=COL_HEAD, desc="Perfect Aire wall-mount head")
 
-    # Water heater — in bath1 near north wall
-    add_piece("Water Heater 182L (Kent 1766016)",
-              x=BATH1_X + INT_T/2 + 12, y=DIV_Y + INT_T/2 + 12,
-              w=WATER_HEATER["w"], d=WATER_HEATER["d"], h=WATER_HEATER["h"],
-              color=COL_WH, price=WATER_HEATER["price"])
+    # ═══════════════════════════════════════════
+    #  BEDROOM 1 FIXTURES (back-west)
+    # ═══════════════════════════════════════════
+    bed1_cx = (INNER_W + BED1_X - INT_T / 2) / 2
+    bed1_cy = (INNER_N + BACK_S) / 2
 
-    # Sub-panel on west wall in living room (Kent 1013553)
-    add_piece("100A Sub-Panel (Kent 1013553)",
-              x=INNER_W + PANEL["d"]/2, y=DIV_Y + INT_T/2 + 60,
-              w=PANEL["w"], d=PANEL["d"], h=PANEL["h"],
-              elevation=48, angle=math.pi/2,
-              color=COL_PANEL_C, price=PANEL["price"])
+    add_piece(f"Baseboard ({BASEBOARD['sku']})",
+              INNER_W + BASEBOARD["d"] / 2, bed1_cy,
+              BASEBOARD["w"], BASEBOARD["d"], BASEBOARD["h"],
+              angle=math.pi / 2, color=COL_BASEBOARD, price=BASEBOARD["price"],
+              desc=BASEBOARD["name"])
 
-    # HRV — ceiling-mounted in bath1 area (Kent 1400849)
-    add_piece("HRV Venmar HRV110 (Kent 1400849)",
-              x=BATH1_X + INT_T/2 + 20, y=150,
-              w=HRV["w"], d=HRV["d"], h=HRV["h"],
+    # ═══════════════════════════════════════════
+    #  BEDROOM 2 FIXTURES (back-east)
+    # ═══════════════════════════════════════════
+
+    add_piece(f"Baseboard ({BASEBOARD['sku']})",
+              INNER_E - BASEBOARD["d"] / 2, bed1_cy,
+              BASEBOARD["w"], BASEBOARD["d"], BASEBOARD["h"],
+              angle=math.pi / 2, color=COL_BASEBOARD, price=BASEBOARD["price"],
+              desc=BASEBOARD["name"])
+
+    # ═══════════════════════════════════════════
+    #  LAUNDRY ROOM FIXTURES (front-right lower)
+    #  Interior: x 160.25→252.5, y 182.25→234.5
+    # ═══════════════════════════════════════════
+    lr_cx = (RIGHT_W + INNER_E) / 2
+    lr_cy = (LNDY_N + INNER_S) / 2
+
+    # Washer/Dryer combo against east wall
+    add_piece(f"Washer/Dryer ({WASHER['sku']})",
+              INNER_E - WASHER["d"] / 2, lr_cy - 5,
+              WASHER["w"], WASHER["d"], WASHER["h"],
+              angle=math.pi / 2, color=COL_WASHER, price=WASHER["price"],
+              desc=WASHER["name"])
+
+    # Water heater
+    add_piece(f"Water Heater ({WATER_HEATER['sku']})",
+              RIGHT_W + 15, INNER_S - WATER_HEATER["d"] / 2 - 3,
+              WATER_HEATER["w"], WATER_HEATER["d"], WATER_HEATER["h"],
+              color=COL_WH, price=WATER_HEATER["price"],
+              desc=WATER_HEATER["name"])
+
+    # HRV (ceiling-mounted)
+    add_piece(f"HRV ({HRV['sku']})",
+              lr_cx, LNDY_N + 15,
+              HRV["w"], HRV["d"], HRV["h"],
               elevation=CEIL_H - HRV["h"] - 2,
-              color=COL_HRV, price=HRV["price"])
+              color=COL_HRV, price=HRV["price"],
+              desc=HRV["name"])
 
-    # Washer/Dryer — in bath1 utility corner (Kent 1462204)
-    add_piece("GE 24\" Washer/Dryer (Kent 1462204)",
-              x=INNER_E - WASHER["d"]/2, y=DIV_Y + INT_T/2 + 12 + WASHER["w"]/2,
-              w=WASHER["w"], d=WASHER["d"], h=WASHER["h"],
-              angle=math.pi/2, color=COL_WASHER_C, price=WASHER["price"])
+    # Sub-panel on west wall of laundry
+    add_piece(f"Sub-Panel ({PANEL['sku']})",
+              RIGHT_W + PANEL["d"] / 2 + 2, lr_cy + 10,
+              PANEL["w"], PANEL["d"], PANEL["h"],
+              elevation=48, color=COL_PANEL, price=PANEL["price"],
+              desc=PANEL["name"])
 
-    # Condenser — OUTSIDE east wall (Kent 1034429)
-    add_piece("Mini-Split Condenser (Kent 1034429)",
-              x=W + 18, y=D / 2,
-              w=CONDENSER["w"], d=CONDENSER["d"], h=CONDENSER["h"],
-              elevation=6, color=COL_COND, price=CONDENSER["price"])
+    # ═══════════════════════════════════════════
+    #  EXTERIOR MECHANICAL
+    # ═══════════════════════════════════════════
+    add_piece(f"Condenser ({CONDENSER['sku']})",
+              W + 20, D / 2,
+              CONDENSER["w"], CONDENSER["d"], CONDENSER["h"],
+              elevation=6, color=COL_COND, price=CONDENSER["price"],
+              desc=CONDENSER["name"])
 
-    # ══════════════════════════════════════════════
-    #  DIMENSION LINES
-    # ══════════════════════════════════════════════
-    # Building width
-    add_dimension(0, D + 30, W, D + 30, offset=15)
-    # Building depth
-    add_dimension(-30, 0, -30, D, offset=15)
-    # Room widths in back zone
-    add_dimension(INNER_W, -15, BED1_X, -15, offset=10)
-    add_dimension(BED1_X, -15, BATH2_X, -15, offset=10)
-    add_dimension(BATH2_X, -15, INNER_E, -15, offset=10)
+    # ═══════════════════════════════════════════
+    #  DIMENSION LINES — comprehensive callouts
+    # ═══════════════════════════════════════════
 
-    # ══════════════════════════════════════════════
-    #  LABELS
-    # ══════════════════════════════════════════════
-    add_label("21'-6\" × 20'-0\" = 430 sqft", W/2, D + 50, size=16)
-    add_label("Mono-slope roof: 9'-6\" (left) → 7'-0\" (right)", W/2, D + 65, size=12)
+    # ── Overall building dimensions ──
+    add_dim(0, D + 36, W, D + 36, offset=12)        # Total width
+    add_dim(-36, 0, -36, D, offset=12)               # Total depth
 
-    # ══════════════════════════════════════════════
+    # ── Back zone room widths (along north edge) ──
+    add_dim(INNER_W, -18, BED1_X - INT_T/2, -18, offset=8)     # Bed 1 width
+    add_dim(BED1_X + INT_T/2, -18, MID_X - INT_T/2, -18, 8)    # Bath 2 width
+    add_dim(MID_X + INT_T/2, -18, INNER_E, -18, offset=8)      # Bed 2 width
+
+    # ── Back zone depth (along west edge) ──
+    add_dim(-18, INNER_N, -18, BACK_S, offset=8)
+
+    # ── Front zone room widths (along south edge) ──
+    add_dim(INNER_W, D + 18, MID_X - INT_T/2, D + 18, 8)       # Kitchen width
+    add_dim(RIGHT_W, D + 18, INNER_E, D + 18, offset=8)         # Bath1/Laundry width
+
+    # ── Front zone depths (along east edge) ──
+    add_dim(W + 18, FRONT_N, W + 18, BATH1_S, offset=8)         # Bath 1 depth
+    add_dim(W + 18, LNDY_N, W + 18, INNER_S, offset=8)          # Laundry depth
+
+    # ── Kitchen depth ──
+    add_dim(INNER_W - 12, FRONT_N, INNER_W - 12, INNER_S, 8)
+
+    # ── Partition positions (E-W divider) ──
+    add_dim(-18, INNER_N, -18, DIV_Y, offset=14)                # Back zone height
+    add_dim(-18, DIV_Y, -18, INNER_S, offset=14)                # Front zone height
+
+    # ── Window callouts ──
+    for wx in NORTH_WIN:
+        add_dim(wx - WIN_W/2, -6, wx + WIN_W/2, -6, offset=4)
+    for wx in SOUTH_WIN:
+        add_dim(wx - WIN_W/2, D + 6, wx + WIN_W/2, D + 6, 4)
+
+    # ═══════════════════════════════════════════
+    #  LABELS — engineering annotations
+    # ═══════════════════════════════════════════
+    dark = rgb_int(60, 60, 60)
+    note_color = rgb_int(120, 120, 120)
+
+    # ── Title block (below the plan) ──
+    add_label("ST. JOHN'S 430 sqft BACKYARD SUITE",
+              W / 2, D + 55, size=18, color=dark)
+    add_label("97 Mayor Ave  -  St. John's, NL  -  2 Bed / 2 Bath / Kitchen / Laundry",
+              W / 2, D + 70, size=11, color=note_color)
+    add_label("21'-6\" x 20'-0\" footprint  -  8'-0\" ceiling  -  Mono-slope roof 9'-6\" to 7'-0\"",
+              W / 2, D + 82, size=10, color=note_color)
+
+    # ── Construction notes ──
+    notes_x = W + 50
+    notes_y = 10
+    add_label("CONSTRUCTION NOTES", notes_x, notes_y, size=14, color=dark)
+    notes = [
+        "Exterior: 2x6 @ 16\" o.c., R-24 mineral wool",
+        "Interior: 2x4 @ 16\" o.c., R-12 batt",
+        "Ceiling: R-60 blown cellulose",
+        "Foundation: 4\" slab-on-grade, R-10 XPS perimeter",
+        "Roof: Mono-slope 3:12, standing seam metal",
+        "Windows: Kent Atlantic 36x40 casement (x7)",
+        "Entry: Dusco Moderna 34x80 full-lite steel",
+        "Interior: 30x80 pocket doors (x5)",
+        "Siding: Mitten Oregon Pride vinyl",
+        "Floor: Volcano Pewter LVP (bed/kit), ceramic tile (bath/lndy)",
+        "HVAC: 18kBTU mini-split + HRV + baseboard backup",
+        "Plumbing: PEX manifold, 182L electric HWT",
+        "Electrical: 100A sub-panel, 200A service at main house",
+        "NL Building Code 2019 + Energy Code compliance",
+    ]
+    for i, note in enumerate(notes):
+        add_label(f"  {note}",
+                  notes_x, notes_y + 16 + i * 13, size=9, color=note_color)
+
+    # ── Room labels with specs ──
+    # Bedroom 1
+    b1_area = room_sqft(BED1_W_IN, BACK_D_IN)
+    add_label(f"BEDROOM 1  ({b1_area:.0f} sqft)",
+              (INNER_W + BED1_X - INT_T/2) / 2,
+              (INNER_N + BACK_S) / 2 - 12, size=11, color=dark)
+    add_label("LVP floor  |  1500W baseboard",
+              (INNER_W + BED1_X - INT_T/2) / 2,
+              (INNER_N + BACK_S) / 2 + 2, size=8, color=note_color)
+
+    # Bathroom 2
+    b2_area = room_sqft(BATH2_W_IN, BACK_D_IN)
+    add_label(f"BATH 2  ({b2_area:.0f} sqft)",
+              (BED1_X + INT_T/2 + MID_X - INT_T/2) / 2,
+              (INNER_N + BACK_S) / 2 - 6, size=10, color=dark)
+    add_label("Ceramic tile  |  48x32 shower",
+              (BED1_X + INT_T/2 + MID_X - INT_T/2) / 2,
+              (INNER_N + BACK_S) / 2 + 6, size=7, color=note_color)
+
+    # Bedroom 2
+    b2b_area = room_sqft(BED2_W_IN, BACK_D_IN)
+    add_label(f"BEDROOM 2  ({b2b_area:.0f} sqft)",
+              (MID_X + INT_T/2 + INNER_E) / 2,
+              (INNER_N + BACK_S) / 2 - 12, size=11, color=dark)
+    add_label("LVP floor  |  1500W baseboard",
+              (MID_X + INT_T/2 + INNER_E) / 2,
+              (INNER_N + BACK_S) / 2 + 2, size=8, color=note_color)
+
+    # Kitchen
+    k_area = room_sqft(KITCHEN_W_IN, FRONT_D_IN)
+    add_label(f"KITCHEN  ({k_area:.0f} sqft)",
+              (INNER_W + MID_X - INT_T/2) / 2,
+              (FRONT_N + INNER_S) / 2 - 20, size=13, color=dark)
+    add_label("Eat-in  |  IKEA METOD + NICKEBO anthracite",
+              (INNER_W + MID_X - INT_T/2) / 2,
+              (FRONT_N + INNER_S) / 2 - 6, size=9, color=note_color)
+    add_label("8 LF counter | 24\" range | 24\" fridge | SS sink",
+              (INNER_W + MID_X - INT_T/2) / 2,
+              (FRONT_N + INNER_S) / 2 + 6, size=8, color=note_color)
+    add_label("LVP floor  |  Mini-split head (18kBTU)",
+              (INNER_W + MID_X - INT_T/2) / 2,
+              (FRONT_N + INNER_S) / 2 + 17, size=8, color=note_color)
+
+    # Bathroom 1
+    b1a_area = room_sqft(B1LR_W_IN, BATH1_D_IN)
+    add_label(f"BATH 1  ({b1a_area:.0f} sqft)",
+              (RIGHT_W + INNER_E) / 2,
+              (FRONT_N + BATH1_S) / 2 - 4, size=10, color=dark)
+    add_label("Ceramic tile  |  48x32 shower",
+              (RIGHT_W + INNER_E) / 2,
+              (FRONT_N + BATH1_S) / 2 + 7, size=7, color=note_color)
+
+    # Laundry
+    lr_area = room_sqft(B1LR_W_IN, LNDY_D_IN)
+    add_label(f"LAUNDRY  ({lr_area:.0f} sqft)",
+              (RIGHT_W + INNER_E) / 2,
+              (LNDY_N + INNER_S) / 2 - 8, size=10, color=dark)
+    add_label("24\" combo W/D | HWT | HRV | panel",
+              (RIGHT_W + INNER_E) / 2,
+              (LNDY_N + INNER_S) / 2 + 4, size=7, color=note_color)
+
+    # ── Fixture legend (bottom-right) ──
+    leg_x = W + 50
+    leg_y = D - 60
+    add_label("FIXTURE SCHEDULE", leg_x, leg_y, size=13, color=dark)
+    fixtures_list = [
+        f"Toilets (x2): {TOILET['name']} -- ${TOILET['price']:.2f} ea",
+        f"Vanities (x2): {VANITY['name']} -- ${VANITY['price']:.2f} ea",
+        f"Showers (x2): {SHOWER['name']} -- ${SHOWER['price']:.2f} ea",
+        f"Range: {RANGE['name']} -- ${RANGE['price']:.2f}",
+        f"Fridge: {FRIDGE['name']} -- ${FRIDGE['price']:.2f}",
+        f"Hood: {HOOD['name']} -- ${HOOD['price']:.2f}",
+        f"Sink: {SINK['name']} -- ${SINK['price']:.2f}",
+        f"W/D: {WASHER['name']} -- ${WASHER['price']:.2f}",
+        f"HWT: {WATER_HEATER['name']} -- ${WATER_HEATER['price']:.2f}",
+        f"HRV: {HRV['name']} -- ${HRV['price']:.2f}",
+        f"Panel: {PANEL['name']} -- ${PANEL['price']:.2f}",
+        f"Mini-split: {CONDENSER['name']} -- ${CONDENSER['price']:.2f}",
+        f"Cabinets: IKEA METOD+NICKEBO 8LF -- ${COUNTER['price']:.2f}",
+    ]
+    for i, line in enumerate(fixtures_list):
+        add_label(line, leg_x, leg_y + 15 + i * 12, size=8, color=note_color)
+
+    # ═══════════════════════════════════════════
     #  ASSEMBLE XML IN CORRECT ORDER
-    # ══════════════════════════════════════════════
-    # SH3D requires: furniture → walls → rooms → dimensions → labels
+    #  (per HomeXMLExporter: furniture → walls → rooms → dims → labels)
+    # ═══════════════════════════════════════════
     for el in furniture_elements:
         root.append(el)
     for el in wall_elements:
@@ -749,114 +930,95 @@ def build_home_xml():
 
 
 # ═══════════════════════════════════════════════════════
-#  .OBJ MODEL GENERATOR (simple box for 3D rendering)
+#  .OBJ (unit box for 3D placeholders)
 # ═══════════════════════════════════════════════════════
-
 def generate_box_obj():
-    """Generate a unit box .obj model for SH3D 3D view rendering.
-    Centered horizontally at origin, base at Y=0, Y-up coordinate system."""
-    return """# Unit box model for Sweet Home 3D
-# SH3D scales this to match width/depth/height of each piece
-v -0.5 0.0 -0.5
-v  0.5 0.0 -0.5
-v  0.5 1.0 -0.5
-v -0.5 1.0 -0.5
-v -0.5 0.0  0.5
-v  0.5 0.0  0.5
-v  0.5 1.0  0.5
-v -0.5 1.0  0.5
-f 1 2 3 4
-f 5 8 7 6
-f 1 5 6 2
-f 2 6 7 3
-f 3 7 8 4
-f 4 8 5 1
-"""
+    return ("# Unit box — SH3D scales to piece w/d/h\n"
+            "v -0.5 0.0 -0.5\nv 0.5 0.0 -0.5\nv 0.5 1.0 -0.5\nv -0.5 1.0 -0.5\n"
+            "v -0.5 0.0 0.5\nv 0.5 0.0 0.5\nv 0.5 1.0 0.5\nv -0.5 1.0 0.5\n"
+            "f 1 2 3 4\nf 5 8 7 6\nf 1 5 6 2\nf 2 6 7 3\nf 3 7 8 4\nf 4 8 5 1\n")
 
 
 # ═══════════════════════════════════════════════════════
-#  MAIN — Generate the .sh3d file
+#  MAIN
 # ═══════════════════════════════════════════════════════
-
 def main():
     output_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                "stjohns_suite.sh3d")
 
-    print("Generating Sweet Home 3D file...")
-    print(f"  Building: {W}\" × {D}\" ({W/12:.1f}' × {D/12:.1f}') = 430 sqft")
-    print(f"  Ceiling:  {CEIL_H}\" ({CEIL_H/12:.1f}')")
-    print(f"  Walls:    {EXT_T}\" exterior (2×6), {INT_T}\" interior (2×4)")
+    print("=" * 60)
+    print("  St. John's 430 sqft Backyard Suite — SH3D Generator")
+    print("=" * 60)
+    print(f"  Footprint:  {W}\" x {D}\" ({W/12:.1f}' x {D/12:.1f}') = 430 sqft")
+    print(f"  Ceiling:    {CEIL_H}\" ({CEIL_H/12:.0f}'-0\")")
+    print(f"  Ext. walls: {EXT_T}\" (2x6 @ 16\" o.c.)")
+    print(f"  Int. walls: {INT_T}\" (2x4 + drywall)")
 
-    # Build XML
     root = build_home_xml()
     tree = ET.ElementTree(root)
 
-    # Serialize XML
-    xml_buffer = io.BytesIO()
-    tree.write(xml_buffer, encoding="UTF-8", xml_declaration=True)
-    xml_bytes = xml_buffer.getvalue()
+    xml_buf = io.BytesIO()
+    tree.write(xml_buf, encoding="UTF-8", xml_declaration=True)
+    xml_bytes = xml_buf.getvalue()
 
-    # Count elements
-    walls = root.findall("wall")
-    rooms = root.findall("room")
-    furniture = root.findall("pieceOfFurniture")
-    doors_wins = root.findall("doorOrWindow")
-    dims = root.findall("dimensionLine")
-
-    print(f"\n  Walls:      {len(walls)}")
-    print(f"  Rooms:      {len(rooms)}")
-    print(f"  Fixtures:   {len(furniture)}")
-    print(f"  Doors/Win:  {len(doors_wins)}")
-    print(f"  Dimensions: {len(dims)}")
-
-    # Package as .sh3d (ZIP containing Home.xml)
     with zipfile.ZipFile(output_path, "w", zipfile.ZIP_DEFLATED) as zf:
         zf.writestr("Home.xml", xml_bytes)
-        # Include box model for 3D rendering (optional)
         zf.writestr("Content/box.obj", generate_box_obj())
 
-    file_size = os.path.getsize(output_path)
-    print(f"\n  Output: {output_path}")
-    print(f"  Size:   {file_size:,} bytes")
-    print(f"\nOpen in Sweet Home 3D (sweethome3d.com) to view.")
-    print("Edit dimensions in this script and re-run to iterate.")
+    walls = root.findall("wall")
+    rooms = root.findall("room")
+    furn = root.findall("pieceOfFurniture")
+    dw = root.findall("doorOrWindow")
+    dims = root.findall("dimensionLine")
+    labels = root.findall("label")
 
-    # Print room summary
-    print("\n── Room Layout ──")
-    bed1_w = (BED1_X - INT_T/2 - INNER_W) / 12
-    bed1_d = (DIV_Y - INT_T/2 - INNER_N) / 12
-    print(f"  Bedroom 1:       {bed1_w:.1f}' × {bed1_d:.1f}' = {bed1_w*bed1_d:.0f} sqft")
+    print(f"\n  Walls:       {len(walls)}")
+    print(f"  Rooms:       {len(rooms)}")
+    print(f"  Fixtures:    {len(furn)}")
+    print(f"  Doors/Win:   {len(dw)}")
+    print(f"  Dimensions:  {len(dims)}")
+    print(f"  Labels:      {len(labels)}")
+    print(f"  XML size:    {len(xml_bytes):,} bytes")
+    print(f"  Output:      {output_path}")
+    print(f"  File size:   {os.path.getsize(output_path):,} bytes")
 
-    b2_w = (BATH2_X - INT_T/2 - BED1_X - INT_T/2) / 12
-    b2_d = bed1_d
-    print(f"  Bathroom 2:      {b2_w:.1f}' × {b2_d:.1f}' = {b2_w*b2_d:.0f} sqft")
+    # Room summary
+    print(f"\n{'─' * 50}")
+    print("  ROOM LAYOUT")
+    print(f"{'─' * 50}")
+    rooms_data = [
+        ("Bedroom 1",  BED1_W_IN,    BACK_D_IN),
+        ("Bathroom 2", BATH2_W_IN,   BACK_D_IN),
+        ("Bedroom 2",  BED2_W_IN,    BACK_D_IN),
+        ("Kitchen",    KITCHEN_W_IN, FRONT_D_IN),
+        ("Bathroom 1", B1LR_W_IN,    BATH1_D_IN),
+        ("Laundry",    B1LR_W_IN,    LNDY_D_IN),
+    ]
+    total_sqft = 0
+    for name, w_in, d_in in rooms_data:
+        sqft = room_sqft(w_in, d_in)
+        total_sqft += sqft
+        print(f"  {name:14s} {w_in/12:5.1f}' x {d_in/12:5.1f}' = {sqft:5.0f} sqft")
+    print(f"  {'─' * 42}")
+    print(f"  {'Total interior':14s}                   {total_sqft:5.0f} sqft")
+    print(f"  {'Walls/structure':14s}                   {430 - total_sqft:5.0f} sqft")
+    print(f"  {'Gross footprint':14s}                     430 sqft")
 
-    bed2_w = (INNER_E - BATH2_X - INT_T/2) / 12
-    bed2_d = bed1_d
-    print(f"  Bedroom 2:       {bed2_w:.1f}' × {bed2_d:.1f}' = {bed2_w*bed2_d:.0f} sqft")
-
-    lk_w = (BATH1_X - INT_T/2 - INNER_W) / 12
-    lk_d = (INNER_S - DIV_Y - INT_T/2) / 12
-    print(f"  Kitchen/Living:  {lk_w:.1f}' × {lk_d:.1f}' = {lk_w*lk_d:.0f} sqft")
-
-    b1_w = (INNER_E - BATH1_X - INT_T/2) / 12
-    b1_d = lk_d
-    print(f"  Bathroom 1:      {b1_w:.1f}' × {b1_d:.1f}' = {b1_w*b1_d:.0f} sqft")
-
-    total = bed1_w*bed1_d + b2_w*b2_d + bed2_w*bed2_d + lk_w*lk_d + b1_w*b1_d
-    print(f"  Total interior:  {total:.0f} sqft")
-
-    # Print fixture price summary
-    print("\n── Fixtures Placed ──")
-    total_price = 0
-    for f in furniture:
+    # Fixture pricing
+    print(f"\n{'─' * 50}")
+    print("  FIXTURE PRICING")
+    print(f"{'─' * 50}")
+    total_price = 0.0
+    for f in furn:
         name = f.get("name", "")
         price = float(f.get("price", "0"))
         if price > 0:
             print(f"  ${price:>8,.2f}  {name}")
             total_price += price
-    print(f"  {'─'*30}")
+    print(f"  {'─' * 42}")
     print(f"  ${total_price:>8,.2f}  Total placed fixtures")
+
+    print(f"\n  Open in Sweet Home 3D: File > Open > {os.path.basename(output_path)}")
 
 
 if __name__ == "__main__":
