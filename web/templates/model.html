@@ -22,10 +22,9 @@
     font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
     background:var(--bg); color:var(--text);
     -webkit-font-smoothing:antialiased;
-    overflow-x:hidden;
+    overflow:hidden;
   }
 
-  /* ── Shared Nav (injected by nav partial) ── */
   .site-nav {
     position:fixed; top:0; left:0; right:0; z-index:100;
     display:flex; align-items:center; justify-content:space-between;
@@ -34,183 +33,141 @@
     backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
     border-bottom:1px solid var(--border);
   }
-  .site-nav .brand {
-    font-size:13px; font-weight:600; letter-spacing:0.08em;
-    text-transform:uppercase; color:var(--muted);
-  }
+  .site-nav .brand { font-size:13px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
   .site-nav .brand b { color:var(--text); font-weight:700; }
   .site-nav .links { display:flex; gap:2px; }
   .site-nav .links a {
-    padding:7px 16px; border-radius:8px;
-    font-size:12px; font-weight:500; letter-spacing:0.03em;
-    color:var(--dim); text-decoration:none; transition:all 0.15s;
+    padding:7px 16px; border-radius:8px; font-size:12px; font-weight:500;
+    letter-spacing:0.03em; color:var(--dim); text-decoration:none; transition:all 0.15s;
   }
   .site-nav .links a:hover { color:var(--text); background:rgba(255,255,255,0.04); }
-  .site-nav .links a.active {
-    color:var(--accent); background:rgba(77,166,255,0.08);
-  }
-  .site-nav .meta {
-    font-size:11px; color:var(--dim); letter-spacing:0.04em;
-  }
+  .site-nav .links a.active { color:var(--accent); background:rgba(77,166,255,0.08); }
+  .site-nav .meta { font-size:11px; color:var(--dim); letter-spacing:0.04em; }
   .site-nav .meta b { color:var(--green); font-weight:600; }
 
-  /* ── Main Area ── */
   main {
     margin-top:52px;
     display:grid;
-    grid-template-columns:1fr 380px;
+    grid-template-columns:1fr 400px;
     height:calc(100vh - 52px);
   }
 
-  /* ── Canvas ── */
   .canvas-wrap {
     position:relative; overflow:hidden;
-    background:radial-gradient(ellipse at 50% 40%, #111 0%, #0a0a0a 70%);
+    background: radial-gradient(ellipse at 50% 60%, #1a1a2a 0%, #0a0a0a 70%);
   }
-  #scene {
-    width:100%; height:100%; display:block; cursor:grab;
-  }
-  #scene:active { cursor:grabbing; }
+  #three-container { width:100%; height:100%; }
 
-  /* Overlay controls */
+  /* Overlay UI */
   .view-controls {
-    position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
-    display:flex; gap:1px; background:rgba(0,0,0,0.6);
+    position:absolute; bottom:24px; left:50%; transform:translateX(-50%);
+    display:flex; gap:1px; background:rgba(0,0,0,0.7);
     border-radius:10px; overflow:hidden;
     backdrop-filter:blur(12px); border:1px solid var(--border);
   }
   .view-btn {
-    padding:8px 18px; font-size:11px; font-weight:500;
+    padding:9px 20px; font-size:11px; font-weight:500;
     color:var(--muted); background:transparent; border:none;
     cursor:pointer; transition:all 0.15s; letter-spacing:0.03em;
   }
   .view-btn:hover { color:var(--text); background:rgba(255,255,255,0.05); }
-  .view-btn.active { color:var(--accent); background:rgba(77,166,255,0.1); }
+  .view-btn.active { color:var(--accent); background:rgba(77,166,255,0.12); }
 
   .hint-overlay {
     position:absolute; top:20px; left:20px;
-    font-size:11px; color:var(--dim); letter-spacing:0.03em;
+    font-size:11px; color:var(--dim); letter-spacing:0.03em; line-height:1.8;
   }
-  .hint-overlay span { color:var(--muted); }
+  .hint-overlay kbd {
+    display:inline-block; padding:2px 6px; border-radius:4px;
+    background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+    font-family:inherit; font-size:10px; color:var(--muted);
+  }
 
-  /* Component label on hover */
   .hover-label {
     position:absolute; pointer-events:none;
-    padding:6px 14px; border-radius:8px;
-    background:rgba(0,0,0,0.8); border:1px solid var(--border);
+    padding:8px 16px; border-radius:8px;
+    background:rgba(0,0,0,0.85); border:1px solid rgba(255,255,255,0.12);
     backdrop-filter:blur(8px);
-    font-size:12px; font-weight:500; color:var(--text);
-    white-space:nowrap; opacity:0; transition:opacity 0.15s;
-    transform:translate(-50%, -100%); margin-top:-12px;
+    font-size:12px; font-weight:600; color:var(--text);
+    white-space:nowrap; opacity:0; transition:opacity 0.12s;
+    transform:translate(-50%, -120%);
   }
+  .hover-label .sub { font-weight:400; color:var(--dim); font-size:10px; margin-top:2px; }
   .hover-label.visible { opacity:1; }
 
-  /* ── Detail Sidebar ── */
+  /* Sidebar */
   .sidebar {
     background:var(--panel); border-left:1px solid var(--border);
-    overflow-y:auto; padding:0;
+    overflow-y:auto; display:flex; flex-direction:column;
   }
-  .sb-header {
-    padding:20px 24px; border-bottom:1px solid var(--border);
-  }
+  .sb-header { padding:20px 24px; border-bottom:1px solid var(--border); }
   .sb-header h2 {
     font-size:11px; font-weight:600; letter-spacing:0.1em;
     text-transform:uppercase; color:var(--dim);
   }
-  .sb-header p {
-    font-size:13px; color:var(--muted); margin-top:4px;
-  }
+  .sb-header p { font-size:13px; color:var(--muted); margin-top:4px; }
 
-  /* Assembly card */
+  .comp-list { padding:12px 24px; }
+  .comp-item {
+    display:flex; align-items:center; gap:10px;
+    padding:9px 8px; cursor:pointer; transition:all 0.15s;
+    border-radius:6px; margin-bottom:2px;
+  }
+  .comp-item:hover { background:rgba(255,255,255,0.03); }
+  .comp-item.active { background:rgba(77,166,255,0.06); }
+  .comp-item .dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  .comp-item .cname { font-size:12px; color:var(--muted); flex:1; }
+  .comp-item.active .cname { color:var(--text); font-weight:600; }
+  .comp-item .cprice { font-size:11px; color:var(--dim); font-weight:500; }
+
+  #assemblyPanel { display:none; flex:1; overflow-y:auto; }
+  #assemblyPanel.open { display:block; }
   .assembly-title {
     padding:20px 24px 12px;
     font-size:13px; font-weight:700; letter-spacing:0.06em;
     text-transform:uppercase; color:var(--text);
+    border-top:1px solid var(--border);
   }
-
-  .cross-section {
-    padding:0 24px 16px;
-  }
+  .cross-section { padding:0 24px 16px; }
   .cs-layer {
     display:flex; align-items:stretch; gap:12px;
     padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.03);
-    cursor:pointer; transition:background 0.15s;
-    border-radius:6px;
+    cursor:pointer; transition:background 0.15s; border-radius:6px;
   }
   .cs-layer:hover { background:rgba(255,255,255,0.02); }
   .cs-layer.active { background:rgba(77,166,255,0.05); }
-
-  .cs-swatch {
-    width:6px; border-radius:3px; flex-shrink:0;
-  }
+  .cs-swatch { width:6px; border-radius:3px; flex-shrink:0; }
   .cs-info { flex:1; min-width:0; }
-  .cs-info .name {
-    font-size:12px; font-weight:600; color:var(--text);
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  }
-  .cs-info .spec {
-    font-size:11px; color:var(--dim); margin-top:2px;
-  }
-  .cs-price {
-    font-size:12px; font-weight:600; color:var(--green);
-    white-space:nowrap; align-self:center;
-  }
+  .cs-info .name { font-size:12px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .cs-info .spec { font-size:11px; color:var(--dim); margin-top:2px; }
+  .cs-price { font-size:12px; font-weight:600; color:var(--green); white-space:nowrap; align-self:center; }
 
-  /* Detail expansion */
   .layer-detail {
     margin:0 24px 16px; padding:16px;
     background:var(--card); border:1px solid var(--border);
     border-radius:10px; display:none;
   }
   .layer-detail.open { display:block; }
-  .layer-detail .thumb {
-    width:100%; height:100px; object-fit:contain;
-    background:#0a0a0a; border-radius:6px; margin-bottom:12px;
-  }
-  .layer-detail .ld-grid {
-    display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;
-  }
-  .layer-detail .ld-cell {
-    background:rgba(255,255,255,0.02); border-radius:6px; padding:8px 10px;
-  }
-  .layer-detail .ld-cell .label {
-    font-size:9px; text-transform:uppercase; letter-spacing:0.08em; color:var(--dim);
-  }
-  .layer-detail .ld-cell .val {
-    font-size:13px; font-weight:600; margin-top:2px;
-  }
-  .layer-detail .notes {
-    font-size:11px; line-height:1.6; color:var(--dim);
-    border-top:1px solid var(--border); padding-top:10px;
-  }
-  .layer-detail .link {
-    display:inline-block; margin-top:8px; padding:6px 12px;
-    font-size:11px; font-weight:500; color:var(--accent);
-    background:rgba(77,166,255,0.06); border-radius:6px;
-    text-decoration:none; transition:background 0.15s;
-  }
-  .layer-detail .link:hover { background:rgba(77,166,255,0.12); }
+  .layer-detail .ld-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
+  .layer-detail .ld-cell { background:rgba(255,255,255,0.02); border-radius:6px; padding:8px 10px; }
+  .layer-detail .ld-cell .label { font-size:9px; text-transform:uppercase; letter-spacing:0.08em; color:var(--dim); }
+  .layer-detail .ld-cell .val { font-size:13px; font-weight:600; margin-top:2px; }
+  .layer-detail .notes { font-size:11px; line-height:1.6; color:var(--dim); border-top:1px solid var(--border); padding-top:10px; }
 
-  /* Component list (sidebar bottom) */
-  .comp-list {
-    padding:0 24px 24px;
-  }
-  .comp-item {
+  /* Section toggle */
+  .section-toggle {
+    position:absolute; top:20px; right:20px;
     display:flex; align-items:center; gap:10px;
-    padding:8px 0; cursor:pointer; transition:opacity 0.15s;
+    padding:8px 14px; border-radius:8px;
+    background:rgba(0,0,0,0.7); border:1px solid var(--border);
+    backdrop-filter:blur(12px); cursor:pointer;
+    font-size:11px; color:var(--muted); user-select:none;
   }
-  .comp-item:hover { opacity:0.8; }
-  .comp-item .dot {
-    width:8px; height:8px; border-radius:50%; flex-shrink:0;
-  }
-  .comp-item .cname {
-    font-size:12px; color:var(--muted); flex:1;
-  }
-  .comp-item.active .cname { color:var(--text); font-weight:600; }
+  .section-toggle input { accent-color:var(--accent); }
+  .section-toggle:hover { color:var(--text); border-color:rgba(255,255,255,0.15); }
 
-  /* ── Responsive ── */
   @media (max-width:900px) {
-    main { grid-template-columns:1fr; grid-template-rows:50vh 1fr; }
+    main { grid-template-columns:1fr; grid-template-rows:55vh 1fr; }
     .sidebar { border-left:none; border-top:1px solid var(--border); }
     .site-nav .meta { display:none; }
   }
@@ -218,7 +175,6 @@
 </head>
 <body>
 
-<!-- ─── Navigation ─── -->
 <nav class="site-nav">
   <div class="brand"><b>SJ</b> Backyard Suite</div>
   <div class="links">
@@ -231,572 +187,607 @@
 </nav>
 
 <main>
-  <!-- ─── 3D Canvas ─── -->
   <div class="canvas-wrap">
-    <canvas id="scene"></canvas>
-    <div class="hint-overlay"><span>Click</span> a component &middot; <span>Drag</span> to orbit &middot; <span>Scroll</span> to zoom</div>
+    <div id="three-container"></div>
+    <div class="hint-overlay">
+      <kbd>Click</kbd> component to inspect &middot; <kbd>Drag</kbd> orbit &middot; <kbd>Scroll</kbd> zoom
+    </div>
     <div id="hoverLabel" class="hover-label"></div>
 
+    <label class="section-toggle">
+      <input type="checkbox" id="sectionCut"> Section Cut
+    </label>
+
     <div class="view-controls">
-      <button class="view-btn active" onclick="setCameraAngle('iso', this)">Isometric</button>
-      <button class="view-btn" onclick="setCameraAngle('front', this)">Front</button>
-      <button class="view-btn" onclick="setCameraAngle('side', this)">Side</button>
-      <button class="view-btn" onclick="setCameraAngle('top', this)">Top</button>
-      <button class="view-btn" onclick="setCameraAngle('section', this)">Section Cut</button>
+      <button class="view-btn active" data-view="iso">Isometric</button>
+      <button class="view-btn" data-view="front">Front</button>
+      <button class="view-btn" data-view="side">Side</button>
+      <button class="view-btn" data-view="top">Top</button>
     </div>
   </div>
 
-  <!-- ─── Sidebar ─── -->
   <div class="sidebar">
     <div class="sb-header">
       <h2>Building Components</h2>
-      <p>Hover or click on the 3D model to inspect</p>
+      <p>Click on the model or list to inspect assemblies</p>
     </div>
-
-    <!-- Components list -->
-    <div class="comp-list" id="compList">
-      <!-- Populated by JS -->
-    </div>
-
-    <!-- Cross-section detail (shows when component selected) -->
-    <div id="assemblyPanel" style="display:none;">
-      <div class="assembly-title" id="assemblyTitle">Wall Assembly</div>
-      <div class="cross-section" id="crossSection">
-        <!-- Layer rows populated by JS -->
-      </div>
-      <div class="layer-detail" id="layerDetail">
-        <!-- Detail card populated by JS -->
-      </div>
+    <div class="comp-list" id="compList"></div>
+    <div id="assemblyPanel">
+      <div class="assembly-title" id="assemblyTitle"></div>
+      <div class="cross-section" id="crossSection"></div>
+      <div class="layer-detail" id="layerDetail"></div>
     </div>
   </div>
 </main>
 
+<!-- Three.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+
 <script>
-// ═══════════════════════════════════════════════════════════════════
-//  3D ISOMETRIC BUILDING MODEL — Pure Canvas (no dependencies)
-// ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+//  BUILDING DATA — real dimensions in feet, converted to meters
+// ═══════════════════════════════════════════════════════════════
+const FT = 0.3048;
+const IN = 0.0254;
+const BLD = { w: 21.5*FT, d: 20*FT, wallH: 2.44, roofHigh: 2.9, roofLow: 2.13, slabThick: 4*IN, foundDepth: 0.3 };
 
-const canvas = document.getElementById('scene');
-const ctx = canvas.getContext('2d');
-
-// Building dimensions (feet, proportional)
-const B = { w: 21.5, d: 20, h: 9.5, roofPitch: 2.5, wallThick: 0.5 };
-
-// Camera state
-let camAngle = 0.6;        // horizontal rotation (radians)
-let camPitch = 0.45;       // vertical tilt
-let camDist = 42;
-let camTarget = { x: B.w/2, y: B.h/2, z: B.d/2 };
-let isDragging = false;
-let lastMouse = { x: 0, y: 0 };
-let sectionCut = false;     // whether to cut the building in half
-
-// ── Component definitions with assembly layers ──
 const COMPONENTS = {
   foundation: {
-    name: 'Foundation & Slab',
-    color: '#6a6a6a',
-    highlight: '#8a8a8a',
+    name: 'Foundation & Slab', color: 0x707070, emissive: 0x111111,
     layers: [
-      { name:'LVP Flooring', thick:'5.3 mm', color:'#3d2a16', qty:'22 BX', price:'$88.19/bx', total:'$1,940', notes:'Volcano Pewter SPC vinyl plank — waterproof click-lock over slab.' },
-      { name:'Concrete Slab', thick:'4 in', color:'#757575', qty:'5.5 cu m', price:'$250/cu m', total:'$1,375', notes:'25 MPa ready-mix with thickened perimeter edges for wall loads.' },
+      { name:'LVP Flooring', thick:'5.3mm', color:'#3d2a16', qty:'22 BX', price:'$88.19/bx', total:'$1,940', notes:'Volcano Pewter SPC vinyl plank — waterproof click-lock over slab.' },
+      { name:'Concrete Slab', thick:'4 in', color:'#757575', qty:'5.5 cu m', price:'$250/m³', total:'$1,375', notes:'25 MPa ready-mix with thickened perimeter edges.' },
       { name:'Wire Mesh', thick:'—', color:'#888', qty:'430 sqft', price:'$0.75/sqft', total:'$323', notes:'6×6 W2.9 welded wire mesh mid-slab for crack control.' },
-      { name:'Vapour Barrier', thick:'10 mil', color:'#444', qty:'1 RL', price:'$112.50', total:'$113', notes:'Poly moisture barrier — all seams lapped 12″ and taped.' },
+      { name:'Vapour Barrier', thick:'10 mil', color:'#444', qty:'1 RL', price:'$112.50', total:'$113', notes:'Poly moisture barrier — seams lapped 12″ and taped.' },
       { name:'XPS Insulation', thick:'2 in', color:'#2d7dce', qty:'14 SH', price:'$50.39/sh', total:'$706', notes:'R-10 rigid foam beneath slab. Thermal break from ground.' },
-      { name:'Gravel Base', thick:'4 in', color:'#666', qty:'16 cu yd', price:'$45/cu yd', total:'$720', notes:'3/4″ clear crush, compacted in lifts. Drainage + bearing.' },
+      { name:'Gravel Base', thick:'4 in', color:'#666', qty:'16 cu yd', price:'$45/cu yd', total:'$720', notes:'¾″ clear crush, compacted in lifts.' },
     ]
   },
   walls: {
-    name: 'Exterior Walls',
-    color: '#5a7a5a',
-    highlight: '#7a9a7a',
+    name: 'Exterior Walls', color: 0x8aaa8a, emissive: 0x111511,
     layers: [
-      { name:'Vinyl Siding', thick:'—', color:'#8a9a8a', qty:'50 EA', price:'$11.19/ea', total:'$560', notes:'Mitten Oregon Pride Dutchlap — low-maintenance exterior cladding.' },
-      { name:'XPS Continuous Insul.', thick:'1.5 in', color:'#2d7dce', qty:'30 SH', price:'$112.99/sh', total:'$3,390', notes:'R-7.5 rigid foam over Tyvek. Continuous thermal envelope.' },
-      { name:'Tyvek HomeWrap', thick:'—', color:'#ddd', qty:'2 RL', price:'$129.99/rl', total:'$260', notes:'Weather-resistant barrier — sheds bulk water, allows vapour out.' },
-      { name:'Plywood Sheathing', thick:'1/2 in', color:'#c4a67a', qty:'28 SH', price:'$39.98/sh', total:'$1,119', notes:'Structural sheathing — shear strength + nail base for WRB.' },
-      { name:'2×6 SPF Studs', thick:'5.5 in', color:'#d4a862', qty:'52 EA', price:'$6.48/ea', total:'$337', notes:'Kiln-dried framing @ 16″ o.c. — R-20 batt cavity.' },
-      { name:'R-20 Batt Insulation', thick:'5.5 in', color:'#f7e67a', qty:'8 BA', price:'$89.57/ba', total:'$717', notes:'Owens Corning fiberglass in stud cavities. R-20 per layer.' },
-      { name:'6-mil Poly Vapour Barrier', thick:'—', color:'#ccc', qty:'1 RL', price:'$89.99', total:'$90', notes:'Interior vapour retarder — continuous, sealed at all penetrations.' },
-      { name:'1/2″ Drywall', thick:'1/2 in', color:'#e8e8e8', qty:'32 SH', price:'$17.82/sh', total:'$570', notes:'CGC UltraLight — painted Sico Evolution Pure White eggshell.' },
+      { name:'Vinyl Siding', thick:'—', color:'#8a9a8a', qty:'50 EA', price:'$11.19/ea', total:'$560', notes:'Mitten Oregon Pride Dutchlap.' },
+      { name:'XPS Continuous', thick:'1.5 in', color:'#2d7dce', qty:'30 SH', price:'$113/sh', total:'$3,390', notes:'R-7.5 rigid foam continuous thermal envelope.' },
+      { name:'Tyvek HomeWrap', thick:'—', color:'#ddd', qty:'2 RL', price:'$130/rl', total:'$260', notes:'Weather-resistant barrier.' },
+      { name:'½″ Plywood', thick:'½ in', color:'#c4a67a', qty:'28 SH', price:'$39.98/sh', total:'$1,119', notes:'Structural sheathing.' },
+      { name:'2×6 Studs + R-20 Batt', thick:'5.5 in', color:'#d4a862', qty:'52+8', price:'various', total:'$1,054', notes:'KD SPF @ 16″ o.c. with R-20 fiberglass batts.' },
+      { name:'6-mil Poly VB', thick:'—', color:'#ccc', qty:'1 RL', price:'$90', total:'$90', notes:'Interior vapour retarder.' },
+      { name:'½″ Drywall', thick:'½ in', color:'#e8e8e8', qty:'32 SH', price:'$17.82/sh', total:'$570', notes:'CGC UltraLight, painted Pure White.' },
     ]
   },
   roof: {
-    name: 'Roof Assembly',
-    color: '#5a5a7a',
-    highlight: '#7a7a9a',
+    name: 'Roof Assembly', color: 0x3a3a4a, emissive: 0x0a0a15,
     layers: [
-      { name:'IKO Cambridge Shingles', thick:'—', color:'#333', qty:'15 BD', price:'$40.99/bd', total:'$615', notes:'Dual Black architectural shingles — lifetime limited warranty.' },
-      { name:'Felt Underlayment', thick:'—', color:'#555', qty:'1 RL', price:'$44.99', total:'$45', notes:'Organic felt over entire deck. Ice shield at eaves + valleys.' },
-      { name:'Ice & Water Shield', thick:'—', color:'#444', qty:'1 RL', price:'$84.99', total:'$85', notes:'IKO StormShield membrane — first 3\' at eaves, all valleys.' },
-      { name:'5/8″ Plywood Deck', thick:'5/8 in', color:'#c4a67a', qty:'16 SH', price:'$54.38/sh', total:'$870', notes:'Structural roof sheathing — 8d nails @ 6″ edges, 12″ field.' },
-      { name:'2×12 Rafters', thick:'11.25 in', color:'#d4a862', qty:'13 EA', price:'$62.27/ea', total:'$810', notes:'SPF #2, 24″ o.c. Mono-slope from 9.5\' to 7\' (2:12 pitch).' },
-      { name:'R-31 Batt Insulation', thick:'10 in', color:'#f7e67a', qty:'13 BA', price:'$79.99/ba', total:'$1,040', notes:'Owens Corning R-31 in rafter cavities. Exceeds NL code min.' },
-      { name:'Air Chutes', thick:'—', color:'#aaa', qty:'13 EA', price:'$2.19/ea', total:'$28', notes:'Thermocell baffles — maintain ventilation above insulation.' },
-      { name:'5/8″ Type X Drywall', thick:'5/8 in', color:'#e8e8e8', qty:'16 SH', price:'$31.99/sh', total:'$512', notes:'CGC Firecode — fire barrier on ceiling, finished + painted.' },
+      { name:'IKO Cambridge Shingles', thick:'—', color:'#333', qty:'15 BD', price:'$41/bd', total:'$615', notes:'Dual Black architectural laminate.' },
+      { name:'Felt + Ice Shield', thick:'—', color:'#555', qty:'2 RL', price:'$65/rl', total:'$130', notes:'Organic felt + IKO StormShield at eaves.' },
+      { name:'⅝″ Plywood Deck', thick:'⅝ in', color:'#c4a67a', qty:'16 SH', price:'$54.38/sh', total:'$870', notes:'Structural roof sheathing.' },
+      { name:'2×12 Rafters + R-31', thick:'11.25 in', color:'#d4a862', qty:'13+13', price:'various', total:'$1,850', notes:'SPF #2 @ 24″ o.c. with R-31 batts + air chutes.' },
+      { name:'⅝″ Type X Drywall', thick:'⅝ in', color:'#e8e8e8', qty:'16 SH', price:'$32/sh', total:'$512', notes:'CGC Firecode ceiling.' },
     ]
   },
   windows: {
-    name: 'Windows',
-    color: '#7abed4',
-    highlight: '#9ad4ea',
+    name: 'Windows', color: 0x7abed4, emissive: 0x152535,
     layers: [
-      { name:'Triple-Pane Casement', thick:'—', color:'#7abed4', qty:'6 EA', price:'$479.00/ea', total:'$2,874', notes:'30″×48″ vinyl casement — argon-filled triple-glazed. U-0.25.' },
-      { name:'Flashing Tape', thick:'—', color:'#888', qty:'2 RL', price:'$47.39/rl', total:'$95', notes:'Self-adhering window flashing — lapped into WRB for drainage.' },
+      { name:'Triple-Pane Casement', thick:'—', color:'#7abed4', qty:'6 EA', price:'$479/ea', total:'$2,874', notes:'30×48″ vinyl casement — argon triple-glazed, U-0.25.' },
+      { name:'Flashing Tape', thick:'—', color:'#888', qty:'2 RL', price:'$47/rl', total:'$95', notes:'Self-adhering window flashing.' },
     ]
   },
   door: {
-    name: 'Entry Door',
-    color: '#2a2a2a',
-    highlight: '#444',
+    name: 'Entry Door', color: 0x1a1a2a, emissive: 0x050510,
     layers: [
-      { name:'Dusco Moderna Full Lite', thick:'—', color:'#222', qty:'1 EA', price:'$850.00', total:'$850', notes:'34″×80″ black steel frame with 3 frosted glass panels. From Home Depot.' },
-    ]
-  },
-  mechanical: {
-    name: 'Mechanical / HVAC',
-    color: '#7a5a5a',
-    highlight: '#9a7a7a',
-    layers: [
-      { name:'Mini-Split Heat Pump', thick:'—', color:'#7a5a5a', qty:'1 EA', price:'$1,553', total:'$1,553', notes:'18,000 BTU ductless — heating + cooling. Primary HVAC system.' },
-      { name:'HRV Ventilator', thick:'—', color:'#8a6a6a', qty:'1 EA', price:'$1,279', total:'$1,279', notes:'Heat-recovery ventilator — fresh air exchange, code-required.' },
-      { name:'Electric Baseboards', thick:'—', color:'#9a7a7a', qty:'2 EA', price:'$102/ea', total:'$204', notes:'1500W backup heat — bathrooms only.' },
-    ]
-  },
-  electrical: {
-    name: 'Electrical',
-    color: '#988a44',
-    highlight: '#b8a854',
-    layers: [
-      { name:'100A Sub-Panel', thick:'—', color:'#988a44', qty:'1 EA', price:'$156.49', total:'$156', notes:'20-space panel — fed from main house panel.' },
-      { name:'14/2 NMD90 Wire', thick:'—', color:'#eee', qty:'1 RL', price:'$163/rl', total:'$163', notes:'150m spool — general lighting + receptacle circuits.' },
-      { name:'12/2 NMD90 Wire', thick:'—', color:'#ffa500', qty:'1 RL', price:'$242/rl', total:'$242', notes:'75m spool — 20A kitchen + bath circuits.' },
-      { name:'LED Pot Lights', thick:'—', color:'#ffdd00', qty:'1 PK', price:'$109.99', total:'$110', notes:'4″ slim recessed, IC-rated, black trim ring.' },
+      { name:'Dusco Moderna Full Lite', thick:'—', color:'#222', qty:'1 EA', price:'$850', total:'$850', notes:'34×80″ black steel frame, 3 frosted glass panels.' },
     ]
   },
   plumbing: {
-    name: 'Plumbing',
-    color: '#446a88',
-    highlight: '#5a8aaa',
+    name: 'Plumbing', color: 0x4488aa, emissive: 0x102030,
     layers: [
-      { name:'Water Heater (40 gal)', thick:'—', color:'#446a88', qty:'1 EA', price:'$595', total:'$595', notes:'Electric tank — serves kitchen + 2 bathrooms.' },
-      { name:'PEX Supply Lines', thick:'—', color:'#e44', qty:'2 RL', price:'$44.89/rl', total:'$90', notes:'1/2″ red + blue PEX — home-run to manifold.' },
-      { name:'ABS/PVC Drains', thick:'—', color:'#333', qty:'1 LOT', price:'$350', total:'$350', notes:'Drain/waste/vent rough-in for slab-on-grade.' },
+      { name:'Water Heater (40 gal)', thick:'—', color:'#446a88', qty:'1 EA', price:'$595', total:'$595', notes:'Electric tank — kitchen + 2 baths.' },
+      { name:'PEX Supply (½″)', thick:'—', color:'#e44', qty:'2 RL', price:'$45/rl', total:'$90', notes:'Red/blue PEX home-run to manifold.' },
+      { name:'ABS/PVC DWV', thick:'—', color:'#333', qty:'1 LOT', price:'$350', total:'$350', notes:'Drain/waste/vent rough-in.' },
+      { name:'Fixtures', thick:'—', color:'#bbb', qty:'LOT', price:'various', total:'$3,217', notes:'Toilet, vanity, shower, kitchen sink, faucets.' },
+    ]
+  },
+  electrical: {
+    name: 'Electrical', color: 0xbbaa44, emissive: 0x252210,
+    layers: [
+      { name:'100A Sub-Panel', thick:'—', color:'#988a44', qty:'1 EA', price:'$156', total:'$156', notes:'20-space, fed from main house.' },
+      { name:'14/2 + 12/2 NMD90', thick:'—', color:'#ffa500', qty:'2 RL', price:'various', total:'$405', notes:'150m general + 75m kitchen/bath circuits.' },
+      { name:'LED Pot Lights', thick:'—', color:'#ffdd00', qty:'1 PK', price:'$110', total:'$110', notes:'4″ slim recessed, IC-rated, black trim.' },
+    ]
+  },
+  hvac: {
+    name: 'HVAC / Mechanical', color: 0x885555, emissive: 0x201010,
+    layers: [
+      { name:'Mini-Split Heat Pump', thick:'—', color:'#7a5a5a', qty:'1 EA', price:'$1,553', total:'$1,553', notes:'18kBTU ductless — heating + cooling.' },
+      { name:'HRV Ventilator', thick:'—', color:'#8a6a6a', qty:'1 EA', price:'$1,279', total:'$1,279', notes:'Heat-recovery fresh air exchange.' },
+      { name:'Electric Baseboards', thick:'—', color:'#9a7a7a', qty:'2 EA', price:'$102/ea', total:'$204', notes:'1500W backup — bathrooms only.' },
     ]
   }
 };
 
-// ═══════════════════════════════════════════════════════════════════
-//  3D PROJECTION ENGINE
-// ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+//  THREE.JS SCENE SETUP
+// ═══════════════════════════════════════════════════════════════
+const container = document.getElementById('three-container');
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x0a0a0a, 0.08);
 
-function project(x, y, z) {
-  // Rotate around Y axis (horizontal orbit)
-  const cosA = Math.cos(camAngle), sinA = Math.sin(camAngle);
-  let rx = (x - camTarget.x) * cosA - (z - camTarget.z) * sinA;
-  let rz = (x - camTarget.x) * sinA + (z - camTarget.z) * cosA;
-  let ry = y - camTarget.y;
+const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 100);
+camera.position.set(14, 8, 14);
 
-  // Pitch (vertical tilt)
-  const cosP = Math.cos(camPitch), sinP = Math.sin(camPitch);
-  let py = ry * cosP - rz * sinP;
-  let pz = ry * sinP + rz * cosP;
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+container.appendChild(renderer.domElement);
 
-  // Perspective — use CSS pixel dimensions, not device pixels
-  const scale = camDist / (camDist + pz);
-  const cx = canvas.clientWidth / 2;
-  const cy = canvas.clientHeight / 2;
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.target.set(BLD.w/2, 1.2, BLD.d/2);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.minDistance = 4;
+controls.maxDistance = 30;
+controls.maxPolarAngle = Math.PI * 0.48;
+controls.update();
 
-  return {
-    x: cx + rx * scale * 14,
-    y: cy - py * scale * 14,
-    z: pz,
-    scale
-  };
+// ── Lighting ──
+const ambient = new THREE.AmbientLight(0x404050, 0.6);
+scene.add(ambient);
+
+const hemi = new THREE.HemisphereLight(0x8899bb, 0x333322, 0.5);
+scene.add(hemi);
+
+const sun = new THREE.DirectionalLight(0xffeedd, 1.8);
+sun.position.set(10, 15, 8);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.camera.left = -12;
+sun.shadow.camera.right = 12;
+sun.shadow.camera.top = 12;
+sun.shadow.camera.bottom = -12;
+sun.shadow.camera.near = 0.5;
+sun.shadow.camera.far = 40;
+sun.shadow.bias = -0.001;
+scene.add(sun);
+
+const fill = new THREE.DirectionalLight(0x6688cc, 0.4);
+fill.position.set(-8, 4, -6);
+scene.add(fill);
+
+// ── Ground plane ──
+const groundGeo = new THREE.PlaneGeometry(40, 40);
+const groundMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.95 });
+const ground = new THREE.Mesh(groundGeo, groundMat);
+ground.rotation.x = -Math.PI / 2;
+ground.position.set(BLD.w/2, -0.01, BLD.d/2);
+ground.receiveShadow = true;
+scene.add(ground);
+
+// ── Grid helper ──
+const grid = new THREE.GridHelper(40, 40, 0x222222, 0x181818);
+grid.position.set(BLD.w/2, 0, BLD.d/2);
+scene.add(grid);
+
+// ═══════════════════════════════════════════════════════════════
+//  MATERIALS
+// ═══════════════════════════════════════════════════════════════
+function makeMat(color, opts = {}) {
+  return new THREE.MeshStandardMaterial({
+    color,
+    roughness: opts.roughness ?? 0.7,
+    metalness: opts.metalness ?? 0.05,
+    transparent: opts.transparent ?? false,
+    opacity: opts.opacity ?? 1,
+    side: opts.side ?? THREE.FrontSide,
+  });
 }
 
-// ═══════════════════════════════════════════════════════════════════
-//  BUILDING GEOMETRY — faces with component tagging
-// ═══════════════════════════════════════════════════════════════════
+const MATS = {
+  concrete:  makeMat(0x888888, { roughness: 0.9 }),
+  gravel:    makeMat(0x666655, { roughness: 1.0 }),
+  xps:       makeMat(0x3388dd, { roughness: 0.6 }),
+  siding:    makeMat(0x9aaa9a, { roughness: 0.5 }),
+  sheathing: makeMat(0xc4a67a, { roughness: 0.8 }),
+  framing:   makeMat(0xd4a862, { roughness: 0.75 }),
+  drywall:   makeMat(0xeeeeee, { roughness: 0.95 }),
+  roof:      makeMat(0x2a2a3a, { roughness: 0.85 }),
+  roofDeck:  makeMat(0xaa8855, { roughness: 0.8 }),
+  glass:     makeMat(0x88ccee, { transparent: true, opacity: 0.35, roughness: 0.05, metalness: 0.1 }),
+  doorFrame: makeMat(0x111118, { roughness: 0.3, metalness: 0.6 }),
+  doorGlass: makeMat(0xaabbcc, { transparent: true, opacity: 0.25, roughness: 0.05 }),
+  pipe_hot:  makeMat(0xcc3333, { roughness: 0.4, metalness: 0.3 }),
+  pipe_cold: makeMat(0x3355cc, { roughness: 0.4, metalness: 0.3 }),
+  pipe_drain:makeMat(0x333333, { roughness: 0.5 }),
+  conduit:   makeMat(0xddaa33, { roughness: 0.35, metalness: 0.3 }),
+  hvac_unit: makeMat(0x777766, { roughness: 0.4, metalness: 0.5 }),
+  hvac_duct: makeMat(0x888877, { roughness: 0.5, metalness: 0.4 }),
+  panel:     makeMat(0x666666, { roughness: 0.3, metalness: 0.6 }),
+};
 
-function getBuildingFaces() {
-  const faces = [];
-  const w = B.w, d = B.d, h = B.h;
-  const rh = B.roofPitch; // extra height at high side
+// ═══════════════════════════════════════════════════════════════
+//  COMPONENT GROUPS — meshes tagged for raycasting
+// ═══════════════════════════════════════════════════════════════
+const groups = {};
+const allMeshes = [];
+const sectionMeshes = [];  // right-half meshes to hide in section cut
 
-  // Cut plane for section view
-  const cutZ = sectionCut ? d * 0.5 : d;
-
-  // ── Foundation slab ──
-  faces.push({
-    comp: 'foundation',
-    verts: [[0,0,0],[w,0,0],[w,0,cutZ],[0,0,cutZ]],
-    baseColor: COMPONENTS.foundation.color,
-    normal: [0,-1,0]
-  });
-
-  // ── Floor (visible top of slab) ──
-  faces.push({
-    comp: 'foundation',
-    verts: [[0,0.3,0],[w,0.3,0],[w,0.3,cutZ],[0,0.3,cutZ]],
-    baseColor: '#3d2a16',
-    normal: [0,1,0]
-  });
-
-  // ── Walls ──
-  // Front wall (z=0)
-  faces.push({
-    comp: 'walls',
-    verts: [[0,0.3,0],[w,0.3,0],[w,h,0],[0,h+rh,0]],
-    baseColor: COMPONENTS.walls.color,
-    normal: [0,0,-1]
-  });
-
-  // Back wall (z=cutZ)
-  if (!sectionCut) {
-    faces.push({
-      comp: 'walls',
-      verts: [[0,0.3,d],[w,0.3,d],[w,h,d],[0,h+rh,d]],
-      baseColor: COMPONENTS.walls.color,
-      normal: [0,0,1]
-    });
-  }
-
-  // Left wall (x=0)
-  faces.push({
-    comp: 'walls',
-    verts: [[0,0.3,0],[0,0.3,cutZ],[0,h+rh,cutZ],[0,h+rh,0]],
-    baseColor: adjustColor(COMPONENTS.walls.color, -15),
-    normal: [-1,0,0]
-  });
-
-  // Right wall (x=w)
-  faces.push({
-    comp: 'walls',
-    verts: [[w,0.3,0],[w,0.3,cutZ],[w,h,cutZ],[w,h,0]],
-    baseColor: adjustColor(COMPONENTS.walls.color, 10),
-    normal: [1,0,0]
-  });
-
-  // ── Roof ──
-  // Mono-slope: high side at x=0 (h+rh), low side at x=w (h)
-  faces.push({
-    comp: 'roof',
-    verts: [[-0.5,h+rh,-0.8],[w+0.5,h,-0.8],[w+0.5,h,cutZ+(sectionCut?0:0.8)],[-0.5,h+rh,cutZ+(sectionCut?0:0.8)]],
-    baseColor: COMPONENTS.roof.color,
-    normal: [0,1,0.15]
-  });
-
-  // Roof underside (soffit visible area)
-  // Skip for section cut to show interior
-
-  // ── Windows (on front wall) ──
-  // 3 windows on front
-  for (let i = 0; i < 3; i++) {
-    const wx = 3 + i * 6.5;
-    const wy = 3;
-    const ww = 2.5;
-    const wh = 4;
-    faces.push({
-      comp: 'windows',
-      verts: [[wx,wy,-0.01],[wx+ww,wy,-0.01],[wx+ww,wy+wh,-0.01],[wx,wy+wh,-0.01]],
-      baseColor: '#5aaed0',
-      normal: [0,0,-1]
-    });
-  }
-
-  // 2 windows on right wall
-  for (let i = 0; i < 2; i++) {
-    const wz = 4 + i * 8;
-    if (wz + 2.5 > cutZ) continue;
-    faces.push({
-      comp: 'windows',
-      verts: [[w+0.01,3,wz],[w+0.01,3,wz+2.5],[w+0.01,7,wz+2.5],[w+0.01,7,wz]],
-      baseColor: '#5aaed0',
-      normal: [1,0,0]
-    });
-  }
-
-  // ── Door (front wall) ──
-  faces.push({
-    comp: 'door',
-    verts: [[9.5,0.3,-0.01],[12.5,0.3,-0.01],[12.5,7,-0.01],[9.5,7,-0.01]],
-    baseColor: '#1a1a2a',
-    normal: [0,0,-1]
-  });
-
-  // ── Section cut — interior cross-section fill ──
-  if (sectionCut) {
-    // Wall cross-section (left wall interior)
-    // Show layered colors on the cut face
-    const layers = COMPONENTS.walls.layers;
-    const cutFaceZ = cutZ;
-
-    // Simplified wall cut — show colored stripe
-    faces.push({
-      comp: 'walls',
-      verts: [[0,0.3,cutFaceZ],[w,0.3,cutFaceZ],[w,h,cutFaceZ],[0,h+rh,cutFaceZ]],
-      baseColor: '#3a4a3a',
-      normal: [0,0,1]
-    });
-
-    // Roof section cut
-    faces.push({
-      comp: 'roof',
-      verts: [[-0.5,h+rh,cutFaceZ],[w+0.5,h,cutFaceZ],[w+0.5,h-1,cutFaceZ],[-0.5,h+rh-1,cutFaceZ]],
-      baseColor: '#3a3a5a',
-      normal: [0,0,1]
-    });
-
-    // Foundation section
-    faces.push({
-      comp: 'foundation',
-      verts: [[0,-0.5,cutFaceZ],[w,-0.5,cutFaceZ],[w,0.3,cutFaceZ],[0,0.3,cutFaceZ]],
-      baseColor: '#555',
-      normal: [0,0,1]
-    });
-
-    // Mechanical indicator (inside)
-    faces.push({
-      comp: 'mechanical',
-      verts: [[1,1,cutFaceZ-0.01],[3.5,1,cutFaceZ-0.01],[3.5,3.5,cutFaceZ-0.01],[1,3.5,cutFaceZ-0.01]],
-      baseColor: COMPONENTS.mechanical.color,
-      normal: [0,0,1]
-    });
-
-    // Electrical panel
-    faces.push({
-      comp: 'electrical',
-      verts: [[w-3,2,cutFaceZ-0.01],[w-1.5,2,cutFaceZ-0.01],[w-1.5,5,cutFaceZ-0.01],[w-3,5,cutFaceZ-0.01]],
-      baseColor: COMPONENTS.electrical.color,
-      normal: [0,0,1]
-    });
-
-    // Plumbing stub
-    faces.push({
-      comp: 'plumbing',
-      verts: [[8,0,cutFaceZ-0.01],[10,0,cutFaceZ-0.01],[10,2,cutFaceZ-0.01],[8,2,cutFaceZ-0.01]],
-      baseColor: COMPONENTS.plumbing.color,
-      normal: [0,0,1]
-    });
-  }
-
-  return faces;
+function tagMesh(mesh, compKey) {
+  mesh.userData.component = compKey;
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  allMeshes.push(mesh);
+  return mesh;
 }
 
-function adjustColor(hex, amount) {
-  const num = parseInt(hex.replace('#',''), 16);
-  let r = Math.min(255, Math.max(0, (num >> 16) + amount));
-  let g = Math.min(255, Math.max(0, ((num >> 8) & 0xff) + amount));
-  let b = Math.min(255, Math.max(0, (num & 0xff) + amount));
-  return `rgb(${r},${g},${b})`;
+function addBox(group, mat, w, h, d, x, y, z, compKey) {
+  const geo = new THREE.BoxGeometry(w, h, d);
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(x, y, z);
+  tagMesh(mesh, compKey);
+  group.add(mesh);
+  return mesh;
 }
 
-// ═══════════════════════════════════════════════════════════════════
-//  RENDERING
-// ═══════════════════════════════════════════════════════════════════
+function addCylinder(group, mat, rTop, rBot, h, x, y, z, compKey, rotX, rotZ) {
+  const geo = new THREE.CylinderGeometry(rTop, rBot, h, 12);
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(x, y, z);
+  if (rotX) mesh.rotation.x = rotX;
+  if (rotZ) mesh.rotation.z = rotZ;
+  tagMesh(mesh, compKey);
+  group.add(mesh);
+  return mesh;
+}
 
+// ── Foundation ──
+groups.foundation = new THREE.Group();
+scene.add(groups.foundation);
+// Gravel
+addBox(groups.foundation, MATS.gravel, BLD.w+0.1, 0.1, BLD.d+0.1, BLD.w/2, -0.05, BLD.d/2, 'foundation');
+// XPS under slab
+addBox(groups.foundation, MATS.xps, BLD.w, 0.05, BLD.d, BLD.w/2, 0.025, BLD.d/2, 'foundation');
+// Concrete slab
+addBox(groups.foundation, MATS.concrete, BLD.w, BLD.slabThick, BLD.d, BLD.w/2, BLD.slabThick/2 + 0.05, BLD.d/2, 'foundation');
+// Perimeter XPS (4 sides)
+const slabTop = BLD.slabThick + 0.05;
+const perimH = 0.6;
+addBox(groups.foundation, MATS.xps, 0.05, perimH, BLD.d, -0.025, perimH/2, BLD.d/2, 'foundation');
+addBox(groups.foundation, MATS.xps, 0.05, perimH, BLD.d, BLD.w+0.025, perimH/2, BLD.d/2, 'foundation');
+addBox(groups.foundation, MATS.xps, BLD.w, perimH, 0.05, BLD.w/2, perimH/2, -0.025, 'foundation');
+addBox(groups.foundation, MATS.xps, BLD.w, perimH, 0.05, BLD.w/2, perimH/2, BLD.d+0.025, 'foundation');
+
+// ── Walls ──
+groups.walls = new THREE.Group();
+scene.add(groups.walls);
+const wallT = 0.16;  // ~6 inches
+const wallBase = slabTop;
+
+// Front wall (z=0)
+addBox(groups.walls, MATS.siding, BLD.w, BLD.roofHigh, wallT, BLD.w/2, wallBase + BLD.roofHigh/2, 0, 'walls');
+// Back wall (z=d)
+const backWall = addBox(groups.walls, MATS.siding, BLD.w, BLD.roofHigh, wallT, BLD.w/2, wallBase + BLD.roofHigh/2, BLD.d, 'walls');
+sectionMeshes.push(backWall);
+// Left wall (x=0) — high side
+addBox(groups.walls, MATS.siding, wallT, BLD.roofHigh, BLD.d, 0, wallBase + BLD.roofHigh/2, BLD.d/2, 'walls');
+// Right wall (x=w) — low side
+const rightWall = addBox(groups.walls, MATS.siding, wallT, BLD.roofLow, BLD.d, BLD.w, wallBase + BLD.roofLow/2, BLD.d/2, 'walls');
+sectionMeshes.push(rightWall);
+
+// Wall section cut interior (visible when section active)
+const wallCutFront = addBox(groups.walls, MATS.drywall, BLD.w*0.49, BLD.roofHigh-0.1, 0.01, BLD.w*0.25, wallBase + BLD.roofHigh/2, BLD.d/2+0.005, 'walls');
+wallCutFront.visible = false;
+wallCutFront.userData.sectionOnly = true;
+
+// Stud framing visible in section
+for (let i = 0; i < 6; i++) {
+  const stud = addBox(groups.walls, MATS.framing, 0.038, BLD.roofHigh-0.1, 0.14, BLD.w*0.05 + i * BLD.w*0.09, wallBase + BLD.roofHigh/2, BLD.d/2, 'walls');
+  stud.visible = false;
+  stud.userData.sectionOnly = true;
+}
+
+// ── Roof ──
+groups.roof = new THREE.Group();
+scene.add(groups.roof);
+const roofOverhang = 0.3;
+const roofW = BLD.w + roofOverhang*2;
+const roofD = BLD.d + roofOverhang*2;
+const roofAngle = Math.atan2(BLD.roofHigh - BLD.roofLow, BLD.w);
+const roofLen = BLD.w / Math.cos(roofAngle);
+// Shingle surface
+const roofGeo = new THREE.BoxGeometry(roofLen + roofOverhang*2, 0.04, roofD);
+const roofMesh = new THREE.Mesh(roofGeo, MATS.roof);
+const roofMidH = wallBase + (BLD.roofHigh + BLD.roofLow) / 2;
+roofMesh.position.set(BLD.w/2, roofMidH + 0.16, BLD.d/2);
+roofMesh.rotation.z = roofAngle;
+tagMesh(roofMesh, 'roof');
+roofMesh.castShadow = true;
+groups.roof.add(roofMesh);
+
+// Roof deck underside
+const deckMesh = new THREE.Mesh(
+  new THREE.BoxGeometry(roofLen + roofOverhang*2, 0.02, roofD),
+  MATS.roofDeck
+);
+deckMesh.position.set(BLD.w/2, roofMidH + 0.10, BLD.d/2);
+deckMesh.rotation.z = roofAngle;
+tagMesh(deckMesh, 'roof');
+groups.roof.add(deckMesh);
+
+// Fascia boards
+const fasciaFront = addBox(groups.roof, MATS.doorFrame, roofLen + roofOverhang*2, 0.15, 0.02, BLD.w/2, roofMidH + 0.08, -roofOverhang, 'roof');
+fasciaFront.rotation.z = roofAngle;
+const fasciaBack = addBox(groups.roof, MATS.doorFrame, roofLen + roofOverhang*2, 0.15, 0.02, BLD.w/2, roofMidH + 0.08, BLD.d + roofOverhang, 'roof');
+fasciaBack.rotation.z = roofAngle;
+sectionMeshes.push(fasciaBack);
+
+// ── Windows ──
+groups.windows = new THREE.Group();
+scene.add(groups.windows);
+const winW = 0.76, winH = 1.22;  // 30"x48"
+
+// Front wall — 3 windows
+for (let i = 0; i < 3; i++) {
+  const wx = 1.0 + i * 2.0;
+  const wy = wallBase + 1.0;
+  // Frame
+  addBox(groups.windows, MATS.doorFrame, winW+0.06, winH+0.06, 0.06, wx, wy + winH/2, -0.01, 'windows');
+  // Glass
+  addBox(groups.windows, MATS.glass, winW, winH, 0.02, wx, wy + winH/2, -0.01, 'windows');
+}
+// Right wall — 2 windows
+for (let i = 0; i < 2; i++) {
+  const wz = 1.5 + i * 2.8;
+  const wy = wallBase + 1.0;
+  const win = addBox(groups.windows, MATS.doorFrame, 0.06, winH+0.06, winW+0.06, BLD.w+0.01, wy + winH/2, wz, 'windows');
+  const gl = addBox(groups.windows, MATS.glass, 0.02, winH, winW, BLD.w+0.01, wy + winH/2, wz, 'windows');
+  sectionMeshes.push(win, gl);
+}
+// Left wall — 1 window
+addBox(groups.windows, MATS.doorFrame, 0.06, winH+0.06, winW+0.06, -0.01, wallBase+1.0+winH/2, BLD.d*0.5, 'windows');
+addBox(groups.windows, MATS.glass, 0.02, winH, winW, -0.01, wallBase+1.0+winH/2, BLD.d*0.5, 'windows');
+
+// ── Entry Door ──
+groups.door = new THREE.Group();
+scene.add(groups.door);
+const doorW = 0.86, doorH = 2.03;
+const doorX = BLD.w * 0.55;
+addBox(groups.door, MATS.doorFrame, doorW+0.08, doorH+0.04, 0.08, doorX, wallBase+doorH/2, -0.02, 'door');
+// 3 frosted glass panels
+for (let i = 0; i < 3; i++) {
+  const panelH = doorH * 0.28;
+  const py = wallBase + 0.15 + i * (panelH + 0.06) + panelH/2;
+  addBox(groups.door, MATS.doorGlass, doorW*0.7, panelH, 0.01, doorX, py, -0.03, 'door');
+}
+
+// ── Plumbing ──
+groups.plumbing = new THREE.Group();
+scene.add(groups.plumbing);
+const pipeY = 0.3;
+// Main drain (ABS) — runs under slab from back to front
+addCylinder(groups.plumbing, MATS.pipe_drain, 0.05, 0.05, BLD.d*0.8, BLD.w*0.4, -0.02, BLD.d*0.4, 'plumbing', Math.PI/2, 0);
+// Branch drains
+addCylinder(groups.plumbing, MATS.pipe_drain, 0.038, 0.038, 2.0, BLD.w*0.25, -0.02, BLD.d*0.15, 'plumbing', 0, Math.PI/2);
+addCylinder(groups.plumbing, MATS.pipe_drain, 0.038, 0.038, 1.5, BLD.w*0.65, -0.02, BLD.d*0.15, 'plumbing', 0, Math.PI/2);
+// Hot supply (PEX red) — along left wall inside
+addCylinder(groups.plumbing, MATS.pipe_hot, 0.013, 0.013, BLD.d*0.7, 0.25, wallBase + 0.5, BLD.d*0.35, 'plumbing', Math.PI/2, 0);
+// Cold supply (PEX blue)
+addCylinder(groups.plumbing, MATS.pipe_cold, 0.013, 0.013, BLD.d*0.7, 0.35, wallBase + 0.45, BLD.d*0.35, 'plumbing', Math.PI/2, 0);
+// Risers (vertical)
+addCylinder(groups.plumbing, MATS.pipe_hot, 0.013, 0.013, 1.0, 0.25, wallBase+1.0, BLD.d*0.2, 'plumbing');
+addCylinder(groups.plumbing, MATS.pipe_cold, 0.013, 0.013, 1.0, 0.35, wallBase+0.95, BLD.d*0.2, 'plumbing');
+addCylinder(groups.plumbing, MATS.pipe_hot, 0.013, 0.013, 1.0, 0.25, wallBase+1.0, BLD.d*0.7, 'plumbing');
+addCylinder(groups.plumbing, MATS.pipe_cold, 0.013, 0.013, 1.0, 0.35, wallBase+0.95, BLD.d*0.7, 'plumbing');
+// Vent stack
+addCylinder(groups.plumbing, MATS.pipe_drain, 0.038, 0.038, BLD.roofHigh+0.5, BLD.w*0.4, wallBase+BLD.roofHigh/2, BLD.d*0.2, 'plumbing');
+// Water heater (cylinder)
+addCylinder(groups.plumbing, makeMat(0xcccccc, {metalness:0.4, roughness:0.3}), 0.22, 0.22, 1.1, BLD.w*0.15, wallBase+0.55, BLD.d*0.85, 'plumbing');
+
+// ── Electrical ──
+groups.electrical = new THREE.Group();
+scene.add(groups.electrical);
+// Panel box
+addBox(groups.electrical, MATS.panel, 0.38, 0.55, 0.1, BLD.w-0.2, wallBase+1.3, BLD.d*0.9, 'electrical');
+// Main conduit runs along ceiling
+addCylinder(groups.electrical, MATS.conduit, 0.015, 0.015, BLD.w*0.8, BLD.w*0.5, wallBase+BLD.roofHigh-0.15, BLD.d*0.9, 'electrical', 0, Math.PI/2);
+// Branch conduits
+for (let i = 0; i < 4; i++) {
+  const cx = 1.0 + i * 1.6;
+  addCylinder(groups.electrical, MATS.conduit, 0.012, 0.012, BLD.d*0.6, cx, wallBase+BLD.roofHigh-0.15, BLD.d*0.5, 'electrical', Math.PI/2, 0);
+}
+// Drop-downs to receptacles
+for (let i = 0; i < 3; i++) {
+  addCylinder(groups.electrical, MATS.conduit, 0.012, 0.012, 1.5, 1.0+i*2.5, wallBase+1.5, BLD.d*0.05, 'electrical');
+}
+// Pot light recesses (small cylinders flush with ceiling)
+for (let i = 0; i < 6; i++) {
+  const lx = 1.0 + i * 1.0;
+  const mesh = addCylinder(groups.electrical, makeMat(0x222222, {roughness:0.2}), 0.05, 0.05, 0.03, lx, wallBase+BLD.roofHigh-0.08, BLD.d*0.5, 'electrical');
+  // Small glow
+  const glow = new THREE.PointLight(0xffffcc, 0.15, 2);
+  glow.position.copy(mesh.position);
+  glow.position.y -= 0.1;
+  groups.electrical.add(glow);
+}
+
+// ── HVAC ──
+groups.hvac = new THREE.Group();
+scene.add(groups.hvac);
+// Indoor mini-split head unit (wall-mounted)
+addBox(groups.hvac, MATS.hvac_unit, 0.85, 0.28, 0.2, BLD.w*0.5, wallBase+BLD.roofHigh-0.4, 0.12, 'hvac');
+// Line set (two pipes to exterior)
+addCylinder(groups.hvac, MATS.pipe_hot, 0.02, 0.02, BLD.roofHigh, BLD.w*0.5, wallBase+BLD.roofHigh/2, 0.02, 'hvac');
+// Outdoor condenser unit
+addBox(groups.hvac, MATS.hvac_unit, 0.7, 0.6, 0.3, BLD.w*0.5, 0.3, -0.4, 'hvac');
+// Condenser fan grill
+addCylinder(groups.hvac, makeMat(0x444444, {metalness:0.5}), 0.2, 0.2, 0.02, BLD.w*0.5, 0.35, -0.55, 'hvac', Math.PI/2);
+// HRV unit (ceiling mounted)
+addBox(groups.hvac, MATS.hvac_duct, 0.6, 0.25, 0.45, BLD.w*0.8, wallBase+BLD.roofHigh-0.3, BLD.d*0.5, 'hvac');
+// HRV ducting
+addCylinder(groups.hvac, MATS.hvac_duct, 0.06, 0.06, 2.0, BLD.w*0.8, wallBase+BLD.roofHigh-0.18, BLD.d*0.3, 'hvac', Math.PI/2);
+addCylinder(groups.hvac, MATS.hvac_duct, 0.06, 0.06, 2.0, BLD.w*0.8, wallBase+BLD.roofHigh-0.18, BLD.d*0.7, 'hvac', Math.PI/2);
+
+// ═══════════════════════════════════════════════════════════════
+//  INTERACTION — Raycasting
+// ═══════════════════════════════════════════════════════════════
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+const hoverLabel = document.getElementById('hoverLabel');
 let hoveredComp = null;
 let selectedComp = null;
+const originalMaterials = new Map();
 
-function render() {
-  const dpr = window.devicePixelRatio || 1;
-  canvas.width = canvas.clientWidth * dpr;
-  canvas.height = canvas.clientHeight * dpr;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
-
-  const faces = getBuildingFaces();
-
-  // Project all faces and sort by depth (painter's algorithm)
-  const projected = faces.map(face => {
-    const pts = face.verts.map(v => project(v[0], v[1], v[2]));
-    const avgZ = pts.reduce((s, p) => s + p.z, 0) / pts.length;
-    return { ...face, pts, avgZ };
-  });
-  projected.sort((a, b) => b.avgZ - a.avgZ);
-
-  // Draw
-  for (const face of projected) {
-    ctx.beginPath();
-    ctx.moveTo(face.pts[0].x, face.pts[0].y);
-    for (let i = 1; i < face.pts.length; i++) {
-      ctx.lineTo(face.pts[i].x, face.pts[i].y);
-    }
-    ctx.closePath();
-
-    // Color based on hover/select state
-    let color = face.baseColor;
-    if (face.comp === hoveredComp || face.comp === selectedComp) {
-      color = COMPONENTS[face.comp]?.highlight || color;
-      ctx.shadowColor = 'rgba(77,166,255,0.3)';
-      ctx.shadowBlur = 15;
-    } else {
-      ctx.shadowColor = 'transparent';
-      ctx.shadowBlur = 0;
-    }
-
-    ctx.fillStyle = color;
-    ctx.fill();
-    ctx.shadowColor = 'transparent';
-    ctx.shadowBlur = 0;
-    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-    ctx.lineWidth = 0.5;
-    ctx.stroke();
-  }
-
-  // Store projected faces for hit testing
-  window._projectedFaces = projected;
-}
-
-// ═══════════════════════════════════════════════════════════════════
-//  HIT TESTING
-// ═══════════════════════════════════════════════════════════════════
-
-function pointInPolygon(x, y, pts) {
-  let inside = false;
-  for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
-    const xi = pts[i].x, yi = pts[i].y;
-    const xj = pts[j].x, yj = pts[j].y;
-    if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
-      inside = !inside;
-    }
-  }
-  return inside;
-}
-
-function hitTest(mx, my) {
-  const faces = window._projectedFaces || [];
-  // Test front-to-back (reverse of draw order)
-  for (let i = faces.length - 1; i >= 0; i--) {
-    if (pointInPolygon(mx, my, faces[i].pts)) {
-      return faces[i].comp;
-    }
+function getCompFromIntersect(intersects) {
+  for (const hit of intersects) {
+    const comp = hit.object.userData.component;
+    if (comp) return comp;
   }
   return null;
 }
 
-// ═══════════════════════════════════════════════════════════════════
-//  INTERACTION
-// ═══════════════════════════════════════════════════════════════════
+function highlightComponent(compKey) {
+  // Reset all
+  allMeshes.forEach(m => {
+    if (originalMaterials.has(m)) {
+      m.material = originalMaterials.get(m);
+      originalMaterials.delete(m);
+    }
+  });
+  if (!compKey) return;
+  // Highlight
+  allMeshes.forEach(m => {
+    if (m.userData.component === compKey) {
+      originalMaterials.set(m, m.material);
+      m.material = m.material.clone();
+      m.material.emissive = new THREE.Color(0x224466);
+      m.material.emissiveIntensity = 0.8;
+    }
+  });
+}
 
-const hoverLabel = document.getElementById('hoverLabel');
+renderer.domElement.addEventListener('mousemove', (e) => {
+  const rect = renderer.domElement.getBoundingClientRect();
+  mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
-canvas.addEventListener('mousemove', (e) => {
-  if (isDragging) {
-    const dx = e.clientX - lastMouse.x;
-    const dy = e.clientY - lastMouse.y;
-    camAngle -= dx * 0.005;
-    camPitch = Math.max(-0.8, Math.min(1.2, camPitch - dy * 0.005));
-    lastMouse = { x: e.clientX, y: e.clientY };
-    render();
-    return;
-  }
-
-  const rect = canvas.getBoundingClientRect();
-  const mx = e.clientX - rect.left;
-  const my = e.clientY - rect.top;
-  const comp = hitTest(mx, my);
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(allMeshes);
+  const comp = getCompFromIntersect(intersects);
 
   if (comp !== hoveredComp) {
     hoveredComp = comp;
-    render();
-    highlightCompInList(comp);
+    if (!selectedComp) highlightComponent(comp);
+    highlightCompInList(comp || selectedComp);
   }
 
   if (comp && COMPONENTS[comp]) {
-    hoverLabel.textContent = COMPONENTS[comp].name;
+    hoverLabel.innerHTML = `<div>${COMPONENTS[comp].name}</div><div class="sub">Click to inspect</div>`;
     hoverLabel.style.left = e.clientX + 'px';
     hoverLabel.style.top = e.clientY + 'px';
     hoverLabel.classList.add('visible');
-    canvas.style.cursor = 'pointer';
+    renderer.domElement.style.cursor = 'pointer';
   } else {
     hoverLabel.classList.remove('visible');
-    canvas.style.cursor = 'grab';
+    renderer.domElement.style.cursor = 'grab';
   }
 });
 
-canvas.addEventListener('mousedown', (e) => {
-  isDragging = true;
-  lastMouse = { x: e.clientX, y: e.clientY };
-  canvas.style.cursor = 'grabbing';
-});
-
-canvas.addEventListener('mouseup', (e) => {
-  const wasDrag = Math.abs(e.clientX - lastMouse.x) > 3 || Math.abs(e.clientY - lastMouse.y) > 3;
-  isDragging = false;
-
-  if (!wasDrag) {
-    const rect = canvas.getBoundingClientRect();
-    const comp = hitTest(e.clientX - rect.left, e.clientY - rect.top);
-    if (comp) {
-      selectedComp = comp;
-      showAssembly(comp);
-      render();
-    }
+renderer.domElement.addEventListener('click', (e) => {
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(allMeshes);
+  const comp = getCompFromIntersect(intersects);
+  if (comp) {
+    selectedComp = comp;
+    highlightComponent(comp);
+    showAssembly(comp);
   }
 });
 
-canvas.addEventListener('mouseleave', () => {
-  isDragging = false;
+renderer.domElement.addEventListener('mouseleave', () => {
   hoveredComp = null;
   hoverLabel.classList.remove('visible');
-  render();
+  if (!selectedComp) highlightComponent(null);
 });
 
-canvas.addEventListener('wheel', (e) => {
-  e.preventDefault();
-  camDist = Math.max(20, Math.min(80, camDist + e.deltaY * 0.03));
-  render();
-}, { passive: false });
+// ── Section Cut ──
+const sectionCheck = document.getElementById('sectionCut');
+sectionCheck.addEventListener('change', () => {
+  const cut = sectionCheck.checked;
+  sectionMeshes.forEach(m => m.visible = !cut);
+  // Show/hide section-only meshes
+  allMeshes.forEach(m => {
+    if (m.userData.sectionOnly) m.visible = cut;
+  });
+});
 
-// ── Camera presets ──
-function setCameraAngle(preset, btn) {
-  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
+// ── Camera Presets ──
+const viewBtns = document.querySelectorAll('.view-btn');
+viewBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    viewBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const view = btn.dataset.view;
+    const t = controls.target;
+    let pos;
+    switch(view) {
+      case 'iso':   pos = {x:14, y:8, z:14}; break;
+      case 'front': pos = {x: BLD.w/2, y:1.5, z:-8}; break;
+      case 'side':  pos = {x:-8, y:2, z:BLD.d/2}; break;
+      case 'top':   pos = {x: BLD.w/2, y:15, z:BLD.d/2+0.01}; break;
+    }
+    animateCamera(pos);
+  });
+});
 
-  sectionCut = false;
-  switch(preset) {
-    case 'iso':    camAngle = 0.6;  camPitch = 0.45; camDist = 42; break;
-    case 'front':  camAngle = 0;    camPitch = 0.15; camDist = 38; break;
-    case 'side':   camAngle = Math.PI/2; camPitch = 0.15; camDist = 38; break;
-    case 'top':    camAngle = 0.3;  camPitch = 1.1;  camDist = 45; break;
-    case 'section':
-      camAngle = 0.5; camPitch = 0.35; camDist = 38;
-      sectionCut = true;
-      break;
+function animateCamera(target) {
+  const start = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
+  const dur = 600;
+  const t0 = performance.now();
+  function step(now) {
+    const p = Math.min((now - t0) / dur, 1);
+    const e = 1 - Math.pow(1 - p, 3); // ease-out cubic
+    camera.position.x = start.x + (target.x - start.x) * e;
+    camera.position.y = start.y + (target.y - start.y) * e;
+    camera.position.z = start.z + (target.z - start.z) * e;
+    controls.update();
+    if (p < 1) requestAnimationFrame(step);
   }
-  render();
+  requestAnimationFrame(step);
 }
 
-// ═══════════════════════════════════════════════════════════════════
-//  SIDEBAR — Component list + Assembly detail
-// ═══════════════════════════════════════════════════════════════════
-
+// ═══════════════════════════════════════════════════════════════
+//  SIDEBAR
+// ═══════════════════════════════════════════════════════════════
 const compList = document.getElementById('compList');
 const assemblyPanel = document.getElementById('assemblyPanel');
 const assemblyTitle = document.getElementById('assemblyTitle');
 const crossSection = document.getElementById('crossSection');
 const layerDetailEl = document.getElementById('layerDetail');
 
-// Build component list
 Object.entries(COMPONENTS).forEach(([key, comp]) => {
+  const totalCost = comp.layers.reduce((s, l) => s + parseInt(l.total.replace(/[$,]/g,'')) || 0, 0);
   const el = document.createElement('div');
   el.className = 'comp-item';
   el.dataset.comp = key;
-  el.innerHTML = `<div class="dot" style="background:${comp.color}"></div><span class="cname">${comp.name}</span>`;
+  el.innerHTML = `<div class="dot" style="background:#${comp.color.toString(16).padStart(6,'0')}"></div>
+    <span class="cname">${comp.name}</span>
+    <span class="cprice">$${totalCost.toLocaleString()}</span>`;
   el.addEventListener('click', () => {
     selectedComp = key;
+    highlightComponent(key);
     showAssembly(key);
-    render();
   });
   el.addEventListener('mouseenter', () => {
     hoveredComp = key;
-    render();
+    if (!selectedComp) highlightComponent(key);
   });
   el.addEventListener('mouseleave', () => {
     hoveredComp = null;
-    render();
+    if (!selectedComp) highlightComponent(null);
   });
   compList.appendChild(el);
 });
@@ -810,34 +801,28 @@ function highlightCompInList(comp) {
 function showAssembly(compKey) {
   const comp = COMPONENTS[compKey];
   if (!comp) return;
-
   highlightCompInList(compKey);
-  assemblyPanel.style.display = 'block';
-  assemblyTitle.textContent = comp.name + ' Assembly';
+  assemblyPanel.classList.add('open');
+  assemblyTitle.textContent = comp.name + ' — Assembly Layers';
 
   crossSection.innerHTML = comp.layers.map((layer, i) => `
     <div class="cs-layer" data-idx="${i}" onclick="showLayerDetail('${compKey}', ${i})">
       <div class="cs-swatch" style="background:${layer.color}"></div>
       <div class="cs-info">
         <div class="name">${layer.name}</div>
-        <div class="spec">${layer.thick}${layer.thick !== '—' ? ' thick' : ''} · ${layer.qty}</div>
+        <div class="spec">${layer.thick !== '—' ? layer.thick + ' thick · ' : ''}${layer.qty}</div>
       </div>
       <div class="cs-price">${layer.total}</div>
     </div>
   `).join('');
 
   layerDetailEl.classList.remove('open');
-  layerDetailEl.innerHTML = '';
 }
 
 function showLayerDetail(compKey, idx) {
   const layer = COMPONENTS[compKey].layers[idx];
   if (!layer) return;
-
-  crossSection.querySelectorAll('.cs-layer').forEach((el, i) => {
-    el.classList.toggle('active', i === idx);
-  });
-
+  crossSection.querySelectorAll('.cs-layer').forEach((el, i) => el.classList.toggle('active', i === idx));
   layerDetailEl.innerHTML = `
     <div class="ld-grid">
       <div class="ld-cell"><div class="label">Quantity</div><div class="val">${layer.qty}</div></div>
@@ -850,12 +835,26 @@ function showLayerDetail(compKey, idx) {
   layerDetailEl.classList.add('open');
 }
 
-// ── Resize & Initial render ──
-window.addEventListener('resize', render);
-render();
+// ═══════════════════════════════════════════════════════════════
+//  RENDER LOOP
+// ═══════════════════════════════════════════════════════════════
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
 
-// Show foundation by default
+window.addEventListener('resize', () => {
+  const w = container.clientWidth, h = container.clientHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+});
+
+// Default: show foundation
 selectedComp = 'foundation';
+highlightComponent('foundation');
 showAssembly('foundation');
 </script>
 </body>

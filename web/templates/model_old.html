@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3D Model — St. John's Backyard Suite</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --panel: #111;
+    --card: #161616;
+    --border: rgba(255,255,255,0.07);
+    --text: #eee;
+    --dim: #666;
+    --muted: #999;
+    --accent: #4da6ff;
+    --green: #34d399;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    background:var(--bg); color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  /* ── Shared Nav (injected by nav partial) ── */
+  .site-nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 28px; height:52px;
+    background:rgba(10,10,10,0.85);
+    backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+  }
+  .site-nav .brand {
+    font-size:13px; font-weight:600; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--muted);
+  }
+  .site-nav .brand b { color:var(--text); font-weight:700; }
+  .site-nav .links { display:flex; gap:2px; }
+  .site-nav .links a {
+    padding:7px 16px; border-radius:8px;
+    font-size:12px; font-weight:500; letter-spacing:0.03em;
+    color:var(--dim); text-decoration:none; transition:all 0.15s;
+  }
+  .site-nav .links a:hover { color:var(--text); background:rgba(255,255,255,0.04); }
+  .site-nav .links a.active {
+    color:var(--accent); background:rgba(77,166,255,0.08);
+  }
+  .site-nav .meta {
+    font-size:11px; color:var(--dim); letter-spacing:0.04em;
+  }
+  .site-nav .meta b { color:var(--green); font-weight:600; }
+
+  /* ── Main Area ── */
+  main {
+    margin-top:52px;
+    display:grid;
+    grid-template-columns:1fr 380px;
+    height:calc(100vh - 52px);
+  }
+
+  /* ── Canvas ── */
+  .canvas-wrap {
+    position:relative; overflow:hidden;
+    background:radial-gradient(ellipse at 50% 40%, #111 0%, #0a0a0a 70%);
+  }
+  #scene {
+    width:100%; height:100%; display:block; cursor:grab;
+  }
+  #scene:active { cursor:grabbing; }
+
+  /* Overlay controls */
+  .view-controls {
+    position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
+    display:flex; gap:1px; background:rgba(0,0,0,0.6);
+    border-radius:10px; overflow:hidden;
+    backdrop-filter:blur(12px); border:1px solid var(--border);
+  }
+  .view-btn {
+    padding:8px 18px; font-size:11px; font-weight:500;
+    color:var(--muted); background:transparent; border:none;
+    cursor:pointer; transition:all 0.15s; letter-spacing:0.03em;
+  }
+  .view-btn:hover { color:var(--text); background:rgba(255,255,255,0.05); }
+  .view-btn.active { color:var(--accent); background:rgba(77,166,255,0.1); }
+
+  .hint-overlay {
+    position:absolute; top:20px; left:20px;
+    font-size:11px; color:var(--dim); letter-spacing:0.03em;
+  }
+  .hint-overlay span { color:var(--muted); }
+
+  /* Component label on hover */
+  .hover-label {
+    position:absolute; pointer-events:none;
+    padding:6px 14px; border-radius:8px;
+    background:rgba(0,0,0,0.8); border:1px solid var(--border);
+    backdrop-filter:blur(8px);
+    font-size:12px; font-weight:500; color:var(--text);
+    white-space:nowrap; opacity:0; transition:opacity 0.15s;
+    transform:translate(-50%, -100%); margin-top:-12px;
+  }
+  .hover-label.visible { opacity:1; }
+
+  /* ── Detail Sidebar ── */
+  .sidebar {
+    background:var(--panel); border-left:1px solid var(--border);
+    overflow-y:auto; padding:0;
+  }
+  .sb-header {
+    padding:20px 24px; border-bottom:1px solid var(--border);
+  }
+  .sb-header h2 {
+    font-size:11px; font-weight:600; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--dim);
+  }
+  .sb-header p {
+    font-size:13px; color:var(--muted); margin-top:4px;
+  }
+
+  /* Assembly card */
+  .assembly-title {
+    padding:20px 24px 12px;
+    font-size:13px; font-weight:700; letter-spacing:0.06em;
+    text-transform:uppercase; color:var(--text);
+  }
+
+  .cross-section {
+    padding:0 24px 16px;
+  }
+  .cs-layer {
+    display:flex; align-items:stretch; gap:12px;
+    padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.03);
+    cursor:pointer; transition:background 0.15s;
+    border-radius:6px;
+  }
+  .cs-layer:hover { background:rgba(255,255,255,0.02); }
+  .cs-layer.active { background:rgba(77,166,255,0.05); }
+
+  .cs-swatch {
+    width:6px; border-radius:3px; flex-shrink:0;
+  }
+  .cs-info { flex:1; min-width:0; }
+  .cs-info .name {
+    font-size:12px; font-weight:600; color:var(--text);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .cs-info .spec {
+    font-size:11px; color:var(--dim); margin-top:2px;
+  }
+  .cs-price {
+    font-size:12px; font-weight:600; color:var(--green);
+    white-space:nowrap; align-self:center;
+  }
+
+  /* Detail expansion */
+  .layer-detail {
+    margin:0 24px 16px; padding:16px;
+    background:var(--card); border:1px solid var(--border);
+    border-radius:10px; display:none;
+  }
+  .layer-detail.open { display:block; }
+  .layer-detail .thumb {
+    width:100%; height:100px; object-fit:contain;
+    background:#0a0a0a; border-radius:6px; margin-bottom:12px;
+  }
+  .layer-detail .ld-grid {
+    display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;
+  }
+  .layer-detail .ld-cell {
+    background:rgba(255,255,255,0.02); border-radius:6px; padding:8px 10px;
+  }
+  .layer-detail .ld-cell .label {
+    font-size:9px; text-transform:uppercase; letter-spacing:0.08em; color:var(--dim);
+  }
+  .layer-detail .ld-cell .val {
+    font-size:13px; font-weight:600; margin-top:2px;
+  }
+  .layer-detail .notes {
+    font-size:11px; line-height:1.6; color:var(--dim);
+    border-top:1px solid var(--border); padding-top:10px;
+  }
+  .layer-detail .link {
+    display:inline-block; margin-top:8px; padding:6px 12px;
+    font-size:11px; font-weight:500; color:var(--accent);
+    background:rgba(77,166,255,0.06); border-radius:6px;
+    text-decoration:none; transition:background 0.15s;
+  }
+  .layer-detail .link:hover { background:rgba(77,166,255,0.12); }
+
+  /* Component list (sidebar bottom) */
+  .comp-list {
+    padding:0 24px 24px;
+  }
+  .comp-item {
+    display:flex; align-items:center; gap:10px;
+    padding:8px 0; cursor:pointer; transition:opacity 0.15s;
+  }
+  .comp-item:hover { opacity:0.8; }
+  .comp-item .dot {
+    width:8px; height:8px; border-radius:50%; flex-shrink:0;
+  }
+  .comp-item .cname {
+    font-size:12px; color:var(--muted); flex:1;
+  }
+  .comp-item.active .cname { color:var(--text); font-weight:600; }
+
+  /* ── Responsive ── */
+  @media (max-width:900px) {
+    main { grid-template-columns:1fr; grid-template-rows:50vh 1fr; }
+    .sidebar { border-left:none; border-top:1px solid var(--border); }
+    .site-nav .meta { display:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── Navigation ─── -->
+<nav class="site-nav">
+  <div class="brand"><b>SJ</b> Backyard Suite</div>
+  <div class="links">
+    <a href="/">BOM</a>
+    <a href="/model" class="active">3D Model</a>
+    <a href="/render">Cross Sections</a>
+    <a href="/finishes">Finishes</a>
+  </div>
+  <div class="meta">Grand Total <b>${{ "{:,.0f}".format(summary.grand_total) }}</b></div>
+</nav>
+
+<main>
+  <!-- ─── 3D Canvas ─── -->
+  <div class="canvas-wrap">
+    <canvas id="scene"></canvas>
+    <div class="hint-overlay"><span>Click</span> a component &middot; <span>Drag</span> to orbit &middot; <span>Scroll</span> to zoom</div>
+    <div id="hoverLabel" class="hover-label"></div>
+
+    <div class="view-controls">
+      <button class="view-btn active" onclick="setCameraAngle('iso', this)">Isometric</button>
+      <button class="view-btn" onclick="setCameraAngle('front', this)">Front</button>
+      <button class="view-btn" onclick="setCameraAngle('side', this)">Side</button>
+      <button class="view-btn" onclick="setCameraAngle('top', this)">Top</button>
+      <button class="view-btn" onclick="setCameraAngle('section', this)">Section Cut</button>
+    </div>
+  </div>
+
+  <!-- ─── Sidebar ─── -->
+  <div class="sidebar">
+    <div class="sb-header">
+      <h2>Building Components</h2>
+      <p>Hover or click on the 3D model to inspect</p>
+    </div>
+
+    <!-- Components list -->
+    <div class="comp-list" id="compList">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Cross-section detail (shows when component selected) -->
+    <div id="assemblyPanel" style="display:none;">
+      <div class="assembly-title" id="assemblyTitle">Wall Assembly</div>
+      <div class="cross-section" id="crossSection">
+        <!-- Layer rows populated by JS -->
+      </div>
+      <div class="layer-detail" id="layerDetail">
+        <!-- Detail card populated by JS -->
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+//  3D ISOMETRIC BUILDING MODEL — Pure Canvas (no dependencies)
+// ═══════════════════════════════════════════════════════════════════
+
+const canvas = document.getElementById('scene');
+const ctx = canvas.getContext('2d');
+
+// Building dimensions (feet, proportional)
+const B = { w: 21.5, d: 20, h: 9.5, roofPitch: 2.5, wallThick: 0.5 };
+
+// Camera state
+let camAngle = 0.6;        // horizontal rotation (radians)
+let camPitch = 0.45;       // vertical tilt
+let camDist = 42;
+let camTarget = { x: B.w/2, y: B.h/2, z: B.d/2 };
+let isDragging = false;
+let lastMouse = { x: 0, y: 0 };
+let sectionCut = false;     // whether to cut the building in half
+
+// ── Component definitions with assembly layers ──
+const COMPONENTS = {
+  foundation: {
+    name: 'Foundation & Slab',
+    color: '#6a6a6a',
+    highlight: '#8a8a8a',
+    layers: [
+      { name:'LVP Flooring', thick:'5.3 mm', color:'#3d2a16', qty:'22 BX', price:'$88.19/bx', total:'$1,940', notes:'Volcano Pewter SPC vinyl plank — waterproof click-lock over slab.' },
+      { name:'Concrete Slab', thick:'4 in', color:'#757575', qty:'5.5 cu m', price:'$250/cu m', total:'$1,375', notes:'25 MPa ready-mix with thickened perimeter edges for wall loads.' },
+      { name:'Wire Mesh', thick:'—', color:'#888', qty:'430 sqft', price:'$0.75/sqft', total:'$323', notes:'6×6 W2.9 welded wire mesh mid-slab for crack control.' },
+      { name:'Vapour Barrier', thick:'10 mil', color:'#444', qty:'1 RL', price:'$112.50', total:'$113', notes:'Poly moisture barrier — all seams lapped 12″ and taped.' },
+      { name:'XPS Insulation', thick:'2 in', color:'#2d7dce', qty:'14 SH', price:'$50.39/sh', total:'$706', notes:'R-10 rigid foam beneath slab. Thermal break from ground.' },
+      { name:'Gravel Base', thick:'4 in', color:'#666', qty:'16 cu yd', price:'$45/cu yd', total:'$720', notes:'3/4″ clear crush, compacted in lifts. Drainage + bearing.' },
+    ]
+  },
+  walls: {
+    name: 'Exterior Walls',
+    color: '#5a7a5a',
+    highlight: '#7a9a7a',
+    layers: [
+      { name:'Vinyl Siding', thick:'—', color:'#8a9a8a', qty:'50 EA', price:'$11.19/ea', total:'$560', notes:'Mitten Oregon Pride Dutchlap — low-maintenance exterior cladding.' },
+      { name:'XPS Continuous Insul.', thick:'1.5 in', color:'#2d7dce', qty:'30 SH', price:'$112.99/sh', total:'$3,390', notes:'R-7.5 rigid foam over Tyvek. Continuous thermal envelope.' },
+      { name:'Tyvek HomeWrap', thick:'—', color:'#ddd', qty:'2 RL', price:'$129.99/rl', total:'$260', notes:'Weather-resistant barrier — sheds bulk water, allows vapour out.' },
+      { name:'Plywood Sheathing', thick:'1/2 in', color:'#c4a67a', qty:'28 SH', price:'$39.98/sh', total:'$1,119', notes:'Structural sheathing — shear strength + nail base for WRB.' },
+      { name:'2×6 SPF Studs', thick:'5.5 in', color:'#d4a862', qty:'52 EA', price:'$6.48/ea', total:'$337', notes:'Kiln-dried framing @ 16″ o.c. — R-20 batt cavity.' },
+      { name:'R-20 Batt Insulation', thick:'5.5 in', color:'#f7e67a', qty:'8 BA', price:'$89.57/ba', total:'$717', notes:'Owens Corning fiberglass in stud cavities. R-20 per layer.' },
+      { name:'6-mil Poly Vapour Barrier', thick:'—', color:'#ccc', qty:'1 RL', price:'$89.99', total:'$90', notes:'Interior vapour retarder — continuous, sealed at all penetrations.' },
+      { name:'1/2″ Drywall', thick:'1/2 in', color:'#e8e8e8', qty:'32 SH', price:'$17.82/sh', total:'$570', notes:'CGC UltraLight — painted Sico Evolution Pure White eggshell.' },
+    ]
+  },
+  roof: {
+    name: 'Roof Assembly',
+    color: '#5a5a7a',
+    highlight: '#7a7a9a',
+    layers: [
+      { name:'IKO Cambridge Shingles', thick:'—', color:'#333', qty:'15 BD', price:'$40.99/bd', total:'$615', notes:'Dual Black architectural shingles — lifetime limited warranty.' },
+      { name:'Felt Underlayment', thick:'—', color:'#555', qty:'1 RL', price:'$44.99', total:'$45', notes:'Organic felt over entire deck. Ice shield at eaves + valleys.' },
+      { name:'Ice & Water Shield', thick:'—', color:'#444', qty:'1 RL', price:'$84.99', total:'$85', notes:'IKO StormShield membrane — first 3\' at eaves, all valleys.' },
+      { name:'5/8″ Plywood Deck', thick:'5/8 in', color:'#c4a67a', qty:'16 SH', price:'$54.38/sh', total:'$870', notes:'Structural roof sheathing — 8d nails @ 6″ edges, 12″ field.' },
+      { name:'2×12 Rafters', thick:'11.25 in', color:'#d4a862', qty:'13 EA', price:'$62.27/ea', total:'$810', notes:'SPF #2, 24″ o.c. Mono-slope from 9.5\' to 7\' (2:12 pitch).' },
+      { name:'R-31 Batt Insulation', thick:'10 in', color:'#f7e67a', qty:'13 BA', price:'$79.99/ba', total:'$1,040', notes:'Owens Corning R-31 in rafter cavities. Exceeds NL code min.' },
+      { name:'Air Chutes', thick:'—', color:'#aaa', qty:'13 EA', price:'$2.19/ea', total:'$28', notes:'Thermocell baffles — maintain ventilation above insulation.' },
+      { name:'5/8″ Type X Drywall', thick:'5/8 in', color:'#e8e8e8', qty:'16 SH', price:'$31.99/sh', total:'$512', notes:'CGC Firecode — fire barrier on ceiling, finished + painted.' },
+    ]
+  },
+  windows: {
+    name: 'Windows',
+    color: '#7abed4',
+    highlight: '#9ad4ea',
+    layers: [
+      { name:'Triple-Pane Casement', thick:'—', color:'#7abed4', qty:'6 EA', price:'$479.00/ea', total:'$2,874', notes:'30″×48″ vinyl casement — argon-filled triple-glazed. U-0.25.' },
+      { name:'Flashing Tape', thick:'—', color:'#888', qty:'2 RL', price:'$47.39/rl', total:'$95', notes:'Self-adhering window flashing — lapped into WRB for drainage.' },
+    ]
+  },
+  door: {
+    name: 'Entry Door',
+    color: '#2a2a2a',
+    highlight: '#444',
+    layers: [
+      { name:'Dusco Moderna Full Lite', thick:'—', color:'#222', qty:'1 EA', price:'$850.00', total:'$850', notes:'34″×80″ black steel frame with 3 frosted glass panels. From Home Depot.' },
+    ]
+  },
+  mechanical: {
+    name: 'Mechanical / HVAC',
+    color: '#7a5a5a',
+    highlight: '#9a7a7a',
+    layers: [
+      { name:'Mini-Split Heat Pump', thick:'—', color:'#7a5a5a', qty:'1 EA', price:'$1,553', total:'$1,553', notes:'18,000 BTU ductless — heating + cooling. Primary HVAC system.' },
+      { name:'HRV Ventilator', thick:'—', color:'#8a6a6a', qty:'1 EA', price:'$1,279', total:'$1,279', notes:'Heat-recovery ventilator — fresh air exchange, code-required.' },
+      { name:'Electric Baseboards', thick:'—', color:'#9a7a7a', qty:'2 EA', price:'$102/ea', total:'$204', notes:'1500W backup heat — bathrooms only.' },
+    ]
+  },
+  electrical: {
+    name: 'Electrical',
+    color: '#988a44',
+    highlight: '#b8a854',
+    layers: [
+      { name:'100A Sub-Panel', thick:'—', color:'#988a44', qty:'1 EA', price:'$156.49', total:'$156', notes:'20-space panel — fed from main house panel.' },
+      { name:'14/2 NMD90 Wire', thick:'—', color:'#eee', qty:'1 RL', price:'$163/rl', total:'$163', notes:'150m spool — general lighting + receptacle circuits.' },
+      { name:'12/2 NMD90 Wire', thick:'—', color:'#ffa500', qty:'1 RL', price:'$242/rl', total:'$242', notes:'75m spool — 20A kitchen + bath circuits.' },
+      { name:'LED Pot Lights', thick:'—', color:'#ffdd00', qty:'1 PK', price:'$109.99', total:'$110', notes:'4″ slim recessed, IC-rated, black trim ring.' },
+    ]
+  },
+  plumbing: {
+    name: 'Plumbing',
+    color: '#446a88',
+    highlight: '#5a8aaa',
+    layers: [
+      { name:'Water Heater (40 gal)', thick:'—', color:'#446a88', qty:'1 EA', price:'$595', total:'$595', notes:'Electric tank — serves kitchen + 2 bathrooms.' },
+      { name:'PEX Supply Lines', thick:'—', color:'#e44', qty:'2 RL', price:'$44.89/rl', total:'$90', notes:'1/2″ red + blue PEX — home-run to manifold.' },
+      { name:'ABS/PVC Drains', thick:'—', color:'#333', qty:'1 LOT', price:'$350', total:'$350', notes:'Drain/waste/vent rough-in for slab-on-grade.' },
+    ]
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════════
+//  3D PROJECTION ENGINE
+// ═══════════════════════════════════════════════════════════════════
+
+function project(x, y, z) {
+  // Rotate around Y axis (horizontal orbit)
+  const cosA = Math.cos(camAngle), sinA = Math.sin(camAngle);
+  let rx = (x - camTarget.x) * cosA - (z - camTarget.z) * sinA;
+  let rz = (x - camTarget.x) * sinA + (z - camTarget.z) * cosA;
+  let ry = y - camTarget.y;
+
+  // Pitch (vertical tilt)
+  const cosP = Math.cos(camPitch), sinP = Math.sin(camPitch);
+  let py = ry * cosP - rz * sinP;
+  let pz = ry * sinP + rz * cosP;
+
+  // Perspective — use CSS pixel dimensions, not device pixels
+  const scale = camDist / (camDist + pz);
+  const cx = canvas.clientWidth / 2;
+  const cy = canvas.clientHeight / 2;
+
+  return {
+    x: cx + rx * scale * 14,
+    y: cy - py * scale * 14,
+    z: pz,
+    scale
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  BUILDING GEOMETRY — faces with component tagging
+// ═══════════════════════════════════════════════════════════════════
+
+function getBuildingFaces() {
+  const faces = [];
+  const w = B.w, d = B.d, h = B.h;
+  const rh = B.roofPitch; // extra height at high side
+
+  // Cut plane for section view
+  const cutZ = sectionCut ? d * 0.5 : d;
+
+  // ── Foundation slab ──
+  faces.push({
+    comp: 'foundation',
+    verts: [[0,0,0],[w,0,0],[w,0,cutZ],[0,0,cutZ]],
+    baseColor: COMPONENTS.foundation.color,
+    normal: [0,-1,0]
+  });
+
+  // ── Floor (visible top of slab) ──
+  faces.push({
+    comp: 'foundation',
+    verts: [[0,0.3,0],[w,0.3,0],[w,0.3,cutZ],[0,0.3,cutZ]],
+    baseColor: '#3d2a16',
+    normal: [0,1,0]
+  });
+
+  // ── Walls ──
+  // Front wall (z=0)
+  faces.push({
+    comp: 'walls',
+    verts: [[0,0.3,0],[w,0.3,0],[w,h,0],[0,h+rh,0]],
+    baseColor: COMPONENTS.walls.color,
+    normal: [0,0,-1]
+  });
+
+  // Back wall (z=cutZ)
+  if (!sectionCut) {
+    faces.push({
+      comp: 'walls',
+      verts: [[0,0.3,d],[w,0.3,d],[w,h,d],[0,h+rh,d]],
+      baseColor: COMPONENTS.walls.color,
+      normal: [0,0,1]
+    });
+  }
+
+  // Left wall (x=0)
+  faces.push({
+    comp: 'walls',
+    verts: [[0,0.3,0],[0,0.3,cutZ],[0,h+rh,cutZ],[0,h+rh,0]],
+    baseColor: adjustColor(COMPONENTS.walls.color, -15),
+    normal: [-1,0,0]
+  });
+
+  // Right wall (x=w)
+  faces.push({
+    comp: 'walls',
+    verts: [[w,0.3,0],[w,0.3,cutZ],[w,h,cutZ],[w,h,0]],
+    baseColor: adjustColor(COMPONENTS.walls.color, 10),
+    normal: [1,0,0]
+  });
+
+  // ── Roof ──
+  // Mono-slope: high side at x=0 (h+rh), low side at x=w (h)
+  faces.push({
+    comp: 'roof',
+    verts: [[-0.5,h+rh,-0.8],[w+0.5,h,-0.8],[w+0.5,h,cutZ+(sectionCut?0:0.8)],[-0.5,h+rh,cutZ+(sectionCut?0:0.8)]],
+    baseColor: COMPONENTS.roof.color,
+    normal: [0,1,0.15]
+  });
+
+  // Roof underside (soffit visible area)
+  // Skip for section cut to show interior
+
+  // ── Windows (on front wall) ──
+  // 3 windows on front
+  for (let i = 0; i < 3; i++) {
+    const wx = 3 + i * 6.5;
+    const wy = 3;
+    const ww = 2.5;
+    const wh = 4;
+    faces.push({
+      comp: 'windows',
+      verts: [[wx,wy,-0.01],[wx+ww,wy,-0.01],[wx+ww,wy+wh,-0.01],[wx,wy+wh,-0.01]],
+      baseColor: '#5aaed0',
+      normal: [0,0,-1]
+    });
+  }
+
+  // 2 windows on right wall
+  for (let i = 0; i < 2; i++) {
+    const wz = 4 + i * 8;
+    if (wz + 2.5 > cutZ) continue;
+    faces.push({
+      comp: 'windows',
+      verts: [[w+0.01,3,wz],[w+0.01,3,wz+2.5],[w+0.01,7,wz+2.5],[w+0.01,7,wz]],
+      baseColor: '#5aaed0',
+      normal: [1,0,0]
+    });
+  }
+
+  // ── Door (front wall) ──
+  faces.push({
+    comp: 'door',
+    verts: [[9.5,0.3,-0.01],[12.5,0.3,-0.01],[12.5,7,-0.01],[9.5,7,-0.01]],
+    baseColor: '#1a1a2a',
+    normal: [0,0,-1]
+  });
+
+  // ── Section cut — interior cross-section fill ──
+  if (sectionCut) {
+    // Wall cross-section (left wall interior)
+    // Show layered colors on the cut face
+    const layers = COMPONENTS.walls.layers;
+    const cutFaceZ = cutZ;
+
+    // Simplified wall cut — show colored stripe
+    faces.push({
+      comp: 'walls',
+      verts: [[0,0.3,cutFaceZ],[w,0.3,cutFaceZ],[w,h,cutFaceZ],[0,h+rh,cutFaceZ]],
+      baseColor: '#3a4a3a',
+      normal: [0,0,1]
+    });
+
+    // Roof section cut
+    faces.push({
+      comp: 'roof',
+      verts: [[-0.5,h+rh,cutFaceZ],[w+0.5,h,cutFaceZ],[w+0.5,h-1,cutFaceZ],[-0.5,h+rh-1,cutFaceZ]],
+      baseColor: '#3a3a5a',
+      normal: [0,0,1]
+    });
+
+    // Foundation section
+    faces.push({
+      comp: 'foundation',
+      verts: [[0,-0.5,cutFaceZ],[w,-0.5,cutFaceZ],[w,0.3,cutFaceZ],[0,0.3,cutFaceZ]],
+      baseColor: '#555',
+      normal: [0,0,1]
+    });
+
+    // Mechanical indicator (inside)
+    faces.push({
+      comp: 'mechanical',
+      verts: [[1,1,cutFaceZ-0.01],[3.5,1,cutFaceZ-0.01],[3.5,3.5,cutFaceZ-0.01],[1,3.5,cutFaceZ-0.01]],
+      baseColor: COMPONENTS.mechanical.color,
+      normal: [0,0,1]
+    });
+
+    // Electrical panel
+    faces.push({
+      comp: 'electrical',
+      verts: [[w-3,2,cutFaceZ-0.01],[w-1.5,2,cutFaceZ-0.01],[w-1.5,5,cutFaceZ-0.01],[w-3,5,cutFaceZ-0.01]],
+      baseColor: COMPONENTS.electrical.color,
+      normal: [0,0,1]
+    });
+
+    // Plumbing stub
+    faces.push({
+      comp: 'plumbing',
+      verts: [[8,0,cutFaceZ-0.01],[10,0,cutFaceZ-0.01],[10,2,cutFaceZ-0.01],[8,2,cutFaceZ-0.01]],
+      baseColor: COMPONENTS.plumbing.color,
+      normal: [0,0,1]
+    });
+  }
+
+  return faces;
+}
+
+function adjustColor(hex, amount) {
+  const num = parseInt(hex.replace('#',''), 16);
+  let r = Math.min(255, Math.max(0, (num >> 16) + amount));
+  let g = Math.min(255, Math.max(0, ((num >> 8) & 0xff) + amount));
+  let b = Math.min(255, Math.max(0, (num & 0xff) + amount));
+  return `rgb(${r},${g},${b})`;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  RENDERING
+// ═══════════════════════════════════════════════════════════════════
+
+let hoveredComp = null;
+let selectedComp = null;
+
+function render() {
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = canvas.clientWidth * dpr;
+  canvas.height = canvas.clientHeight * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+
+  const faces = getBuildingFaces();
+
+  // Project all faces and sort by depth (painter's algorithm)
+  const projected = faces.map(face => {
+    const pts = face.verts.map(v => project(v[0], v[1], v[2]));
+    const avgZ = pts.reduce((s, p) => s + p.z, 0) / pts.length;
+    return { ...face, pts, avgZ };
+  });
+  projected.sort((a, b) => b.avgZ - a.avgZ);
+
+  // Draw
+  for (const face of projected) {
+    ctx.beginPath();
+    ctx.moveTo(face.pts[0].x, face.pts[0].y);
+    for (let i = 1; i < face.pts.length; i++) {
+      ctx.lineTo(face.pts[i].x, face.pts[i].y);
+    }
+    ctx.closePath();
+
+    // Color based on hover/select state
+    let color = face.baseColor;
+    if (face.comp === hoveredComp || face.comp === selectedComp) {
+      color = COMPONENTS[face.comp]?.highlight || color;
+      ctx.shadowColor = 'rgba(77,166,255,0.3)';
+      ctx.shadowBlur = 15;
+    } else {
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+    }
+
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+  }
+
+  // Store projected faces for hit testing
+  window._projectedFaces = projected;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  HIT TESTING
+// ═══════════════════════════════════════════════════════════════════
+
+function pointInPolygon(x, y, pts) {
+  let inside = false;
+  for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+    const xi = pts[i].x, yi = pts[i].y;
+    const xj = pts[j].x, yj = pts[j].y;
+    if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
+
+function hitTest(mx, my) {
+  const faces = window._projectedFaces || [];
+  // Test front-to-back (reverse of draw order)
+  for (let i = faces.length - 1; i >= 0; i--) {
+    if (pointInPolygon(mx, my, faces[i].pts)) {
+      return faces[i].comp;
+    }
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  INTERACTION
+// ═══════════════════════════════════════════════════════════════════
+
+const hoverLabel = document.getElementById('hoverLabel');
+
+canvas.addEventListener('mousemove', (e) => {
+  if (isDragging) {
+    const dx = e.clientX - lastMouse.x;
+    const dy = e.clientY - lastMouse.y;
+    camAngle -= dx * 0.005;
+    camPitch = Math.max(-0.8, Math.min(1.2, camPitch - dy * 0.005));
+    lastMouse = { x: e.clientX, y: e.clientY };
+    render();
+    return;
+  }
+
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const comp = hitTest(mx, my);
+
+  if (comp !== hoveredComp) {
+    hoveredComp = comp;
+    render();
+    highlightCompInList(comp);
+  }
+
+  if (comp && COMPONENTS[comp]) {
+    hoverLabel.textContent = COMPONENTS[comp].name;
+    hoverLabel.style.left = e.clientX + 'px';
+    hoverLabel.style.top = e.clientY + 'px';
+    hoverLabel.classList.add('visible');
+    canvas.style.cursor = 'pointer';
+  } else {
+    hoverLabel.classList.remove('visible');
+    canvas.style.cursor = 'grab';
+  }
+});
+
+canvas.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  lastMouse = { x: e.clientX, y: e.clientY };
+  canvas.style.cursor = 'grabbing';
+});
+
+canvas.addEventListener('mouseup', (e) => {
+  const wasDrag = Math.abs(e.clientX - lastMouse.x) > 3 || Math.abs(e.clientY - lastMouse.y) > 3;
+  isDragging = false;
+
+  if (!wasDrag) {
+    const rect = canvas.getBoundingClientRect();
+    const comp = hitTest(e.clientX - rect.left, e.clientY - rect.top);
+    if (comp) {
+      selectedComp = comp;
+      showAssembly(comp);
+      render();
+    }
+  }
+});
+
+canvas.addEventListener('mouseleave', () => {
+  isDragging = false;
+  hoveredComp = null;
+  hoverLabel.classList.remove('visible');
+  render();
+});
+
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  camDist = Math.max(20, Math.min(80, camDist + e.deltaY * 0.03));
+  render();
+}, { passive: false });
+
+// ── Camera presets ──
+function setCameraAngle(preset, btn) {
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  sectionCut = false;
+  switch(preset) {
+    case 'iso':    camAngle = 0.6;  camPitch = 0.45; camDist = 42; break;
+    case 'front':  camAngle = 0;    camPitch = 0.15; camDist = 38; break;
+    case 'side':   camAngle = Math.PI/2; camPitch = 0.15; camDist = 38; break;
+    case 'top':    camAngle = 0.3;  camPitch = 1.1;  camDist = 45; break;
+    case 'section':
+      camAngle = 0.5; camPitch = 0.35; camDist = 38;
+      sectionCut = true;
+      break;
+  }
+  render();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SIDEBAR — Component list + Assembly detail
+// ═══════════════════════════════════════════════════════════════════
+
+const compList = document.getElementById('compList');
+const assemblyPanel = document.getElementById('assemblyPanel');
+const assemblyTitle = document.getElementById('assemblyTitle');
+const crossSection = document.getElementById('crossSection');
+const layerDetailEl = document.getElementById('layerDetail');
+
+// Build component list
+Object.entries(COMPONENTS).forEach(([key, comp]) => {
+  const el = document.createElement('div');
+  el.className = 'comp-item';
+  el.dataset.comp = key;
+  el.innerHTML = `<div class="dot" style="background:${comp.color}"></div><span class="cname">${comp.name}</span>`;
+  el.addEventListener('click', () => {
+    selectedComp = key;
+    showAssembly(key);
+    render();
+  });
+  el.addEventListener('mouseenter', () => {
+    hoveredComp = key;
+    render();
+  });
+  el.addEventListener('mouseleave', () => {
+    hoveredComp = null;
+    render();
+  });
+  compList.appendChild(el);
+});
+
+function highlightCompInList(comp) {
+  compList.querySelectorAll('.comp-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.comp === comp);
+  });
+}
+
+function showAssembly(compKey) {
+  const comp = COMPONENTS[compKey];
+  if (!comp) return;
+
+  highlightCompInList(compKey);
+  assemblyPanel.style.display = 'block';
+  assemblyTitle.textContent = comp.name + ' Assembly';
+
+  crossSection.innerHTML = comp.layers.map((layer, i) => `
+    <div class="cs-layer" data-idx="${i}" onclick="showLayerDetail('${compKey}', ${i})">
+      <div class="cs-swatch" style="background:${layer.color}"></div>
+      <div class="cs-info">
+        <div class="name">${layer.name}</div>
+        <div class="spec">${layer.thick}${layer.thick !== '—' ? ' thick' : ''} · ${layer.qty}</div>
+      </div>
+      <div class="cs-price">${layer.total}</div>
+    </div>
+  `).join('');
+
+  layerDetailEl.classList.remove('open');
+  layerDetailEl.innerHTML = '';
+}
+
+function showLayerDetail(compKey, idx) {
+  const layer = COMPONENTS[compKey].layers[idx];
+  if (!layer) return;
+
+  crossSection.querySelectorAll('.cs-layer').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+  });
+
+  layerDetailEl.innerHTML = `
+    <div class="ld-grid">
+      <div class="ld-cell"><div class="label">Quantity</div><div class="val">${layer.qty}</div></div>
+      <div class="ld-cell"><div class="label">Unit Price</div><div class="val">${layer.price}</div></div>
+      <div class="ld-cell"><div class="label">Extended</div><div class="val" style="color:var(--green)">${layer.total}</div></div>
+      <div class="ld-cell"><div class="label">Thickness</div><div class="val">${layer.thick}</div></div>
+    </div>
+    <div class="notes">${layer.notes}</div>
+  `;
+  layerDetailEl.classList.add('open');
+}
+
+// ── Resize & Initial render ──
+window.addEventListener('resize', render);
+render();
+
+// Show foundation by default
+selectedComp = 'foundation';
+showAssembly('foundation');
+</script>
+</body>
+</html>
