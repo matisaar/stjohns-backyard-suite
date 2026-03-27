@@ -238,11 +238,11 @@
     <div id="hoverLabel" class="hover-label"></div>
 
     <div class="view-controls">
-      <button class="view-btn active" onclick="setCameraAngle('iso')">Isometric</button>
-      <button class="view-btn" onclick="setCameraAngle('front')">Front</button>
-      <button class="view-btn" onclick="setCameraAngle('side')">Side</button>
-      <button class="view-btn" onclick="setCameraAngle('top')">Top</button>
-      <button class="view-btn" onclick="setCameraAngle('section')">Section Cut</button>
+      <button class="view-btn active" onclick="setCameraAngle('iso', this)">Isometric</button>
+      <button class="view-btn" onclick="setCameraAngle('front', this)">Front</button>
+      <button class="view-btn" onclick="setCameraAngle('side', this)">Side</button>
+      <button class="view-btn" onclick="setCameraAngle('top', this)">Top</button>
+      <button class="view-btn" onclick="setCameraAngle('section', this)">Section Cut</button>
     </div>
   </div>
 
@@ -751,9 +751,9 @@ canvas.addEventListener('wheel', (e) => {
 }, { passive: false });
 
 // ── Camera presets ──
-function setCameraAngle(preset) {
+function setCameraAngle(preset, btn) {
   document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
+  if (btn) btn.classList.add('active');
 
   sectionCut = false;
   switch(preset) {

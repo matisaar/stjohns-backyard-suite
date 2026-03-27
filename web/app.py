@@ -129,7 +129,8 @@ def render_view():
     for item in fin.get("items", []):
         layers.append(dict(item))
 
-    return render_template("render.html", layers=layers)
+    summary = calculate_bom_summary()
+    return render_template("render.html", layers=layers, summary=summary)
 
 
 @app.route("/finishes")
@@ -186,7 +187,8 @@ def finishes():
         if items:
             sections.append({"name": section_name, "products": items})
 
-    return render_template("finishes.html", sections=sections)
+    summary = calculate_bom_summary()
+    return render_template("finishes.html", sections=sections, summary=summary)
 
 
 @app.route("/api/summary")
