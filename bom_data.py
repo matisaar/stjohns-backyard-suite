@@ -857,8 +857,9 @@ DIVISION_11 = {
             "name": "White Laminate Countertop — 8' Post-Formed",
             "qty": 1, "unit": "EA", "unit_price": 300.00,
             "url": f"{KENT_BASE}/25-x-8-2300-kitchen-countertop-1015537",
-            "notes": "Bright white laminate — high contrast with anthracite cabinets. 25\" deep, 8' length.",
-            "image_url": "/static/images/1015537.jpg",
+            "notes": "Bright white laminate — high contrast with anthracite cabinets. 25\" deep, 8' length. Kent SKU discontinued; price is local estimate.",
+            "estimate": True,
+            "image_url": "/static/images/white-countertop.svg",
         },
         {
             "name": "24\" Apartment-Size Electric Range — Black/Stainless",
